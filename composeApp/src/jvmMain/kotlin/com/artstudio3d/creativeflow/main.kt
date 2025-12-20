@@ -11,75 +11,72 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.WindowState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
-
+import com.artstudio3d.creativeflow.ui.components.CFButtonText
 
 
 // Imports del tema y el botón con la ruta correcta
 import com.artstudio3d.creativeflow.ui.theme.CreativeFlowTheme
 import com.artstudio3d.creativeflow.ui.components.CFNativeButton
 import com.artstudio3d.creativeflow.ui.theme.BlueGray
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 fun main() = application {
     Window(
         onCloseRequest = ::exitApplication,
         title = "CreativeFlow ERP",
-        state = WindowState(width = 300.dp, height = 700.dp)
+        state = WindowState(width = 1080.dp, height = 700.dp)
     ) {
         // Envolvemos todo con nuestro Tema
         CreativeFlowTheme {
             // Surface toma el color DarkPetrol del tema
             Surface(color = MaterialTheme.colorScheme.background) {
-                TestCreativeFlowUI()
+                MainCreativeFlowUI()
             }
         }
     }
 }
 
 @Composable
-fun TestCreativeFlowUI() {
+@Preview
+fun MainCreativeFlowUI() {
     val spacing = 2.dp
     val buttonWidth = 150.dp
     val sidebarBackgroundColor = BlueGray
-    Column(
-        modifier = Modifier
-            .background(sidebarBackgroundColor)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(spacing),
+    MaterialTheme {
+        Column(
+            horizontalAlignment = Alignment.Start,
+            modifier = Modifier
+                .background(sidebarBackgroundColor)
+                .fillMaxHeight()
+                .wrapContentWidth()
 
-    ) {
-        // Botón Activo (Naranja)
-
-        CFNativeButton(
-            text = "Proyectos",
-            buttonWidth = buttonWidth, // Ancho personalizado
-            onClick = { println("Navegar a Proyectos") },
-            isActive = true,
-            modifier = Modifier.padding(bottom = spacing)
-        )
-        // ESPACIADOR: Separación de 8dp
-        Spacer(modifier = Modifier.height(spacing))
-        // Botón Inactivo (Azul Petróleo)
-        CFNativeButton(
-            text = "Ventas",
-            buttonWidth = buttonWidth, // Ancho personalizado
-            onClick = { println("Navegar a Ventas") },
-            isActive = false,
-            modifier = Modifier.padding(bottom = spacing)
-        )
-        // ESPACIADOR: Separación de 8dp
-        Spacer(modifier = Modifier.height(spacing))
-        // Otro botón Inactivo
-        CFNativeButton(
-            text = "Facturación",
-            buttonWidth = buttonWidth, // Ancho personalizado
-            onClick = { println("Navegar a Facturación") },
-            isActive = false,
-            modifier = Modifier.padding(bottom = spacing)
-        )
+                //.fillMaxSize()
+        ) {
+            CFButtonText(
+                text = "Proyectos",
+                buttonWidth = buttonWidth, // Ancho personalizado
+                modifier = Modifier.padding(6.dp)
+            )
+            CFButtonText(
+                text = "Clientes",
+                buttonWidth = buttonWidth, // Ancho personalizado
+                modifier = Modifier.padding(6.dp)
+            )
+            CFButtonText(
+                text = "Facturación",
+                buttonWidth = buttonWidth, // Ancho personalizado
+                modifier = Modifier.padding(6.dp)
+            )
+        }
     }
 }

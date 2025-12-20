@@ -58,7 +58,7 @@ kotlin {
 
 android {
     namespace = "com.artstudio3d.creativeflow"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.artstudio3d.creativeflow"

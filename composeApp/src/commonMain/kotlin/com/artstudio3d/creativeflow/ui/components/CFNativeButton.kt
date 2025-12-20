@@ -2,11 +2,13 @@ package com.artstudio3d.creativeflow.ui.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,12 +21,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 // Imports de colores desde tu paquete de tema
 import com.artstudio3d.creativeflow.ui.theme.DarkPetrol
 import com.artstudio3d.creativeflow.ui.theme.OrangePrimary
 import com.artstudio3d.creativeflow.ui.theme.LightGray
+import org.jetbrains.compose.ui.tooling.preview.Preview
+
 //import androidx.compose.foundation.layout.padding
 
 @Composable
@@ -66,6 +71,31 @@ fun CFNativeButton(
             color = targetTextColor,
             style = MaterialTheme.typography.labelLarge,
             //modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+
+        )
+    }
+}
+
+@Composable
+@Preview
+fun CFButtonText(    text: String ="botón de texto",
+                     modifier: Modifier = Modifier,
+                     isActive: Boolean = false,
+                     buttonWidth: Dp = 150.dp) {
+    
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .width(buttonWidth)
+            .clickable { println("Click en $text") }
+
+            .border(width = 2.dp, color = Color.DarkGray, shape = RoundedCornerShape(8.dp))
+            .background(Color.LightGray, shape = RoundedCornerShape(8.dp))
+            .padding(vertical = 8.dp)
+        //
+    ){
+        Text(
+            text = text,
 
         )
     }
