@@ -32,10 +32,19 @@ kotlin {
     
     sourceSets {
         androidMain.dependencies {
+
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            // Exposed para Android
+            val exposedVersion = "0.56.0"
+            implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+            implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+            // CAMBIO: Sustituimos javatime por kotlin-datetime
+            //implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
+
         }
         commonMain.dependencies {
+
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
@@ -45,6 +54,10 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(projects.shared)
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
+
+
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -52,6 +65,18 @@ kotlin {
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+            val exposedVersion = "0.56.0"
+            // Exposed para Desktop (JVM)
+            implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+            implementation("org.jetbrains.exposed:exposed-dao:${exposedVersion}")
+            implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+            implementation("org.jetbrains.exposed:exposed-kotlin-datetime:${exposedVersion}")
+
+
+            // Drivers solo para Desktop
+            implementation("org.xerial:sqlite-jdbc:3.45.1.0")
+            implementation("org.postgresql:postgresql:42.7.2")
+            implementation("org.mariadb.jdbc:mariadb-java-client:3.3.3")
         }
     }
 }

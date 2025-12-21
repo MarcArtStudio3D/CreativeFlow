@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import com.artstudio3d.creativeflow.database.DatabaseManager
 import com.artstudio3d.creativeflow.ui.components.CFButtonText
 
 
@@ -31,6 +32,9 @@ import com.artstudio3d.creativeflow.ui.theme.BlueGray
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 fun main() = application {
+
+    //Inicializamos la base de datos
+    DatabaseManager.init()
     Window(
         onCloseRequest = ::exitApplication,
         title = "CreativeFlow ERP",
