@@ -1,0 +1,10 @@
+<resources>
+    <string name="mod_proyectos_tit">Proyectos</string>
+    <string name="mod_proyectos_desc">Planificación y seguimiento de tareas.</string>
+    <string name="mod_ventas_tit">Ventas</string>
+    <string name="mod_ventas_desc">Gestión de clientes, pedidos, presupuestos, albaranes, facturas...</string>
+    <string name="mod_administracion">Administración</string>
+    <string name="mod_administracion_desc">Administración de Creative Flow (Solo ADMINS).</string>
+    <string name="sec_lista">Lista</string>
+    <string name="sec_calendario">Calendario</string>
+</resources>
