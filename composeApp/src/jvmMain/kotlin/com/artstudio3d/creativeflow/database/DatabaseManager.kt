@@ -1,11 +1,12 @@
 package com.artstudio3d.creativeflow.database
 
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
 // Este es el que hace que insertAndGetId funcione:
 import org.jetbrains.exposed.sql.insertAndGetId
+import org.jetbrains.exposed.sql.insert  // <--- ESTE ES EL CRÍTICO
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 object DatabaseManager {
     fun init() {
@@ -78,9 +79,9 @@ object DatabaseManager {
         }
 
         // F. VINCULAR USUARIO CON ROL
-        UsuarioRolesTable.insert {
-            it[usuarioId] = idUsuario.value
-            it[rolId] = idRolAdmin.value
+        UsuarioRolesTable.insert { fila->
+            fila[usuarioId] = idUsuario.value
+            fila[rolId] = idRolAdmin.value
         }
 
         println("🌱 Base de datos poblada con éxito: Usuario 'admin.artstudio' listo.")

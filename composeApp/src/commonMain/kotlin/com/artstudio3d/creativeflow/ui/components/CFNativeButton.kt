@@ -25,9 +25,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 // Imports de colores desde tu paquete de tema
-import com.artstudio3d.creativeflow.ui.theme.DarkPetrol
-import com.artstudio3d.creativeflow.ui.theme.OrangePrimary
-import com.artstudio3d.creativeflow.ui.theme.LightGray
+import com.artstudio3d.creativeflow.ui.theme.AzulPetroleo
+import com.artstudio3d.creativeflow.ui.theme.NaranjaPrincipal
+import com.artstudio3d.creativeflow.ui.theme.GrisClaro
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 //import androidx.compose.foundation.layout.padding
@@ -44,12 +44,12 @@ fun CFNativeButton(
     val isHovered by interactionSource.collectIsHoveredAsState()
 
     val targetBackgroundColor = when {
-        isActive -> OrangePrimary.copy(alpha = 0.9f)
-        isHovered -> DarkPetrol.copy(alpha = 0.6f)
-        else -> DarkPetrol
+        isActive -> NaranjaPrincipal.copy(alpha = 0.9f)
+        isHovered -> AzulPetroleo.copy(alpha = 0.6f)
+        else -> AzulPetroleo
     }
 
-    val targetTextColor = if (isActive) MaterialTheme.colorScheme.onPrimary else LightGray
+    val targetTextColor = if (isActive) MaterialTheme.colorScheme.onPrimary else GrisClaro
 
     val animatedBackgroundColor by animateColorAsState(targetBackgroundColor)
     // Define el radio de redondeo deseado

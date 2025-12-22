@@ -4,24 +4,26 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
+  //  alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
 }
 
 kotlin {
-    androidTarget {
+   /* androidTarget {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
-    }
+    } */
     
     jvm()
     
-    js {
+    /*js {
         browser()
         binaries.executable()
+
+
     }
     
     @OptIn(ExperimentalWasmDsl::class)
@@ -29,9 +31,9 @@ kotlin {
         browser()
         binaries.executable()
     }
-    
+    */
     sourceSets {
-        androidMain.dependencies {
+    /*    androidMain.dependencies {
 
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -43,6 +45,7 @@ kotlin {
             //implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
 
         }
+    */
         commonMain.dependencies {
 
             implementation(compose.runtime)
@@ -55,6 +58,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(projects.shared)
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
+            implementation(compose.materialIconsExtended)
 
 
 
@@ -81,7 +85,7 @@ kotlin {
     }
 }
 
-android {
+/*android {
     namespace = "com.artstudio3d.creativeflow"
     compileSdk = 36
 
@@ -106,10 +110,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-}
+} */
 
 dependencies {
-    debugImplementation(compose.uiTooling)
+ //   debugImplementation(compose.uiTooling)
 }
 
 compose.desktop {

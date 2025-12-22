@@ -1,7 +1,6 @@
 package com.artstudio3d.creativeflow.database
 
 import org.jetbrains.exposed.dao.id.IntIdTable // IMPORTANTE: Nueva herencia
-import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 object UsuariosTable : IntIdTable("usuarios") {
     val nombre = varchar("nombre", 100).uniqueIndex()
