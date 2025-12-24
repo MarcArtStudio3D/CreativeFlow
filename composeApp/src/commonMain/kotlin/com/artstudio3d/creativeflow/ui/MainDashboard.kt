@@ -1,6 +1,7 @@
 package com.artstudio3d.creativeflow.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -28,6 +29,7 @@ import androidx.compose.material3.OutlinedTextField
 
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import com.artstudio3d.creativeflow.models.ModuloModel
+import com.artstudio3d.creativeflow.models.ModuloSeccionModel
 import com.artstudio3d.creativeflow.repositories.ModuloRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,12 +37,12 @@ import com.artstudio3d.creativeflow.repositories.ModuloRepository
 fun MainDashboard(onLogout: () -> Unit) {
 // 1. ESTADOS
     var moduloSeleccionado by remember { mutableStateOf<Int?>(null) }
-    var seccionSeleccionada by remember { mutableStateOf("Lista") }
+    var seccionSeleccionada by remember { mutableStateOf("No hay ninguna seleccionada") }
     var textoBusqueda by remember { mutableStateOf("") }
 
     // CORRECCIÓN: Usamos ModuloModel, no DTO
     var listaModulos by remember { mutableStateOf<List<ModuloModel>>(emptyList()) }
-
+    var secciones by remember { mutableStateOf(listOf<ModuloSeccionModel>()) }
     // Cargar módulos de la base de datos al iniciar
     LaunchedEffect(Unit) {
         val datos = ModuloRepository.obtenerModulosPadre()
@@ -52,6 +54,33 @@ fun MainDashboard(onLogout: () -> Unit) {
                 ModuloModel(3, "ADMIN", "Configuración del sistema", "Admin")
             )
         }
+    }
+
+    // Dentro de tu @Composable MainDashboard
+
+
+// Efecto para cargar secciones cuando cambie el ID seleccionado
+    LaunchedEffect(moduloSeleccionado) {
+        moduloSeleccionado?.let { id ->
+            println("Cargando secciones para el módulo ID: $id") // Debug
+            secciones = ModuloRepository.obtenerSecciones(id)
+        }
+    }
+
+    Row(Modifier.fillMaxSize()) {
+        // SIDEBAR
+        Column(Modifier.width(250.dp).fillMaxHeight().background(Color.DarkGray)) {
+            Text("SECCIONES", color = Color.White, modifier = Modifier.padding(16.dp))
+
+            secciones.forEach { seccion ->
+                Text(
+                    text = seccion.nombre,
+                    color = Color.LightGray,
+                    modifier = Modifier.fillMaxWidth().padding(16.dp).clickable { /* Cambiar vista */ }
+                )
+            }
+        }
+
     }
 
     Scaffold(
@@ -94,20 +123,45 @@ fun MainDashboard(onLogout: () -> Unit) {
                 .background(MaterialTheme.colorScheme.background)
         ) {
             // SIDEBAR
+            // Busca la parte del Sidebar (Surface con ancho 260.dp) y reemplázala por esto:
             Surface(
                 modifier = Modifier.width(260.dp).fillMaxHeight(),
                 color = MaterialTheme.colorScheme.surface,
                 tonalElevation = 2.dp
             ) {
-                if (moduloSeleccionado == null) {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("Selecciona un módulo", style = MaterialTheme.typography.bodySmall)
-                    }
-                } else {
-                    Column(modifier = Modifier.padding(12.dp)) {
-                        Text("Módulo Activo", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                Column(modifier = Modifier.padding(12.dp)) {
+                    if (moduloSeleccionado == null) {
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Text("Selecciona un módulo para ver secciones",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                    } else {
+                        // TÍTULO DEL SIDEBAR
+                        Text("SECCIONES",
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.labelLarge)
+
                         Spacer(Modifier.height(20.dp))
-                        Text("Secciones aquí...", color = MaterialTheme.colorScheme.onSurfaceVariant)
+
+                        // LISTA DINÁMICA DE SECCIONES DE LA DB
+                        secciones.forEach { seccion ->
+                            NavigationDrawerItem(
+                                label = { Text(seccion.nombre) },
+                                selected = seccionSeleccionada == seccion.vistaId,
+                                onClick = { seccionSeleccionada = seccion.vistaId },
+                                icon = { Icon(Icons.Default.List, contentDescription = null) },
+                                shape = RoundedCornerShape(8.dp),
+                                modifier = Modifier.padding(vertical = 2.dp)
+                            )
+                        }
+
+                        if (secciones.isEmpty()) {
+                            Text("No hay secciones configuradas",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.Gray)
+                        }
                     }
                 }
             }

@@ -2,6 +2,7 @@
 package com.artstudio3d.creativeflow.repositories
 
 import com.artstudio3d.creativeflow.models.ModuloModel
+import com.artstudio3d.creativeflow.models.ModuloSeccionModel
 import java.sql.DriverManager
 import java.sql.Connection
 
@@ -60,6 +61,34 @@ actual object ModuloRepository {
             e.printStackTrace()
         }
 
+        return lista
+    }
+    // Añade la implementación real
+    actual fun obtenerSecciones(moduloId: Int): List<ModuloSeccionModel> {
+        val lista = mutableListOf<ModuloSeccionModel>()
+        // Reutilizamos la lógica de búsqueda de archivo que ya tenemos
+        val dbFile = java.io.File("creativeflow.db") // O la ruta que detectamos antes
+
+        try {
+            java.sql.DriverManager.getConnection("jdbc:sqlite:${dbFile.absolutePath}").use { conn ->
+                val stmt = conn.prepareStatement("SELECT id, modulo_id, nombre, vista_id FROM modulos_secciones WHERE modulo_id = ? ORDER BY orden")
+                stmt.setInt(1, moduloId)
+                val rs = stmt.executeQuery()
+
+                while (rs.next()) {
+                    lista.add(
+                        ModuloSeccionModel(
+                            id = rs.getInt("id"),
+                            moduloId = rs.getInt("modulo_id"),
+                            nombre = rs.getString("nombre") ?: "",
+                            vistaId = rs.getString("vista_id") ?: ""
+                        )
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            println("❌ Error al cargar secciones: ${e.message}")
+        }
         return lista
     }
 }
