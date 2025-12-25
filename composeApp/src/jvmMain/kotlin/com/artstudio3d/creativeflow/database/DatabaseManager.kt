@@ -9,6 +9,8 @@ import org.jetbrains.exposed.sql.insert  // <--- ESTE ES EL CRÍTICO
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 object DatabaseManager {
+    private var connection : Conexion? = null
+    var empresaActual:EmpresaModel? = null
     fun init() {
         val dbFile = File("creativeflow.db")
         Database.connect("jdbc:sqlite:${dbFile.absolutePath}", "org.sqlite.JDBC")
@@ -124,5 +126,27 @@ object DatabaseManager {
         }
         println("----------------------------------\n")
     }
+        fun conectarAEmpresa(empresa: EmpresaModel): Boolean {
+            return try {
+                // Cerramos la anterior si existe
+                connection?.close()
+
+                val url = "jdbc:mariadb://${empresa.dbHost}:3306/${empresa.dbName}"
+                connection = DriverManager.getConnection(url, empresa.dbUser, empresa.dbPassword)
+                empresaActual = empresa
+                println("✅ Conectado a MariaDB: ${empresa.nombre}")
+                true
+            } catch (e: Exception) {
+                println("❌ Error conectando a MariaDB: ${e.message}")
+                false
+            }
+        }
+
+        fun getConnection(): Connexion {
+            if (connection == null || connection!!.isClosed) {
+                throw Exception("No hay conexión activa a ninguna empresa")
+            }
+            return connection!!
+        }
 }
 }

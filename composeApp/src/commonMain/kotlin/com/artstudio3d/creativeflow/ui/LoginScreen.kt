@@ -1,14 +1,17 @@
 package com.artstudio3d.creativeflow.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import com.artstudio3d.creativeflow.repositories.AuthGateway
 import com.artstudio3d.creativeflow.session.AppSession
+import kotlin.system.exitProcess
 
 @Composable
 fun LoginScreen(onLoginSuccess: () -> Unit) {
@@ -74,6 +77,19 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                 modifier = Modifier.fillMaxWidth().height(50.dp)
             ) {
                 Text("ENTRAR")
+            }
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Button(
+                onClick = {
+                    exitProcess(0)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+
+            ) {
+                Text("CERRAR APLICACIÓN")
             }
         }
     }
