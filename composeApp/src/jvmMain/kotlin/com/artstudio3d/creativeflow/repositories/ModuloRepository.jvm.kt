@@ -227,4 +227,29 @@ actual object ModuloRepository {
         }
         return lista
     }
+    actual fun guardarNuevaEmpresa(empresa: EmpresaModel): Result<Unit> {
+        return try {
+            val dbFile = java.io.File("creativeflow.db")
+            DriverManager.getConnection("jdbc:sqlite:${dbFile.absolutePath}").use { conn ->
+                val sql = """
+                INSERT INTO empresas (nombre_comercial, motordb, archivo_sqlite, mariadb_host, ...) 
+                VALUES (?, ?, ?, ?, ...)
+            """.trimIndent()
+
+                // 1. Guardar en el índice local
+                val pstmt = conn.prepareStatement(sql)
+                pstmt.setString(1, empresa.nombreComercial)
+                pstmt.setString(2, empresa.motorDb)
+                // ... resto de parámetros
+                pstmt.executeUpdate()
+
+                // 2. Inicializar la base de datos de destino
+                inicializarTablasEmpresa(empresa)
+
+                Result.success(Unit)
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }

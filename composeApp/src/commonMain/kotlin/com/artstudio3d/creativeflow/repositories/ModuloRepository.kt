@@ -9,5 +9,6 @@ expect object ModuloRepository {
     fun obtenerSecciones(moduloId: Int): List<ModuloSeccionModel>
 
     fun obtenerEmpresas(): List<EmpresaModel>
+    fun guardarNuevaEmpresa(empresa: EmpresaModel): Result<Unit>
     fun validarUsuarioEnConexionActiva(user: String, pass: String): Boolean
 }
