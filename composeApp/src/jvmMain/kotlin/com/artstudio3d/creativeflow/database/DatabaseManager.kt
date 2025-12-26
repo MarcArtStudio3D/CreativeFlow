@@ -1,5 +1,6 @@
 package com.artstudio3d.creativeflow.database
 
+import com.artstudio3d.creativeflow.models.EmpresaModel
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
@@ -7,10 +8,12 @@ import java.io.File
 import org.jetbrains.exposed.sql.insertAndGetId
 import org.jetbrains.exposed.sql.insert  // <--- ESTE ES EL CRÍTICO
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import java.sql.Connection
+import java.sql.DriverManager
 
 object DatabaseManager {
-    private var connection : Conexion? = null
-    var empresaActual:EmpresaModel? = null
+    private var connection : Connection? = null
+    var empresaActual: EmpresaModel? = null
     fun init() {
         val dbFile = File("creativeflow.db")
         Database.connect("jdbc:sqlite:${dbFile.absolutePath}", "org.sqlite.JDBC")
@@ -75,7 +78,7 @@ object DatabaseManager {
 
         // E. CREAR EL USUARIO ADMINISTRADOR
         val idUsuario = UsuariosTable.insertAndGetId {
-            it[nombre] = "admin.artstudio"
+            it[nombre] = "admin"
             it[contrasenaHash] = SecurityUtils.hashPassword("admin123")
             it[activo] = true
         }
@@ -131,10 +134,10 @@ object DatabaseManager {
                 // Cerramos la anterior si existe
                 connection?.close()
 
-                val url = "jdbc:mariadb://${empresa.dbHost}:3306/${empresa.dbName}"
-                connection = DriverManager.getConnection(url, empresa.dbUser, empresa.dbPassword)
+                val url = "jdbc:mariadb://${empresa.mariadbHost}:3306/${empresa.mariadbName}"
+                connection = DriverManager.getConnection(url, empresa.mariadbUser, empresa.mariadbPassword)
                 empresaActual = empresa
-                println("✅ Conectado a MariaDB: ${empresa.nombre}")
+                println("✅ Conectado a MariaDB: ${empresa.nombreComercial}")
                 true
             } catch (e: Exception) {
                 println("❌ Error conectando a MariaDB: ${e.message}")
@@ -142,7 +145,7 @@ object DatabaseManager {
             }
         }
 
-        fun getConnection(): Connexion {
+        fun getConnection(): Connection {
             if (connection == null || connection!!.isClosed) {
                 throw Exception("No hay conexión activa a ninguna empresa")
             }

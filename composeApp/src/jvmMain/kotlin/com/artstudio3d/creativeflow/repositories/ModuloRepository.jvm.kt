@@ -4,6 +4,7 @@ package com.artstudio3d.creativeflow.repositories
 import com.artstudio3d.creativeflow.models.EmpresaModel
 import com.artstudio3d.creativeflow.models.ModuloModel
 import com.artstudio3d.creativeflow.models.ModuloSeccionModel
+import com.artstudio3d.creativeflow.database.ExternalDbManager
 import java.sql.DriverManager
 import java.sql.Connection
 
@@ -67,8 +68,11 @@ actual object ModuloRepository {
     // Añade la implementación real
     actual fun obtenerSecciones(moduloId: Int): List<ModuloSeccionModel> {
         val lista = mutableListOf<ModuloSeccionModel>()
-        // Reutilizamos la lógica de búsqueda de archivo que ya tenemos
-        val dbFile = java.io.File("creativeflow.db") // O la ruta que detectamos antes
+        val dbFile = java.io.File(System.getProperty("user.dir") + "/creativeflow.db")
+        if (!dbFile.exists()) {
+            println("⚠️ Error: No se encuentra creativeflow.db en ${dbFile.absolutePath}")
+            return emptyList()
+        }
 
         try {
             java.sql.DriverManager.getConnection("jdbc:sqlite:${dbFile.absolutePath}").use { conn ->
@@ -91,6 +95,29 @@ actual object ModuloRepository {
             println("❌ Error al cargar secciones: ${e.message}")
         }
         return lista
+    }
+    actual fun validarUsuarioEnConexionActiva(user: String, pass: String): Boolean {
+        return try {
+            // Usamos la conexión que el AuthService acaba de abrir
+            val conn = ExternalDbManager.obtenerConexion()
+
+            val sql = "SELECT COUNT(*) FROM usuarios WHERE username = ? AND password = ? AND activo = 1"
+
+            conn.prepareStatement(sql).use { pstmt ->
+                pstmt.setString(1, user)
+                pstmt.setString(2, pass)
+
+                val rs = pstmt.executeQuery()
+                if (rs.next()) {
+                    rs.getInt(1) > 0 // Si el conteo es mayor a 0, las credenciales son válidas
+                } else {
+                    false
+                }
+            }
+        } catch (e: Exception) {
+            println("❌ Error en validación MariaDB: ${e.message}")
+            false
+        }
     }
     actual fun obtenerEmpresas(): List<EmpresaModel> {
         val lista = mutableListOf<EmpresaModel>()
