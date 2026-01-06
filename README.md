@@ -46,4 +46,4 @@ C'est un logiciel de performance native conçu pour offrir puissance, confidenti
 
     Interface: UI sombre native à haut contraste (#2D2D2D).
 
-    Données: Architecture modulaire avec persistance SQLite/SQL locale.
+    Données: Architecture modulaire avec persistance SQLite/MariaSQL locale.
