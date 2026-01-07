@@ -1,5 +1,5 @@
 # main_app/MainWindow.py
-from PIL import Image
+from PIL import Image, ImageTk
 import os
 import customtkinter as ctk
 from colores import *
@@ -15,8 +15,24 @@ IMAGES_DIR = os.path.join(CURRENT_DIR, "images", "modules")
 class MainWindow(ctk.CTk):
     def __init__(self, session_data):
         super().__init__()
+        self.session_data = session_data  # Guardamos los datos de la sesión
         self.title("CREATIVE FLOW")
-        self.geometry("1400x900")  # Tamaño estándar creativo
+        #self.geometry("1400x900")  # Tamaño estándar creativo
+        # 3. Maximizar (Compatibilidad Arch Linux)
+        try:
+            self.attributes('-zoomed', True)  # Funciona en la mayoría de Linux
+        except:
+            self.state('zoomed')  # Fallback para Windows/Otros
+        # Definir la ruta del icono (usa PNG para mejor compatibilidad en Linux/Mac)
+        self.ruta_icono = os.path.join(IMAGES_DIR, "LogoIcono.png")
+
+        if os.path.exists(self.ruta_icono):
+            # En Windows suele usarse self.iconbitmap(), pero en Linux esto es más robusto:
+            img_icono = Image.open(self.ruta_icono)
+            photo = ImageTk.PhotoImage(img_icono)
+            self.wm_iconphoto(False, photo)
+        else:
+            print(f"Aviso: No se encontró el icono en {self.ruta_icono}")
 
         # Diccionario para guardar las instancias de los módulos (Lazy Loading)
         self.modulos = {}
@@ -113,19 +129,18 @@ class MainWindow(ctk.CTk):
         )
 
     def cambiar_modulo(self, nombre_modulo):
-        # 1. Limpiamos el contenido actual del área de contenido
-        # Esto elimina lo que haya (bienvenida, otros módulos, etc.)
+        # 1. Limpiamos el contenido actual
         for widget in self.content_area.winfo_children():
             widget.destroy()
 
-        # 2. Cargamos el módulo de Ventas
+        # 2. Cargamos el módulo con la sesión de la empresa actual
         if nombre_modulo == "VENTAS":
-            # Importamos aquí para evitar errores de importación circular
             from modulos.ventas import VentasModule
 
-            # Instanciamos el módulo pasándole el content_area como master
-            modulo_ventas = VentasModule(self.content_area)
-            # Lo hacemos ocupar todo el espacio disponible
+            # Le pasamos self.session_data para que sepa qué 'archivo_sqlite' usar
+            modulo_ventas = VentasModule(self.content_area, self.session_data)
             modulo_ventas.pack(fill="both", expand=True)
 
-        # Aquí irás añadiendo el resto: elif nombre_modulo == "PROYECTOS": ...
+        elif nombre_modulo == "PROYECTOS":
+            # Ejemplo para futuros módulos
+            pass
