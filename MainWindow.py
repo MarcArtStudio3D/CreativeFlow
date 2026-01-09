@@ -65,12 +65,13 @@ class MainWindow(ctk.CTk):
             # Modo Rescate: Mostrar mensaje especial
             lbl_rescate = ctk.CTkLabel(
                 self.content_area,
-                text="MODO RESCATE ACTIVADO\nContacte con soporte técnico.",
+                text="MODO ADMIN ACTIVADO",
                 font=("Arial", 20, "bold"),
                 text_color="#E74C3C",
                 justify="center"
             )
             lbl_rescate.pack(expand=True)
+            self.init_sidebar_admin()
         else:
             self.init_sidebar()
 
@@ -93,6 +94,27 @@ class MainWindow(ctk.CTk):
             ("CONTABILIDAD", "contabilidad.png"),
             ("ESTADÍSTICAS", "estadisticas.png"),
             ("ADMINISTRACIÓN", "configuracion.png")
+        ]
+
+        for nombre, icono in modulos:
+            self.crear_tarjeta_modulo(nombre, icono)
+    def init_sidebar_admin(self):
+        # Título o Logo arriba
+        self.lbl_logo = ctk.CTkLabel(
+            self.sidebar,
+            text="CREATIVE FLOW",
+            font=("Inter", 16, "bold"),  # Usa una fuente moderna
+            text_color=COLOR_NARANJA
+        )
+        self.lbl_logo.pack(pady=30)  # Dale mucho aire arriba y abajo
+
+        # Definimos los módulos con sus iconos
+        modulos = [
+            ("USUARIOS", "usuarios.png"),
+            ("EMPRESAS", "empresas.png"),
+            ("ROLES", "roles.png"),
+            ("BACKUPS", "backups.png"),
+            ("CONFIGURACIÓN", "configuracion.png")
         ]
 
         for nombre, icono in modulos:
