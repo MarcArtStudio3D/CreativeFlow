@@ -1,23 +1,23 @@
 <RCC>
-  <qresource prefix="PNG">
-    <file>../../resources/icons/png/ok.png</file>
-    <file>../../resources/icons/png/close.png</file>
-    <file>../../resources/icons/png/down_arrow.png</file>
-    <file>../../resources/icons/png/LogoIcono.png</file>
-    <file>../../resources/icons/ico/LogoIconoCreative.ico</file>
-    <file>../../resources/icons/png/LogoCreative.png</file>
-    <file>../../resources/icons/png/Add.png</file>
-    <file>../../resources/icons/png/Calendar.png</file>
-    <file>../../resources/icons/png/Next.png</file>
-    <file>../../resources/icons/png/Pay.png</file>
-    <file>../../resources/icons/png/delete.png</file>
-    <file>../../resources/icons/png/Previous.png</file>
-    <file>../../resources/icons/png/undo.png</file>
-    <file>../../resources/icons/png/Edit.png</file>
-    <file>../../resources/icons/png/Exit.png</file>
-    <file>../../resources/icons/png/Print.png</file>
-    <file>../../resources/icons/png/Save.png</file>
-    <file>../../resources/icons/png/List.png</file>
-    <file>../../resources/icons/png/search.png</file>
+  <qresource prefix="modules">
+    <file>../images/modules/LogoIcono.png</file>
+    <file>../images/modules/LogoIconoCreative.ico</file>
+    <file>../images/modules/ventas.png</file>
+    <file>../images/modules/backups.png</file>
+    <file>../images/modules/usuarios.png</file>
+    <file>../images/modules/estadisticas.png</file>
+    <file>../images/modules/contabilidad.png</file>
+    <file>../images/modules/almacen.png</file>
+    <file>../images/modules/roles.png</file>
+    <file>../images/modules/proyectos.png</file>
+    <file>../images/modules/compras.png</file>
+    <file>../images/modules/configuracion.png</file>
+    <file>../images/modules/empresas.png</file>
+    <file>../images/modules/sinnombre.png</file>
+  </qresource>
+  <qresource prefix="icons">
+    <file>../images/chevron-down-dark.svg</file>
+    <file>../images/chevron-down.svg</file>
+    <file>../images/chevron-up.svg</file>
   </qresource>
 </RCC>

@@ -31,7 +31,7 @@ class VentasModule(ctk.CTkFrame):
             w.destroy()
 
         if nombre == "Clientes":
-            from modulos.ventas_vistas.clientes import ClientesView
+            from modulos.ventas.clientes import ClientesView
             # Pasamos la sesión a la vista final
             view = ClientesView(self.view_container, self.session)
             view.pack(fill="both", expand=True, padx=20, pady=20)

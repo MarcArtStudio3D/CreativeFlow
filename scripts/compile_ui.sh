@@ -6,8 +6,8 @@ set -euo pipefail
 # Usage: ./scripts/compile_ui.sh
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-UI_DIR="$ROOT_DIR/app/ui"
-MODULES_DIR="$ROOT_DIR/modules"
+UI_DIR="$ROOT_DIR/ui"
+MODULOS_DIR="$ROOT_DIR/modulos"
 VENV_BIN="$ROOT_DIR/.venv/bin"
 SCRIPTS_DIR="$ROOT_DIR/scripts"
 
@@ -44,9 +44,12 @@ find "$ROOT_DIR" -path "$ROOT_DIR/.venv" -prune -o -type f -name '*.pyc' -print 
 for qrc in "$UI_DIR"/*.qrc; do
     [ -e "$qrc" ] || continue
     base=$(basename "$qrc" .qrc)
-    out="$MODULES_DIR/${base}_rc.py"
+    out="$MODULOS_DIR/${base}_rc.py"
     echo " - $qrc -> $out"
-    "$PYRCC" "$qrc" -o "$out"
+    "$PYRCC" "$qrc" -o "$out" || {
+        echo "   WARNING: Failed to compile $qrc, skipping..."
+        continue
+    }
 done
 
 # Function to compile a UI file to its target module
@@ -62,23 +65,23 @@ compile_ui_file() {
     "$PYTHON" "$SCRIPTS_DIR/ui_tools/remove_palette.py" "$output_file"
     
     # Patch imports
-    perl -0777 -pe 's/^import designer_rc\b/from modules import designer_rc/igm; s/^from\s+\.\s+import\s+designer_rc\b/from modules import designer_rc/igm' -i "$output_file"
-    
-    # Patch chartviewwidget imports to use modules.common
-    perl -0777 -pe 's/^from chartviewwidget import/from modules.common.chartviewwidget import/igm' -i "$output_file"
-    
-    # Patch openchart imports to use modules.common
-    perl -0777 -pe 's/^from openchart import/from modules.common.openchart import/igm' -i "$output_file"
-    
+    perl -0777 -pe 's/^import designer_rc\b/from modulos import designer_rc/igm; s/^from\s+\.\s+import\s+designer_rc\b/from modulos import designer_rc/igm' -i "$output_file"
+
+    # Patch chartviewwidget imports to use modulos.common
+    perl -0777 -pe 's/^from chartviewwidget import/from modulos.common.chartviewwidget import/igm' -i "$output_file"
+
+    # Patch openchart imports to use modulos.common
+    perl -0777 -pe 's/^from openchart import/from modulos.common.openchart import/igm' -i "$output_file"
+
     # Fix Qt constants
     echo "   - Fixing Qt constants in $output_file"
     "$PYTHON" "$SCRIPTS_DIR/ui_tools/fix_qt_constants.py" "$output_file"
     
     # Clean hardcoded colors
-    if [ -f "$ROOT_DIR/clean_ui_colors.py" ]; then
+    if [ -f "$SCRIPTS_DIR/utils/clean_ui_colors.py" ]; then
         echo "   - Cleaning hardcoded colors from $output_file"
-        "$PYTHON" "$ROOT_DIR/clean_ui_colors.py" "$output_file"
-        
+        "$PYTHON" "$SCRIPTS_DIR/utils/clean_ui_colors.py" "$output_file"
+
         # Also remove problematic text colors directly
         sed -i 's/\.setStyleSheet(u"color: rgb(0, 0, 0);")/.setStyleSheet(u"")/g' "$output_file"
         sed -i 's/\.setStyleSheet(u"color: rgb(0, 0, 0)")/.setStyleSheet(u"")/g' "$output_file"
@@ -94,20 +97,20 @@ compile_ui_file() {
 echo "Compiling UI files..."
 
 # Map UI files to their corresponding modules
-# Format: "ui_filename:module_name"
+# Format: "ui_filename:module_name/view"
 declare -A UI_MODULE_MAP=(
-    ["frmClientes.ui"]="clientes"
-    ["frmempresas.ui"]="empresas"
-    ["frmtipocliente.ui"]="tipo_cliente"
-    ["/Almacen/frmarticulos.ui"]="articulos"
-    ["/Almacen/frmkit.ui"]="articulos"
-    ["/Almacen/frmDivisiones.ui"]="articulos"
-    ["/maestros/frmTarifasBase.ui"]="articulos"
-    ["db_consulta_view.ui"]="common"
-    ["frmConfig.ui"]="common"
-    ["frmeditaravisos.ui"]="common"
-    ["frmformas_pago.ui"]="common"
-    ["frmnuevosavisos.ui"]="common"
+    ["frmClientes.ui"]="ventas/view"
+    ["frmempresas.ui"]="empresas/view"
+    ["frmtipocliente.ui"]="ventas/view"
+    ["Almacen/frmarticulos.ui"]="ventas/view"
+    ["Almacen/frmkit.ui"]="almacen/view"
+    ["Almacen/frmDivisiones.ui"]="almacen/view"
+    ["maestros/frmTarifasBase.ui"]="maestros/view"
+    ["db_consulta_view.ui"]="auxiliares/db_consulta_view/view"
+    ["frmConfig.ui"]="configuracion/view"
+    ["frmeditaravisos.ui"]="configuracion/view"
+    ["frmformas_pago.ui"]="ventas/view"
+    ["frmnuevosavisos.ui"]="configuracion/view"
 )
 
 # Find all .ui files recursively
@@ -129,7 +132,7 @@ while IFS= read -r ui_file; do
     fi
     
     if [ -n "$module" ]; then
-        out="$MODULES_DIR/$module/ui_${base%.ui}.py"
+        out="$MODULOS_DIR/$module/ui_${base%.ui}.py"
         compile_ui_file "$ui_file" "$out"
     else
         # If no mapping exists, skip or warn
@@ -142,6 +145,6 @@ echo "Running UI import tests..."
 
 echo "Compilation and testing done. You can now import generated UI modules."
 
-echo "Note: This script assumes compiled resources are accessible under 'modules' package."
+echo "Note: This script assumes compiled resources are accessible under 'modulos' package."
 
 exit 0
