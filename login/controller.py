@@ -66,8 +66,14 @@ class LoginController:
         app_principal = MainWindow(session_data)  # Lanzamos Main
         app_principal.mainloop()
 
-    def handle_admin(self, session_data):
+    def handle_admin(self):
         self.view.destroy()  # Cerramos login
+        session_data = {
+            "empresa": "MODO ADMIN",
+            "usuario": "Administrador",
+            "rol": "admin",
+            "ejercicio": "2026"  # Podrías sacarlo de un campo fecha
+        }
         app_principal = MainWindow(session_data,True)  # Lanzamos Main
         app_principal.mainloop()
 
