@@ -13,16 +13,15 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 IMAGES_DIR = os.path.join(CURRENT_DIR, "images", "modules")
 
 class MainWindow(ctk.CTk):
-    def __init__(self, session_data):
+    def __init__(self, session_data, modo_rescate = False):
         super().__init__()
         self.session_data = session_data  # Guardamos los datos de la sesión
         self.title("CREATIVE FLOW")
-        #self.geometry("1400x900")  # Tamaño estándar creativo
-        # 3. Maximizar (Compatibilidad Arch Linux)
+        #  Maximizar la ventana al iniciar
         try:
             self.attributes('-zoomed', True)  # Funciona en la mayoría de Linux
         except:
-            self.state('zoomed')  # Fallback para Windows/Otros
+            self.state('zoomed')  # Fallback para Windows/MacOS
         # Definir la ruta del icono (usa PNG para mejor compatibilidad en Linux/Mac)
         self.ruta_icono = os.path.join(IMAGES_DIR, "LogoIcono.png")
 
@@ -62,8 +61,18 @@ class MainWindow(ctk.CTk):
         # 3. Área de Contenido Dinámico (donde se cargan los frames)
         self.content_area = ctk.CTkFrame(self.main_container, corner_radius=0, fg_color="transparent")
         self.content_area.pack(expand=True, fill="both", padx=20, pady=20)
-
-        self.init_sidebar()
+        if modo_rescate:
+            # Modo Rescate: Mostrar mensaje especial
+            lbl_rescate = ctk.CTkLabel(
+                self.content_area,
+                text="MODO RESCATE ACTIVADO\nContacte con soporte técnico.",
+                font=("Arial", 20, "bold"),
+                text_color="#E74C3C",
+                justify="center"
+            )
+            lbl_rescate.pack(expand=True)
+        else:
+            self.init_sidebar()
 
     def init_sidebar(self):
         # Título o Logo arriba

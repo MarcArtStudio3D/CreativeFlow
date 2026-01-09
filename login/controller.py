@@ -1,3 +1,5 @@
+from operator import truediv
+
 from helpers.componentes import  AlertaPersonalizada
 
 from MainWindow import MainWindow
@@ -35,13 +37,39 @@ class LoginController:
                 "rol": resultado["rol"],
                 "ejercicio": "2026"  # Podrías sacarlo de un campo fecha
             }
-            self.abrir_sistema_principal(session_data)
+            self.id_empresa = self.model.get_empresa_id(datos['empresa'])
+            if self.comprobar_conexion_bd_empresa(self.id_empresa):
+                self.abrir_sistema_principal(session_data)
+            else:
+                self.view.agregar_boton_admin()
         else:
             AlertaPersonalizada(resultado["error"])
+
+    def comprobar_conexion_bd_empresa(self, id_empresa):
+
+        try:
+            # Intentamos una conexión simple para verificar
+            conn = self.model.get_empresa(id_empresa)
+            if conn:
+                conn.close()
+                return True
+            else:
+                AlertaPersonalizada("Error al conectar con la base de datos de la empresa.", "Error de Conexión")
+
+                return False
+        except Exception as e:
+            print(f"Error de conexión a la base de datos: {e}")
+            return False
 
     def abrir_sistema_principal(self, session_data):
         self.view.destroy()  # Cerramos login
         app_principal = MainWindow(session_data)  # Lanzamos Main
         app_principal.mainloop()
+
+    def handle_admin(self, session_data):
+        self.view.destroy()  # Cerramos login
+        app_principal = MainWindow(session_data,True)  # Lanzamos Main
+        app_principal.mainloop()
+
 if __name__ == "__main__":
     LoginController()

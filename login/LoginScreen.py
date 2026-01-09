@@ -94,6 +94,25 @@ class LoginView(ctk.CTk):
         self.btn_salir._canvas.bind("<Return>", lambda e: self.quit())
         self.btn_salir._canvas.bind("<KP_Enter>", lambda e: self.quit())
 
+        # Creamos el botón pero NO le damos .pack() aún
+        self.btn_admin = ctk.CTkButton(
+            self.frame, text="GESTIONAR EMPRESAS (INICIAR ADMIN)",
+            fg_color=COLOR_ROJO_ERROR,  # Rojo para indicar que es algo técnico/emergencia
+            hover_color=COLOR_BOTONES_HOVER,
+            height=45,
+            font=("Arial", 12, "bold"),
+            command=self.controller.handle_admin)
+        self.btn_admin._canvas.configure(takefocus=True, highlightthickness=1, highlightbackground=COLOR_ROJO_ERROR_HOVER)
+
+        self.btn_admin._canvas.bind("<FocusIn>",
+                                    lambda e: self.btn_admin._canvas.configure(highlightcolor=COLOR_BLANCO))
+
+        self.btn_admin._canvas.bind("<FocusOut>",
+                                    lambda e: self.btn_admin._canvas.configure(highlightcolor=COLOR_ROJO_ERROR_HOVER))
+
+        self.btn_admin._canvas.bind("<space>", lambda e: self.controller.handle_admin())
+        self.btn_admin._canvas.bind("<Return>", lambda e: self.controller.handle_admin())
+        self.btn_admin._canvas.bind("<KP_Enter>", lambda e: self.controller.handle_admin())
 
     def get_credentials(self):
         return {
@@ -101,3 +120,17 @@ class LoginView(ctk.CTk):
             "usuario": self.ent_user.get(),
             "pass": self.ent_pass.get()
         }
+
+    def agregar_boton_admin(self):
+        # Este método lo llama el controlador solo si hay error y es admin
+        if hasattr(self, 'btn_admin'):
+            # 1. Añadimos expand=True para que respete el height=45
+            self.btn_admin.pack(padx=30, pady=(20, 10), fill="x", expand=True)
+
+            # 2. Forzamos a que el frame crezca para albergar el nuevo botón
+            self.frame.configure(height=self.frame.winfo_reqheight() + 60)
+            self.update_idletasks()  # ¡IMPORTANTE! Obliga a la ventana a recalcular el tamaño
+
+
+
+

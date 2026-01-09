@@ -30,6 +30,32 @@ class DataModel:
             print(f"Error crítico: ¿Existe el archivo .db? {e}")
             return []
 
+    def get_empresa_id(self, nombre_empresa):
+        """Devuelve el ID de la empresa dado su nombre"""
+        try:
+            conn = sqlite3.connect(self.sqlite_path)
+            cursor = conn.cursor()
+            cursor.execute("SELECT id FROM empresas WHERE nombre_comercial = ?", (nombre_empresa,))
+            result = cursor.fetchone()
+            conn.close()
+            return result[0] if result else None
+        except sqlite3.OperationalError as e:
+            print(f"Error crítico: ¿Existe el archivo .db? {e}")
+            return None
+
+    def get_empresa(self, id_empresa):
+        """Devuelve todos los datos de la empresa dado su id"""
+        try:
+            conn = sqlite3.connect(self.sqlite_path)
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM empresas WHERE id = ?", (id_empresa,))
+            result = cursor.fetchone()
+            conn.close()
+            return result
+        except sqlite3.OperationalError as e:
+            print(f"Error crítico: ¿Existe el archivo .db? {e}")
+            return None
+
     def validar_acceso(self, empresa, usuario, password_ingresada):
         try:
             conn = sqlite3.connect(self.sqlite_path)
