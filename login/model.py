@@ -56,6 +56,65 @@ class DataModel:
             print(f"Error crítico: ¿Existe el archivo .db? {e}")
             return None
 
+    def get_empresa_db_config(self, id_empresa):
+        """
+        Obtiene la configuración de la base de datos de una empresa específica.
+
+        Args:
+            id_empresa: ID de la empresa
+
+        Returns:
+            Diccionario con la configuración de conexión a MariaDB/PostgreSQL o None
+        """
+        try:
+            conn = sqlite3.connect(self.sqlite_path)
+            cursor = conn.cursor()
+
+            # Obtenemos los campos de configuración de la base de datos
+            query = """
+                SELECT motordb, mariadb_host, mariadb_port, mariadb_name, 
+                       mariadb_user, mariadb_password,
+                       postgre_host, postgre_port, postgre_name,
+                       postgre_user, postgre_password
+                FROM empresas 
+                WHERE id = ?
+            """
+            cursor.execute(query, (id_empresa,))
+            result = cursor.fetchone()
+            conn.close()
+
+            if not result:
+                print(f"No se encontró la empresa con ID {id_empresa}")
+                return None
+
+            motor = result[0] or "MariaDB"
+
+            if motor.lower() == "mariadb":
+                return {
+                    'host': result[1] or 'localhost',
+                    'port': int(result[2]) if result[2] else 3306,
+                    'database': result[3] or 'creativeflow',
+                    'user': result[4] or 'root',
+                    'password': result[5] or '',
+                    'charset': 'utf8mb4'
+                }
+            elif motor.lower() == "postgresql":
+                return {
+                    'host': result[6] or 'localhost',
+                    'port': int(result[7]) if result[7] else 5432,
+                    'database': result[8] or 'creativeflow',
+                    'user': result[9] or 'postgres',
+                    'password': result[10] or '',
+                    'motor': 'postgresql'
+                }
+            else:
+                print(f"Motor de base de datos no soportado: {motor}")
+                return None
+
+        except Exception as e:
+            print(f"Error obteniendo configuración de BD: {e}")
+            return None
+
     def validar_acceso(self, empresa, usuario, password_ingresada):
         try:
             conn = sqlite3.connect(self.sqlite_path)

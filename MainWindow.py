@@ -4,16 +4,23 @@ from PySide6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
 from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtCore import Qt, QSize
 from colores import *
+from modulos.empresas.controller.controller import EmpresaController
+from modulos.empresas.model.model import EmpresaModel
+from modulos.empresas.view.EmpresaConfigView import EmpresaConfigView
 
 # Detección de rutas
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 IMAGES_DIR = os.path.join(CURRENT_DIR, "images", "modules")
 
 class MainWindow(QMainWindow):
-    def __init__(self, data_manager, session_data, modo_rescate=False):
+    def __init__(self, data_manager, session_data, sqlite_model=None, modo_rescate=False):
         super().__init__()
-        self.data_manager = data_manager
+        self.data_manager = data_manager  # Para MariaDB (datos operativos)
+        self.sqlite_model = sqlite_model  # Para SQLite (configuración de empresas)
         self.session_data = session_data
+
+        # No creamos módulos en el inicio - se crearán bajo demanda
+        # Esto ahorra memoria en aplicaciones grandes
 
         self.setWindowTitle("CREATIVE FLOW")
         self.showMaximized()
@@ -81,21 +88,46 @@ class MainWindow(QMainWindow):
         self.main_layout.addWidget(self.header)
 
     def setup_modo_rescate(self):
-        # Restauramos el mensaje visual de error de BD
-        lbl_rescate = QLabel("MODO ADMIN ACTIVADO\n(Error de conexión con la BD de la empresa)")
-        lbl_rescate.setStyleSheet(f"color: #E74C3C; font-size: 20px; font-weight: bold;")
-        lbl_rescate.setAlignment(Qt.AlignCenter)
+        """
+        Modo rescate: Se activa cuando la BD de la empresa no existe o no está accesible.
+        Muestra un banner de advertencia y el sidebar de admin para que el usuario elija qué hacer.
+        """
+        # Banner de advertencia en el header
+        self.lbl_empresa.setStyleSheet("color: #E74C3C; font-weight: bold;")
+        self.lbl_rol.setStyleSheet("color: #E74C3C; font-weight: bold;")
+
+        # Banner de advertencia en el content area
+        banner_rescate = QFrame()
+        banner_rescate.setFixedHeight(80)
+        banner_rescate.setStyleSheet(f"background-color: #E74C3C; border-radius: 5px;")
+        banner_layout = QVBoxLayout(banner_rescate)
+
+        lbl_rescate = QLabel("⚠️ MODO ADMIN - BASE DE DATOS NO DISPONIBLE")
+        lbl_rescate.setStyleSheet("color: white; font-size: 16px; font-weight: bold;")
+        lbl_rescate.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        lbl_instruccion = QLabel("Seleccione un módulo del menú lateral para continuar")
+        lbl_instruccion.setStyleSheet("color: white; font-size: 12px;")
+        lbl_instruccion.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        banner_layout.addWidget(lbl_rescate)
+        banner_layout.addWidget(lbl_instruccion)
+
+        self.content_layout.addWidget(banner_rescate)
         self.content_layout.addStretch()
-        self.content_layout.addWidget(lbl_rescate)
-        self.content_layout.addStretch()
+
+        # Sidebar de admin - el usuario elige qué módulo cargar
         self.init_sidebar_admin()
 
     def init_sidebar(self):
         self.agregar_logo_sidebar()
         modulos = [
-            ("PROYECTOS", "proyectos.png"), ("VENTAS", "ventas.png"),
-            ("COMPRAS", "compras.png"), ("ALMACÉN", "almacen.png"),
-            ("CONTABILIDAD", "contabilidad.png"), ("ESTADÍSTICAS", "estadisticas.png"),
+            ("PROYECTOS", "proyectos.png"),
+            ("VENTAS", "ventas.png"),
+            ("COMPRAS", "compras.png"),
+            ("ALMACÉN", "almacen.png"),
+            ("CONTABILIDAD", "contabilidad.png"),
+            ("ESTADÍSTICAS", "estadisticas.png"),
             ("ADMINISTRACIÓN", "configuracion.png")
         ]
         for nombre, icono in modulos:
@@ -156,22 +188,44 @@ class MainWindow(QMainWindow):
 
     def cambiar_modulo(self, nombre_modulo):
         print(f"DEBUG: Cargando {nombre_modulo}")
+
+        # Limpiar completamente el área de contenido - ELIMINAR widgets de memoria
         while self.content_layout.count():
             item = self.content_layout.takeAt(0)
-            if item.widget(): item.widget().deleteLater()
+            widget = item.widget()
+            if widget:
+                widget.deleteLater()  # Eliminar completamente de memoria
 
         if nombre_modulo == "EMPRESAS":
-            try:
-                from modulos.configuracion.view.EmpresaConfigView import EmpresaConfigView
-                from modulos.configuracion.model.modelo import EmpresaModel
-                from modulos.configuracion.controller.EmpresaController import EmpresaController
+            # Siempre recrear el módulo desde cero
+            vista_empresas = EmpresaConfigView()
+            modelo_empresas = EmpresaModel(self.sqlite_model)
+            controlador_empresas = EmpresaController(
+                vista_empresas,
+                modelo_empresas,
+                self.session_data.get('id_empresa')
+            )
 
-                self.modelo_actual = EmpresaModel(self.data_manager)
-                self.vista_actual = EmpresaConfigView()
-                self.controlador_actual = EmpresaController(
-                    self.vista_actual, self.modelo_actual, self.session_data.get('id_empresa')
-                )
-                self.content_layout.addWidget(self.vista_actual)
-                self.vista_actual.show()
-            except Exception as e:
-                print(f"Error al cargar Empresas: {e}")
+            self.content_layout.addWidget(vista_empresas)
+            vista_empresas.show()
+
+        # Aquí se pueden agregar más módulos cuando estén implementados
+        # elif nombre_modulo == "USUARIOS":
+        #     vista_usuarios = UsuariosView()
+        #     modelo_usuarios = UsuariosModel(self.sqlite_model)
+        #     controlador_usuarios = UsuariosController(vista_usuarios, modelo_usuarios)
+        #     self.content_layout.addWidget(vista_usuarios)
+        #
+        # elif nombre_modulo == "VENTAS":
+        #     vista_ventas = VentasView()
+        #     modelo_ventas = VentasModel(self.data_manager)
+        #     controlador_ventas = VentasController(vista_ventas, modelo_ventas)
+        #     self.content_layout.addWidget(vista_ventas)
+
+        else:
+            # Mensaje para módulos no implementados
+            lbl_placeholder = QLabel(f"Módulo '{nombre_modulo}' en desarrollo")
+            lbl_placeholder.setStyleSheet("color: #999; font-size: 16px;")
+            lbl_placeholder.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            self.content_layout.addWidget(lbl_placeholder)
+            self.content_layout.addStretch()

@@ -1,0 +1,82 @@
+/* Variables de colores */
+@fondo_gris_widgets: #1e1e1e;
+@color_fondo_campos: #2d2d2d;
+@color_borde_normal: #3d3d3d;
+@color_borde_foco: #3a96dd;
+@color_blanco_textos: #e0e0e0;
+
+/* Estilo General */
+QMainWindow, QWidget {
+    background-color: @fondo_gris_widgets;
+    color: @color_blanco_textos;
+    font-family: 'Segoe UI', 'Ubuntu', sans-serif;
+}
+
+/* Campos de entrada */
+QLineEdit, QComboBox, QDateEdit, QTextEdit, QSpinBox {
+    background-color: @color_fondo_campos;
+    border: 1px solid @color_borde_normal;
+    border-radius: 4px;
+    padding: 6px;
+    color: @color_blanco_textos;
+}
+
+QLineEdit:focus, QComboBox:focus {
+    border: 1px solid #3a96dd;
+    background-color: #333333;
+}
+
+/* Botones */
+QPushButton {
+    background-color: #3d3d3d;
+    border: 1px solid #555555;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: #4d4d4d;
+    border: 1px solid #3a96dd;
+}
+
+QPushButton:pressed {
+    background-color: #2d2d2d;
+}
+
+/* Botones Especiales (como 'Guardar') */
+QPushButton#btn_guardar {
+    background-color: #2a5a8a;
+    border: 1px solid #3a96dd;
+}
+
+QPushButton#btn_guardar:hover {
+    background-color: #3a96dd;
+}
+
+/* Tabs / Pestañas */
+QTabWidget::pane {
+    border: 1px solid #3d3d3d;
+    background-color: #1e1e1e;
+}
+
+QTabBar::tab {
+    background: #2d2d2d;
+    padding: 10px 20px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    margin-right: 2px;
+}
+
+QTabBar::tab:selected {
+    background: #1e1e1e;
+    border-bottom: 2px solid #3a96dd;
+    color: #3a96dd;
+}
+
+/* Labels */
+QLabel {
+    font-size: 13px;
+    color: #bbbbbb;
+}
