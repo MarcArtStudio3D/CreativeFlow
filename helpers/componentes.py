@@ -1,5 +1,5 @@
 # componentes.py
-import customtkinter as ctk
+
 from colores import *
 
 

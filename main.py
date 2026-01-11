@@ -1,49 +1,44 @@
 import os
 import sys
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication
-from login.controller import LoginController
-from colores import *
 
 
 def aplicar_estilo_personalizado(app):
+    """Carga y aplica el QSS al QApplication (copiado de Creative_ERP)"""
     style_path = "styles.qss"
     if not os.path.exists(style_path):
+        print(f"⚠ No se encontró el archivo {style_path}")
         return
 
-    with open(style_path, "r", encoding="utf-8") as f:
-        content = f.read()
+    try:
+        with open(style_path, "r", encoding="utf-8") as f:
+            qss = f.read()
 
-    # 1. Extraemos las variables (líneas que empiezan por @)
-    # Buscamos patrones como @nombre: #color;
-    import re
-    variables = re.findall(r"(@\w+):\s*(#?\w+);", content)
+        # Aplicar directamente al QApplication
+        app.setStyleSheet(qss)
+        print(f"✓ Estilos cargados desde {style_path} (Creative ERP)")
+        print(f"✓ Total caracteres QSS: {len(qss)}")
 
-    # 2. Limpiamos el contenido quitando las definiciones de variables
-    # para que Qt no se confunda al leer el QSS final
-    pure_qss = re.sub(r"@\w+:\s*#?\w+;", "", content)
-
-    # 3. Reemplazamos cada variable en el resto del código
-    for var_name, var_value in variables:
-        pure_qss = pure_qss.replace(var_name, var_value)
-
-    app.setStyleSheet(pure_qss)
+    except Exception as e:
+        print(f"❌ Error cargando estilos: {e}")
 
 def main():
-    # 1. Crear la instancia de la aplicación (El motor de Qt)
     app = QApplication(sys.argv)
 
-    # 2. Configurar estilo visual
-    app.setStyle("Fusion")
+    app.setApplicationName("Creative Flow - Projects Pipeline System")
 
-    # 3. Aplicar estilos globales modernos para TODA la aplicación (300+ pantallas)
+    # Aplicar el QSS de Creative ERP
     aplicar_estilo_personalizado(app)
 
-    # 4. Iniciamos el controlador del Login
+    # Iniciar controlador
+    from login.controller import LoginController
     login_ctrl = LoginController()
 
-    # 5. El bucle de eventos principal
+    login_ctrl.view.show()
     sys.exit(app.exec())
 
 
 if __name__ == "__main__":
     main()
+

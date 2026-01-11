@@ -61,7 +61,6 @@ class Ui_FrmEmpresas(object):
         self.tabWidget = QTabWidget(self.create_page_empresa)
         self.tabWidget.setObjectName(u"tabWidget")
         self.tabWidget.setMaximumSize(QSize(1216, 16777215))
-        self.tabWidget.setStyleSheet(u"")
         self.tabWidgetPage1 = QWidget()
         self.tabWidgetPage1.setObjectName(u"tabWidgetPage1")
         self.gridLayout_12 = QGridLayout(self.tabWidgetPage1)
@@ -642,8 +641,6 @@ class Ui_FrmEmpresas(object):
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
         self.label_36 = QLabel(self.tab_6)
         self.label_36.setObjectName(u"label_36")
-        self.label_36.setStyleSheet(u"background-color: rgb(0, 0, 127);\n"
-"color: rgb(255, 255, 255);")
         self.label_36.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.verticalLayout_5.addWidget(self.label_36)
@@ -655,8 +652,6 @@ class Ui_FrmEmpresas(object):
 
         self.label_35 = QLabel(self.tab_6)
         self.label_35.setObjectName(u"label_35")
-        self.label_35.setStyleSheet(u"background-color: rgb(0, 0, 127);\n"
-"color: rgb(255, 255, 255);")
         self.label_35.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.verticalLayout_5.addWidget(self.label_35)
@@ -921,9 +916,6 @@ class Ui_FrmEmpresas(object):
         self.label_38 = QLabel(self.tab_5)
         self.label_38.setObjectName(u"label_38")
         self.label_38.setMaximumSize(QSize(16777214, 15))
-        self.label_38.setStyleSheet(u"background-color: rgb(0, 0, 127);\n"
-"border-color: rgb(0, 0, 42);\n"
-"color: rgb(255, 255, 255);")
         self.label_38.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout_13.addWidget(self.label_38, 0, 1, 1, 1)
@@ -943,9 +935,6 @@ class Ui_FrmEmpresas(object):
         self.label_39 = QLabel(self.tab_5)
         self.label_39.setObjectName(u"label_39")
         self.label_39.setMaximumSize(QSize(16777214, 15))
-        self.label_39.setStyleSheet(u"background-color: rgb(0, 0, 127);\n"
-"border-color: rgb(0, 0, 42);\n"
-"color: rgb(255, 255, 255);")
         self.label_39.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout_13.addWidget(self.label_39, 0, 4, 1, 1)
@@ -1020,16 +1009,12 @@ class Ui_FrmEmpresas(object):
         self.label_66 = QLabel(self.tab_5)
         self.label_66.setObjectName(u"label_66")
         self.label_66.setMaximumSize(QSize(16777214, 15))
-        self.label_66.setStyleSheet(u"background-color: rgb(0, 0, 127);\n"
-"color: rgb(255, 255, 255);")
 
         self.gridLayout_13.addWidget(self.label_66, 0, 2, 1, 1)
 
         self.label_67 = QLabel(self.tab_5)
         self.label_67.setObjectName(u"label_67")
         self.label_67.setMaximumSize(QSize(16777214, 15))
-        self.label_67.setStyleSheet(u"background-color: rgb(0, 0, 127);\n"
-"color: rgb(255, 255, 255);")
 
         self.gridLayout_13.addWidget(self.label_67, 0, 5, 1, 1)
 
@@ -1334,9 +1319,6 @@ class Ui_FrmEmpresas(object):
 
         self.label = QLabel(FrmEmpresas)
         self.label.setObjectName(u"label")
-        self.label.setStyleSheet(u"background-color: #304163;\n"
-"font: 14pt \"Sans Serif\";\n"
-"color: rgb(255, 255, 255);")
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout_2.addWidget(self.label, 0, 0, 1, 1)

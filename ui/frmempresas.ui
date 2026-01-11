@@ -64,9 +64,6 @@
            <height>16777215</height>
           </size>
          </property>
-         <property name="styleSheet">
-          <string notr="true"/>
-         </property>
          <property name="currentIndex">
           <number>0</number>
          </property>
@@ -1024,10 +1021,6 @@
               <layout class="QVBoxLayout" name="verticalLayout_5">
                <item>
                 <widget class="QLabel" name="label_36">
-                 <property name="styleSheet">
-                  <string notr="true">background-color: rgb(0, 0, 127);
-color: rgb(255, 255, 255);</string>
-                 </property>
                  <property name="text">
                   <string>Comentarios en Albaranes</string>
                  </property>
@@ -1041,10 +1034,6 @@ color: rgb(255, 255, 255);</string>
                </item>
                <item>
                 <widget class="QLabel" name="label_35">
-                 <property name="styleSheet">
-                  <string notr="true">background-color: rgb(0, 0, 127);
-color: rgb(255, 255, 255);</string>
-                 </property>
                  <property name="text">
                   <string>Comentarios en Facturas:</string>
                  </property>
@@ -1523,11 +1512,6 @@ color: rgb(255, 255, 255);</string>
                      <height>15</height>
                     </size>
                    </property>
-                   <property name="styleSheet">
-                    <string notr="true">background-color: rgb(0, 0, 127);
-border-color: rgb(0, 0, 42);
-color: rgb(255, 255, 255);</string>
-                   </property>
                    <property name="text">
                     <string>Cuenta IVA soportado</string>
                    </property>
@@ -1563,11 +1547,6 @@ color: rgb(255, 255, 255);</string>
                      <width>16777214</width>
                      <height>15</height>
                     </size>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true">background-color: rgb(0, 0, 127);
-border-color: rgb(0, 0, 42);
-color: rgb(255, 255, 255);</string>
                    </property>
                    <property name="text">
                     <string>Cuenta IVA repercutido</string>
@@ -1690,10 +1669,6 @@ color: rgb(255, 255, 255);</string>
                      <height>15</height>
                     </size>
                    </property>
-                   <property name="styleSheet">
-                    <string notr="true">background-color: rgb(0, 0, 127);
-color: rgb(255, 255, 255);</string>
-                   </property>
                    <property name="text">
                     <string>IVA soportado RE</string>
                    </property>
@@ -1706,10 +1681,6 @@ color: rgb(255, 255, 255);</string>
                      <width>16777214</width>
                      <height>15</height>
                     </size>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true">background-color: rgb(0, 0, 127);
-color: rgb(255, 255, 255);</string>
                    </property>
                    <property name="text">
                     <string>IVA repercutido RE</string>
@@ -2141,11 +2112,6 @@ color: rgb(255, 255, 255);</string>
    </item>
    <item row="0" column="0">
     <widget class="QLabel" name="label">
-     <property name="styleSheet">
-      <string notr="true">background-color: #304163;
-font: 14pt &quot;Sans Serif&quot;;
-color: rgb(255, 255, 255);</string>
-     </property>
      <property name="text">
       <string>Gestión de Empresas</string>
      </property>

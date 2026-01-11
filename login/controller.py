@@ -2,7 +2,6 @@ import os
 import sys
 from PySide6.QtWidgets import QApplication, QMessageBox
 
-from helpers.componentes import AlertaPersonalizada
 from .LoginScreen import LoginView
 from .model import DataModel
 from MainWindow import MainWindow

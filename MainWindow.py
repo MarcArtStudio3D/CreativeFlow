@@ -55,7 +55,8 @@ class MainWindow(QMainWindow):
 
         # 4. ÁREA DE CONTENIDO
         self.content_area = QFrame()
-        self.content_area.setStyleSheet(f"background-color: {COLOR_FONDO_PRINCIPAL};")
+        # NO aplicar setStyleSheet aquí - bloquea la herencia del QSS global
+        # El color de fondo vendrá del QSS global o QPalette
         self.content_layout = QVBoxLayout(self.content_area)
         self.content_layout.setContentsMargins(20, 20, 20, 20)
         self.body_layout.addWidget(self.content_area, stretch=1)
@@ -199,6 +200,8 @@ class MainWindow(QMainWindow):
         if nombre_modulo == "EMPRESAS":
             # Siempre recrear el módulo desde cero
             vista_empresas = EmpresaConfigView()
+
+
             modelo_empresas = EmpresaModel(self.sqlite_model)
             controlador_empresas = EmpresaController(
                 vista_empresas,
