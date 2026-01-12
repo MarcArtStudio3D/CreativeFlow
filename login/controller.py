@@ -169,6 +169,7 @@ class LoginController:
                 # Obtenemos el ID de la primera empresa
                 primer_id_empresa = self.model.get_empresa_id(empresas_list[0])
                 db_config = self.model.get_empresa_db_config(primer_id_empresa)
+                session_data["id_empresa"] = primer_id_empresa
             else:
                 db_config = None
         except Exception as e:

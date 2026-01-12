@@ -199,18 +199,18 @@ class MainWindow(QMainWindow):
 
         if nombre_modulo == "EMPRESAS":
             # Siempre recrear el módulo desde cero
-            vista_empresas = EmpresaConfigView()
+            self.vista_empresas = EmpresaConfigView()
 
 
             modelo_empresas = EmpresaModel(self.sqlite_model)
-            controlador_empresas = EmpresaController(
-                vista_empresas,
+            self.controlador_empresas = EmpresaController(
+                self.vista_empresas,
                 modelo_empresas,
                 self.session_data.get('id_empresa')
             )
 
-            self.content_layout.addWidget(vista_empresas)
-            vista_empresas.show()
+            self.content_layout.addWidget(self.vista_empresas)
+            self.vista_empresas.show()
 
         # Aquí se pueden agregar más módulos cuando estén implementados
         # elif nombre_modulo == "USUARIOS":

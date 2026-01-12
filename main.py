@@ -1,11 +1,11 @@
 import os
 import sys
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTranslator, QLocale
 from PySide6.QtWidgets import QApplication
 
 
 def aplicar_estilo_personalizado(app):
-    """Carga y aplica el QSS al QApplication (copiado de Creative_ERP)"""
+
     style_path = "styles.qss"
     if not os.path.exists(style_path):
         print(f"⚠ No se encontró el archivo {style_path}")
@@ -25,6 +25,13 @@ def aplicar_estilo_personalizado(app):
 
 def main():
     app = QApplication(sys.argv)
+
+    # Cargar traductor
+    translator = QTranslator()
+    # Supongamos que tus archivos se llaman 'app_fr.qm', 'app_ca.qm'...
+    idioma = QLocale.system().name()  # Detecta si es fr_FR, ca_ES, es_ES...
+    if translator.load(f"translations/app_{idioma}.qm"):
+        app.installTranslator(translator)
 
     app.setApplicationName("Creative Flow - Projects Pipeline System")
 

@@ -47,3 +47,178 @@ C'est un logiciel de performance native conçu pour offrir puissance, confidenti
     Interface: UI sombre native à haut contraste (#2D2D2D).
 
     Données: Architecture modulaire avec persistance SQLite/MariaSQL locale.
+
+---
+
+## 📦 Instalación / Installation
+
+### Requisitos / Prérequis
+- Python 3.10 o superior / Python 3.10 ou supérieur
+- 100 MB de espacio en disco / 100 Mo d'espace disque
+- Git (opcional / optionnel)
+
+### 🐧 Linux / macOS
+
+#### Instalación automática / Installation automatique:
+```bash
+# Clonar el repositorio / Cloner le dépôt
+git clone https://github.com/tu-usuario/CreativeFlow.git
+cd CreativeFlow
+
+# Ejecutar instalador / Exécuter l'installateur
+chmod +x install.sh
+./install.sh
+```
+
+#### Instalación manual / Installation manuelle:
+```bash
+# Crear entorno virtual / Créer l'environnement virtuel
+python3 -m venv .venv
+source .venv/bin/activate
+
+# Instalar dependencias / Installer les dépendances
+pip install -r requirements.txt
+
+# Compilar interfaces / Compiler les interfaces
+chmod +x scripts/compile_ui.sh
+./scripts/compile_ui.sh
+
+# Ejecutar / Exécuter
+python main.py
+```
+
+### 🪟 Windows
+
+#### Instalación automática / Installation automatique:
+```cmd
+REM Clonar el repositorio / Cloner le dépôt
+git clone https://github.com/tu-usuario/CreativeFlow.git
+cd CreativeFlow
+
+REM Ejecutar instalador / Exécuter l'installateur
+install.bat
+```
+
+#### Instalación manual / Installation manuelle:
+```cmd
+REM Crear entorno virtual / Créer l'environnement virtuel
+python -m venv .venv
+.venv\Scripts\activate.bat
+
+REM Instalar dependencias / Installer les dépendances
+pip install -r requirements.txt
+
+REM Ejecutar / Exécuter
+python main.py
+```
+
+### 🔧 Configuración de Base de Datos / Configuration de la Base de Données
+
+CreativeFlow soporta tres tipos de bases de datos:
+- **SQLite** (predeterminado, sin configuración) / (par défaut, sans configuration)
+- **MariaDB/MySQL** (servidor local o remoto) / (serveur local ou distant)
+- **PostgreSQL** (servidor local o remoto) / (serveur local ou distant)
+
+La configuración se realiza desde la interfaz de administración después del primer inicio.
+
+---
+
+## 🚀 Inicio Rápido / Démarrage Rapide
+
+```bash
+# Activar entorno / Activer l'environnement
+source .venv/bin/activate  # Linux/macOS
+.venv\Scripts\activate.bat # Windows
+
+# Ejecutar aplicación / Exécuter l'application
+python main.py
+```
+
+**Usuario por defecto / Utilisateur par défaut:**
+- Usuario / Utilisateur: `admin`
+- Contraseña / Mot de passe: *(configurar en primer inicio / à configurer au premier démarrage)*
+
+---
+
+## 📚 Estructura del Proyecto / Structure du Projet
+
+```
+CreativeFlow/
+├── main.py                 # Punto de entrada / Point d'entrée
+├── requirements.txt        # Dependencias / Dépendances
+├── install.sh             # Instalador Linux/macOS
+├── install.bat            # Instalador Windows
+├── styles.qss             # Estilos de interfaz / Styles d'interface
+├── creativeflow.db        # Base de datos SQLite
+├── database/              # Gestión de datos / Gestion des données
+├── login/                 # Módulo de autenticación
+├── modulos/               # Módulos de aplicación
+│   ├── empresas/         # Gestión de empresas
+│   ├── ventas/           # Módulo de ventas
+│   ├── almacen/          # Gestión de almacén
+│   ├── configuracion/    # Configuración
+│   └── ...
+├── scripts/               # Scripts de utilidad
+│   └── compile_ui.sh     # Compilador de interfaces
+└── ui/                    # Archivos de interfaz Qt Designer
+
+```
+
+---
+
+## 🛠️ Desarrollo / Développement
+
+### Compilar interfaces después de cambios / Compiler les interfaces après modifications:
+```bash
+./scripts/compile_ui.sh
+```
+
+### Estructura de un módulo / Structure d'un module:
+```
+modulos/mi_modulo/
+├── __init__.py
+├── controller/
+│   └── controller.py     # Lógica de negocio
+├── model/
+│   └── model.py          # Acceso a datos
+└── view/
+    ├── view.py           # Clase de vista
+    └── ui_*.py           # Archivos generados (no editar)
+```
+
+### Añadir nueva pantalla / Ajouter un nouvel écran:
+1. Diseñar en Qt Designer (.ui en carpeta `ui/`)
+2. Ejecutar `./scripts/compile_ui.sh`
+3. Crear clase View que herede de Ui_*
+4. Crear Controller y Model según patrón MVC
+
+---
+
+## 📄 Licencia / Licence
+
+[Especificar licencia / Spécifier la licence]
+
+---
+
+## 👥 Contribuir / Contribuer
+
+Las contribuciones son bienvenidas. Por favor:
+1. Fork del proyecto
+2. Crea una rama feature (`git checkout -b feature/NuevaCaracteristica`)
+3. Commit de cambios (`git commit -m 'Añadir nueva característica'`)
+4. Push a la rama (`git push origin feature/NuevaCaracteristica`)
+5. Abre un Pull Request
+
+---
+
+## 📞 Soporte / Support
+
+Para problemas o preguntas / Pour des problèmes ou questions:
+- 📧 Email: support@creativeflow.com
+- 🐛 Issues: [GitHub Issues](https://github.com/tu-usuario/CreativeFlow/issues)
+
+---
+
+**CreativeFlow** - Potencia nativa, privacidad total, costes bajo control.
+**CreativeFlow** - Puissance native, confidentialité totale, coûts maîtrisés.
+

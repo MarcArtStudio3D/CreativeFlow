@@ -14,7 +14,7 @@
    <string>Gestión de empresas</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="designer.qrc">
+   <iconset>
     <normaloff>:/PNG/resources/icons/png/LogoIcono.png</normaloff>:/PNG/resources/icons/png/LogoIcono.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
@@ -28,7 +28,7 @@
        <item row="4" column="0">
         <widget class="QPushButton" name="btn_guardar_nuevo">
          <property name="text">
-          <string>Guardar</string>
+          <string>Guardar cambios</string>
          </property>
          <property name="icon">
           <iconset>
@@ -37,9 +37,9 @@
         </widget>
        </item>
        <item row="5" column="0">
-        <widget class="QPushButton" name="pushButton">
+        <widget class="QPushButton" name="btn_deshacer">
          <property name="text">
-          <string>Descartar</string>
+          <string>Deshacer cambios</string>
          </property>
         </widget>
        </item>
@@ -88,19 +88,6 @@
                </property>
               </widget>
              </item>
-             <item row="0" column="8" colspan="3">
-              <widget class="QComboBox" name="cboGrupoEmpresa">
-               <property name="minimumSize">
-                <size>
-                 <width>152</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="editable">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
              <item row="12" column="1">
               <widget class="QLabel" name="label_20">
                <property name="sizePolicy">
@@ -121,14 +108,14 @@
               </widget>
              </item>
              <item row="3" column="2" colspan="9">
-              <widget class="QLineEdit" name="txtdireccion1">
+              <widget class="QLineEdit" name="direccion">
                <property name="clearButtonEnabled">
                 <bool>true</bool>
                </property>
               </widget>
              </item>
              <item row="8" column="2">
-              <widget class="QLineEdit" name="txtcif">
+              <widget class="QLineEdit" name="cif_siren">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -172,13 +159,6 @@
                </property>
               </widget>
              </item>
-             <item row="0" column="7">
-              <widget class="QLabel" name="label_6">
-               <property name="text">
-                <string>Grupo</string>
-               </property>
-              </widget>
-             </item>
              <item row="8" column="1">
               <widget class="QLabel" name="label_22">
                <property name="sizePolicy">
@@ -199,17 +179,10 @@
               </widget>
              </item>
              <item row="8" column="8" colspan="3">
-              <widget class="QLineEdit" name="txtAPE"/>
+              <widget class="QLineEdit" name="ape_naf"/>
              </item>
              <item row="8" column="6">
-              <widget class="QLineEdit" name="txtSiret"/>
-             </item>
-             <item row="2" column="8">
-              <widget class="QCheckBox" name="chkTVA">
-               <property name="text">
-                <string>TVA non applicable</string>
-               </property>
-              </widget>
+              <widget class="QLineEdit" name="siret"/>
              </item>
              <item row="13" column="2">
               <spacer name="verticalSpacer_3">
@@ -231,9 +204,6 @@
                </property>
               </widget>
              </item>
-             <item row="0" column="4" colspan="3">
-              <widget class="QLineEdit" name="txtNombreComercial"/>
-             </item>
              <item row="9" column="1">
               <widget class="QLabel" name="label_53">
                <property name="text">
@@ -242,14 +212,14 @@
               </widget>
              </item>
              <item row="4" column="10">
-              <widget class="QLineEdit" name="txtprovincia">
+              <widget class="QLineEdit" name="provincia">
                <property name="clearButtonEnabled">
                 <bool>true</bool>
                </property>
               </widget>
              </item>
              <item row="10" column="2" colspan="5">
-              <widget class="QLineEdit" name="txtcInscripcion">
+              <widget class="QLineEdit" name="inscripcion">
                <property name="clearButtonEnabled">
                 <bool>true</bool>
                </property>
@@ -295,7 +265,7 @@
               </widget>
              </item>
              <item row="0" column="2">
-              <widget class="QLineEdit" name="txtcodigo">
+              <widget class="QLineEdit" name="codigoempresa">
                <property name="maximumSize">
                 <size>
                  <width>100</width>
@@ -324,13 +294,13 @@
               </widget>
              </item>
              <item row="9" column="2">
-              <widget class="QLineEdit" name="txtNRS"/>
+              <widget class="QLineEdit" name="rcs"/>
              </item>
              <item row="9" column="8" colspan="3">
-              <widget class="QLineEdit" name="txtRM"/>
+              <widget class="QLineEdit" name="registro_mercantil"/>
              </item>
              <item row="12" column="8" colspan="3">
-              <widget class="QLineEdit" name="txtweb"/>
+              <widget class="QLineEdit" name="web"/>
              </item>
              <item row="9" column="5">
               <widget class="QLabel" name="label_54">
@@ -340,7 +310,7 @@
               </widget>
              </item>
              <item row="11" column="8">
-              <widget class="QLineEdit" name="txtMovil">
+              <widget class="QLineEdit" name="movil">
                <property name="maximumSize">
                 <size>
                  <width>150</width>
@@ -350,7 +320,7 @@
               </widget>
              </item>
              <item row="11" column="2">
-              <widget class="QLineEdit" name="txttelefono1">
+              <widget class="QLineEdit" name="telefono1">
                <property name="maximumSize">
                 <size>
                  <width>150</width>
@@ -385,29 +355,7 @@
               </widget>
              </item>
              <item row="9" column="6">
-              <widget class="QLineEdit" name="txtCiudadRCS"/>
-             </item>
-             <item row="1" column="4" colspan="3">
-              <widget class="QLineEdit" name="txtEmpresa">
-               <property name="minimumSize">
-                <size>
-                 <width>332</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="readOnly">
-                <bool>false</bool>
-               </property>
-               <property name="clearButtonEnabled">
-                <bool>true</bool>
-               </property>
-              </widget>
+              <widget class="QLineEdit" name="ciudad_rcs"/>
              </item>
              <item row="4" column="1">
               <widget class="QLabel" name="label_14">
@@ -436,8 +384,134 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="8">
-              <widget class="QComboBox" name="cboFormajuridica">
+             <item row="9" column="7">
+              <widget class="QLabel" name="label_57">
+               <property name="text">
+                <string>Nº RM:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="2">
+              <widget class="QLineEdit" name="cp">
+               <property name="maximumSize">
+                <size>
+                 <width>100</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="9">
+              <widget class="QLabel" name="label_15">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Provincia:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="4" colspan="5">
+              <widget class="QLineEdit" name="poblacion">
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="11" column="3">
+              <widget class="QLabel" name="label_18">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>80</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Telefono 2:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="12" column="2" colspan="4">
+              <widget class="QLineEdit" name="email"/>
+             </item>
+             <item row="2" column="2" colspan="2">
+              <widget class="QComboBox" name="pais">
+               <property name="minimumSize">
+                <size>
+                 <width>168</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>250</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item row="11" column="5">
+              <widget class="QLineEdit" name="telefono2">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="4" colspan="4">
+              <widget class="QLineEdit" name="nombre_fiscal">
+               <property name="minimumSize">
+                <size>
+                 <width>332</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="readOnly">
+                <bool>false</bool>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="4" colspan="4">
+              <widget class="QLineEdit" name="nombre_comercial"/>
+             </item>
+             <item row="0" column="8">
+              <widget class="QLabel" name="label_24">
+               <property name="text">
+                <string>Forma juridica:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="9">
+              <widget class="QComboBox" name="forma_juridica">
                <property name="maximumSize">
                 <size>
                  <width>205</width>
@@ -507,104 +581,10 @@
                </item>
               </widget>
              </item>
-             <item row="9" column="7">
-              <widget class="QLabel" name="label_57">
+             <item row="0" column="10">
+              <widget class="QCheckBox" name="non_tva">
                <property name="text">
-                <string>Nº RM:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="7">
-              <widget class="QLabel" name="label_24">
-               <property name="text">
-                <string>Forma juridica:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="2">
-              <widget class="QLineEdit" name="txtcp">
-               <property name="maximumSize">
-                <size>
-                 <width>100</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="clearButtonEnabled">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="9">
-              <widget class="QLabel" name="label_15">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Provincia:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="4" colspan="5">
-              <widget class="QLineEdit" name="txtpoblacion">
-               <property name="clearButtonEnabled">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="11" column="3">
-              <widget class="QLabel" name="label_18">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>80</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>Telefono 2:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="12" column="2" colspan="4">
-              <widget class="QLineEdit" name="txtcMail"/>
-             </item>
-             <item row="2" column="2" colspan="2">
-              <widget class="QComboBox" name="cboPais">
-               <property name="minimumSize">
-                <size>
-                 <width>168</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>250</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-             <item row="11" column="5">
-              <widget class="QLineEdit" name="txttelefono2">
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="clearButtonEnabled">
-                <bool>true</bool>
+                <string>TVA non applicable</string>
                </property>
               </widget>
              </item>
@@ -649,10 +629,10 @@
                  </property>
                  <layout class="QGridLayout" name="gridLayout_16">
                   <item row="1" column="1">
-                   <widget class="QComboBox" name="cboDivisas"/>
+                   <widget class="QComboBox" name="id_divisa"/>
                   </item>
                   <item row="0" column="0" colspan="2">
-                   <widget class="QCheckBox" name="chk_upate_divisas">
+                   <widget class="QCheckBox" name="actualizar_divisas">
                     <property name="text">
                      <string>Actualizar divisas al entrar</string>
                     </property>
@@ -681,7 +661,7 @@
                  </property>
                  <layout class="QGridLayout" name="gridLayout_17">
                   <item row="1" column="0">
-                   <widget class="QCheckBox" name="chkIRPF">
+                   <widget class="QCheckBox" name="irpf">
                     <property name="maximumSize">
                      <size>
                       <width>135</width>
@@ -703,7 +683,7 @@
                      </widget>
                     </item>
                     <item>
-                     <widget class="QDoubleSpinBox" name="spinPorc_irpf">
+                     <widget class="QDoubleSpinBox" name="porcentaje_irpf">
                       <property name="alignment">
                        <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                       </property>
@@ -740,7 +720,7 @@
                    </widget>
                   </item>
                   <item row="0" column="1" colspan="2">
-                   <widget class="QSpinBox" name="txtDecimalesTotales">
+                   <widget class="QSpinBox" name="decimales_en_calculos">
                     <property name="value">
                      <number>2</number>
                     </property>
@@ -754,7 +734,7 @@
                    </widget>
                   </item>
                   <item row="1" column="1" colspan="2">
-                   <widget class="QSpinBox" name="txtDecimalesPrecios">
+                   <widget class="QSpinBox" name="decimales_precios">
                     <property name="value">
                      <number>2</number>
                     </property>
@@ -783,7 +763,7 @@
                    </widget>
                   </item>
                   <item row="0" column="1">
-                   <widget class="QSpinBox" name="spinDigitos">
+                   <widget class="QSpinBox" name="digitos_factura">
                     <property name="maximum">
                      <number>45</number>
                     </property>
@@ -793,7 +773,7 @@
                    </widget>
                   </item>
                   <item row="1" column="1">
-                   <widget class="QComboBox" name="cboSerie"/>
+                   <widget class="QComboBox" name="serie_factura"/>
                   </item>
                   <item row="1" column="0">
                    <widget class="QLabel" name="label_26">
@@ -815,7 +795,7 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QSpinBox" name="txtDiaCierre">
+                  <widget class="QSpinBox" name="dia_cierre_ejercicio">
                    <property name="minimum">
                     <number>1</number>
                    </property>
@@ -828,7 +808,7 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QSpinBox" name="tstMesCierre">
+                  <widget class="QSpinBox" name="mes_cierre_ejercicio">
                    <property name="minimum">
                     <number>1</number>
                    </property>
@@ -847,7 +827,7 @@
                  <property name="title">
                   <string>Varios</string>
                  </property>
-                 <widget class="QCheckBox" name="chkEnlace_web">
+                 <widget class="QCheckBox" name="enlace_web">
                   <property name="geometry">
                    <rect>
                     <x>0</x>
@@ -860,7 +840,7 @@
                    <string>Enlace Web.</string>
                   </property>
                  </widget>
-                 <widget class="QCheckBox" name="chkInternacional">
+                 <widget class="QCheckBox" name="gestion_internacional">
                   <property name="geometry">
                    <rect>
                     <x>0</x>
@@ -882,7 +862,7 @@
                  </property>
                  <layout class="QGridLayout" name="gridLayout_10">
                   <item row="0" column="0">
-                   <widget class="QCheckBox" name="chkAutocodificiar">
+                   <widget class="QCheckBox" name="autocodificar_nuevos_articulos">
                     <property name="text">
                      <string>Auto codificar los nuevos artículos</string>
                     </property>
@@ -892,7 +872,7 @@
                    </widget>
                   </item>
                   <item row="1" column="1">
-                   <widget class="QSpinBox" name="txttamano_codigoart">
+                   <widget class="QSpinBox" name="tamano_codigo_articulo">
                     <property name="maximumSize">
                      <size>
                       <width>60</width>
@@ -927,7 +907,7 @@
                  </property>
                  <layout class="QGridLayout" name="gridLayout_9">
                   <item row="1" column="3">
-                   <widget class="QDoubleSpinBox" name="spinMargen"/>
+                   <widget class="QDoubleSpinBox" name="margen_articulos"/>
                   </item>
                   <item row="2" column="1">
                    <widget class="QLabel" name="label_33">
@@ -937,7 +917,7 @@
                    </widget>
                   </item>
                   <item row="0" column="3">
-                   <widget class="QComboBox" name="cboTarifa"/>
+                   <widget class="QComboBox" name="id_tarifa"/>
                   </item>
                   <item row="1" column="1">
                    <widget class="QLabel" name="label_31">
@@ -947,7 +927,7 @@
                    </widget>
                   </item>
                   <item row="2" column="3">
-                   <widget class="QDoubleSpinBox" name="spinMargen_minimo"/>
+                   <widget class="QDoubleSpinBox" name="margen_minimo_articulos"/>
                   </item>
                   <item row="0" column="1">
                    <widget class="QLabel" name="label_58">
@@ -1001,7 +981,7 @@
                    <string/>
                   </property>
                   <property name="pixmap">
-                   <pixmap resource="designer.qrc">:/PNG/resources/icons/png/LogoIcono.png</pixmap>
+                   <pixmap>:/PNG/resources/icons/png/LogoIcono.png</pixmap>
                   </property>
                   <property name="scaledContents">
                    <bool>false</bool>
@@ -1030,7 +1010,7 @@
                 </widget>
                </item>
                <item>
-                <widget class="QTextEdit" name="txtcCometarioAlbaran"/>
+                <widget class="QTextEdit" name="cometarios_albaran"/>
                </item>
                <item>
                 <widget class="QLabel" name="label_35">
@@ -1043,7 +1023,20 @@
                 </widget>
                </item>
                <item>
-                <widget class="QTextEdit" name="txtccomentario_factura"/>
+                <widget class="QTextEdit" name="comentarios_facturas"/>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_5">
+                 <property name="text">
+                  <string>Comentarios para el contrato de servicios</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QTextEdit" name="comentarios_contrato_servicio"/>
                </item>
               </layout>
              </widget>
@@ -1053,7 +1046,7 @@
               </attribute>
               <layout class="QGridLayout" name="gridLayout_15">
                <item row="5" column="1">
-                <widget class="QLineEdit" name="lineEdit_9"/>
+                <widget class="QLineEdit" name="horarios_sabado"/>
                </item>
                <item row="1" column="0">
                 <widget class="QLabel" name="label_47">
@@ -1063,10 +1056,10 @@
                 </widget>
                </item>
                <item row="3" column="1">
-                <widget class="QLineEdit" name="lineEdit_7"/>
+                <widget class="QLineEdit" name="horarios_jueves"/>
                </item>
                <item row="0" column="1">
-                <widget class="QLineEdit" name="txt_horario_primer_dia">
+                <widget class="QLineEdit" name="horarios_lunes">
                  <property name="clearButtonEnabled">
                   <bool>true</bool>
                  </property>
@@ -1101,7 +1094,7 @@
                 </widget>
                </item>
                <item row="1" column="1">
-                <widget class="QLineEdit" name="txt_horario_dia_normal">
+                <widget class="QLineEdit" name="horarios_martes">
                  <property name="clearButtonEnabled">
                   <bool>true</bool>
                  </property>
@@ -1115,7 +1108,7 @@
                 </widget>
                </item>
                <item row="2" column="1">
-                <widget class="QLineEdit" name="txt_horario_ultimo_dia">
+                <widget class="QLineEdit" name="horarios_miercoles">
                  <property name="clearButtonEnabled">
                   <bool>true</bool>
                  </property>
@@ -1133,7 +1126,7 @@
                  <property name="title">
                   <string>Acceso a Google Calendar</string>
                  </property>
-                 <widget class="QLineEdit" name="txtGoogleCalendarID">
+                 <widget class="QLineEdit" name="google_id">
                   <property name="geometry">
                    <rect>
                     <x>190</x>
@@ -1143,7 +1136,7 @@
                    </rect>
                   </property>
                  </widget>
-                 <widget class="QLineEdit" name="txtOauthToken">
+                 <widget class="QLineEdit" name="google_acces_token">
                   <property name="geometry">
                    <rect>
                     <x>190</x>
@@ -1153,7 +1146,7 @@
                    </rect>
                   </property>
                  </widget>
-                 <widget class="QLineEdit" name="txtOauthRefreshToken">
+                 <widget class="QLineEdit" name="google_refresh_token">
                   <property name="geometry">
                    <rect>
                     <x>190</x>
@@ -1163,7 +1156,7 @@
                    </rect>
                   </property>
                  </widget>
-                 <widget class="QLineEdit" name="txtTokenExpirity">
+                 <widget class="QLineEdit" name="googletoken_expires_at">
                   <property name="geometry">
                    <rect>
                     <x>190</x>
@@ -1225,13 +1218,36 @@
                    <string> Token Expirity:</string>
                   </property>
                  </widget>
+                 <widget class="QLineEdit" name="google_email">
+                  <property name="geometry">
+                   <rect>
+                    <x>730</x>
+                    <y>40</y>
+                    <width>291</width>
+                    <height>32</height>
+                   </rect>
+                  </property>
+                 </widget>
+                 <widget class="QLabel" name="label_6">
+                  <property name="geometry">
+                   <rect>
+                    <x>560</x>
+                    <y>50</y>
+                    <width>161</width>
+                    <height>18</height>
+                   </rect>
+                  </property>
+                  <property name="text">
+                   <string>Google email:</string>
+                  </property>
+                 </widget>
                 </widget>
                </item>
                <item row="6" column="1">
-                <widget class="QLineEdit" name="lineEdit_10"/>
+                <widget class="QLineEdit" name="horarios_domingo"/>
                </item>
                <item row="4" column="1">
-                <widget class="QLineEdit" name="lineEdit_8"/>
+                <widget class="QLineEdit" name="horarios_viernes"/>
                </item>
               </layout>
              </widget>
@@ -1241,7 +1257,7 @@
               </attribute>
               <layout class="QVBoxLayout" name="verticalLayout">
                <item>
-                <widget class="QCheckBox" name="chkContabilidad">
+                <widget class="QCheckBox" name="activar_contabilidad">
                  <property name="text">
                   <string>Activar contabilidad</string>
                  </property>
@@ -1253,7 +1269,7 @@
                <item>
                 <layout class="QGridLayout" name="gridLayout_8">
                  <item row="5" column="1">
-                  <widget class="QLineEdit" name="txtCuenta_venta_servicios">
+                  <widget class="QLineEdit" name="cuenta_venta_servicios">
                    <property name="maximumSize">
                     <size>
                      <width>200</width>
@@ -1272,7 +1288,7 @@
                   </widget>
                  </item>
                  <item row="4" column="1">
-                  <widget class="QLineEdit" name="txtCuenta_venta_mercaderias">
+                  <widget class="QLineEdit" name="cuenta_venta_mercaderias">
                    <property name="maximumSize">
                     <size>
                      <width>200</width>
@@ -1291,7 +1307,7 @@
                   </widget>
                  </item>
                  <item row="3" column="1">
-                  <widget class="QLineEdit" name="txtcuenta_acreedores">
+                  <widget class="QLineEdit" name="cuenta_acreedores">
                    <property name="maximumSize">
                     <size>
                      <width>200</width>
@@ -1350,7 +1366,7 @@
                   </widget>
                  </item>
                  <item row="2" column="1">
-                  <widget class="QLineEdit" name="txtcuenta_proveedores">
+                  <widget class="QLineEdit" name="cuenta_proveedores">
                    <property name="maximumSize">
                     <size>
                      <width>200</width>
@@ -1369,7 +1385,7 @@
                   </widget>
                  </item>
                  <item row="0" column="1">
-                  <widget class="QSpinBox" name="txtdigitos_cuentas">
+                  <widget class="QSpinBox" name="digitos_cuentas">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -1388,7 +1404,7 @@
                   </widget>
                  </item>
                  <item row="1" column="1">
-                  <widget class="QLineEdit" name="txtcuentaCliente">
+                  <widget class="QLineEdit" name="cuenta_clientes">
                    <property name="maximumSize">
                     <size>
                      <width>200</width>
@@ -1444,7 +1460,7 @@
                <item>
                 <layout class="QGridLayout" name="gridLayout_13">
                  <item row="1" column="5">
-                  <widget class="QLineEdit" name="ivarepercutidore1">
+                  <widget class="QLineEdit" name="cuenta_iva_repercutido_re_n">
                    <property name="placeholderText">
                     <string>(F1 - lista)</string>
                    </property>
@@ -1454,7 +1470,7 @@
                   </widget>
                  </item>
                  <item row="3" column="4">
-                  <widget class="QLineEdit" name="ivarepercutido3">
+                  <widget class="QLineEdit" name="cuenta_iva_repercutido_sr">
                    <property name="placeholderText">
                     <string>(F1 - lista)</string>
                    </property>
@@ -1471,7 +1487,7 @@
                   </widget>
                  </item>
                  <item row="4" column="1">
-                  <widget class="QLineEdit" name="txtIvasoportado4">
+                  <widget class="QLineEdit" name="cuenta_iva_soportado_e">
                    <property name="placeholderText">
                     <string>(F1 - lista)</string>
                    </property>
@@ -1488,7 +1504,7 @@
                   </widget>
                  </item>
                  <item row="2" column="1">
-                  <widget class="QLineEdit" name="txtIvasoportado2">
+                  <widget class="QLineEdit" name="cuenta_iva_soportado_r">
                    <property name="placeholderText">
                     <string>(F1 - lista)</string>
                    </property>
@@ -1521,7 +1537,7 @@
                   </widget>
                  </item>
                  <item row="4" column="2">
-                  <widget class="QLineEdit" name="ivasoportadore4">
+                  <widget class="QLineEdit" name="cuenta_iva_soportado_re_e">
                    <property name="placeholderText">
                     <string>(F1 - lista)</string>
                    </property>
@@ -1531,7 +1547,7 @@
                   </widget>
                  </item>
                  <item row="3" column="2">
-                  <widget class="QLineEdit" name="ivasoportadore3">
+                  <widget class="QLineEdit" name="cuenta_iva_soportado_re_sr">
                    <property name="placeholderText">
                     <string>(F1 - lista)</string>
                    </property>
@@ -1571,7 +1587,7 @@
                   </widget>
                  </item>
                  <item row="1" column="1">
-                  <widget class="QLineEdit" name="txtIvasoportado1">
+                  <widget class="QLineEdit" name="cuenta_iva_soportado_n">
                    <property name="placeholderText">
                     <string>(F1 - lista)</string>
                    </property>
@@ -1581,7 +1597,7 @@
                   </widget>
                  </item>
                  <item row="1" column="4">
-                  <widget class="QLineEdit" name="ivarepercutido1">
+                  <widget class="QLineEdit" name="cuenta_iva_repercutido_n">
                    <property name="placeholderText">
                     <string>(F1 - lista)</string>
                    </property>
@@ -1591,7 +1607,7 @@
                   </widget>
                  </item>
                  <item row="4" column="4">
-                  <widget class="QLineEdit" name="ivarepercutido4">
+                  <widget class="QLineEdit" name="cuenta_iva_repercutido_e">
                    <property name="placeholderText">
                     <string>(F1 - lista)</string>
                    </property>
@@ -1601,7 +1617,7 @@
                   </widget>
                  </item>
                  <item row="2" column="4">
-                  <widget class="QLineEdit" name="ivarepercutido2">
+                  <widget class="QLineEdit" name="cuenta_iva_repercutido_r">
                    <property name="placeholderText">
                     <string>(F1 - lista)</string>
                    </property>
@@ -1618,7 +1634,7 @@
                   </widget>
                  </item>
                  <item row="3" column="1">
-                  <widget class="QLineEdit" name="txtIvasoportado3">
+                  <widget class="QLineEdit" name="cuenta_iva_soportado_sr">
                    <property name="placeholderText">
                     <string>(F1 - lista)</string>
                    </property>
@@ -1642,7 +1658,7 @@
                   </widget>
                  </item>
                  <item row="1" column="2">
-                  <widget class="QLineEdit" name="ivasoportadore1">
+                  <widget class="QLineEdit" name="cuenta_iva_soportado_re_n">
                    <property name="placeholderText">
                     <string>(F1 - lista)</string>
                    </property>
@@ -1652,7 +1668,7 @@
                   </widget>
                  </item>
                  <item row="2" column="2">
-                  <widget class="QLineEdit" name="ivasoportadore2">
+                  <widget class="QLineEdit" name="cuenta_iva_soportado_re_r">
                    <property name="placeholderText">
                     <string>(F1 - lista)</string>
                    </property>
@@ -1688,7 +1704,7 @@
                   </widget>
                  </item>
                  <item row="3" column="5">
-                  <widget class="QLineEdit" name="ivarepercutidore3">
+                  <widget class="QLineEdit" name="cuenta_iva_repercutido_re_sr">
                    <property name="placeholderText">
                     <string>(F1 - lista)</string>
                    </property>
@@ -1698,7 +1714,7 @@
                   </widget>
                  </item>
                  <item row="2" column="5">
-                  <widget class="QLineEdit" name="ivarepercutidore2">
+                  <widget class="QLineEdit" name="cuenta_iva_repercutido_re_r">
                    <property name="placeholderText">
                     <string>(F1 - lista)</string>
                    </property>
@@ -1708,7 +1724,7 @@
                   </widget>
                  </item>
                  <item row="4" column="5">
-                  <widget class="QLineEdit" name="ivarepercutidore4">
+                  <widget class="QLineEdit" name="cuenta_iva_repercutido_re_e">
                    <property name="placeholderText">
                     <string>(F1 - lista)</string>
                    </property>
@@ -1725,7 +1741,7 @@
                   </widget>
                  </item>
                  <item row="5" column="2">
-                  <widget class="QLineEdit" name="txtcuenta_cobros">
+                  <widget class="QLineEdit" name="cuenta_cobros">
                    <property name="placeholderText">
                     <string>(F1 - lista)</string>
                    </property>
@@ -1739,7 +1755,7 @@
                   </widget>
                  </item>
                  <item row="5" column="5">
-                  <widget class="QLineEdit" name="txtcuenta_pagos">
+                  <widget class="QLineEdit" name="cuenta_pagos">
                    <property name="placeholderText">
                     <string>(F1 - lista)</string>
                    </property>
@@ -1821,13 +1837,13 @@
                 </widget>
                </item>
                <item row="2" column="3" colspan="2">
-                <widget class="QLineEdit" name="txtUsuarioMariaDB"/>
+                <widget class="QLineEdit" name="mariadb_user"/>
                </item>
                <item row="0" column="4">
-                <widget class="QLineEdit" name="txtPortMariadb"/>
+                <widget class="QLineEdit" name="mariadb_port"/>
                </item>
                <item row="3" column="3" colspan="2">
-                <widget class="QLineEdit" name="txtPasswordMariaDB"/>
+                <widget class="QLineEdit" name="mariadb_password"/>
                </item>
                <item row="2" column="0" colspan="2">
                 <widget class="QLabel" name="label_87">
@@ -1837,7 +1853,7 @@
                 </widget>
                </item>
                <item row="1" column="3" colspan="2">
-                <widget class="QLineEdit" name="txtNombreBD_MariaDB"/>
+                <widget class="QLineEdit" name="mariadb_name"/>
                </item>
                <item row="0" column="0">
                 <widget class="QLabel" name="label_86">
@@ -1847,7 +1863,7 @@
                 </widget>
                </item>
                <item row="0" column="1">
-                <widget class="QLineEdit" name="txtHostMariaDB"/>
+                <widget class="QLineEdit" name="mariadb_host"/>
                </item>
                <item row="0" column="3">
                 <widget class="QLabel" name="label_84">
@@ -1882,7 +1898,7 @@
             </widget>
            </item>
            <item row="0" column="1" colspan="2">
-            <widget class="QComboBox" name="comboBox">
+            <widget class="QComboBox" name="motordb">
              <item>
               <property name="text">
                <string>SQLite</string>
@@ -1923,24 +1939,10 @@
               <enum>QFrame::Shadow::Raised</enum>
              </property>
              <layout class="QGridLayout" name="gridLayout_3">
-              <item row="2" column="0">
-               <widget class="QLabel" name="label_55">
+              <item row="0" column="0" colspan="2">
+               <widget class="QLabel" name="label_4">
                 <property name="text">
-                 <string>Ruta BD: Contabilidad:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="2">
-               <widget class="QPushButton" name="btnSeleccionarBDSQLiteConta">
-                <property name="text">
-                 <string>...</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="0">
-               <widget class="QPushButton" name="btn_migrar">
-                <property name="text">
-                 <string>Migrar a BD Multipuesto</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700; color:#ffffff;&quot;&gt;Acceso a SQLite (Para empresas con un solo ordenador)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700; color:#ffffff;&quot;&gt;&lt;br/&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                </widget>
               </item>
@@ -1958,15 +1960,8 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="0" colspan="2">
-               <widget class="QLabel" name="label_4">
-                <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700; color:#ffffff;&quot;&gt;Acceso a SQLite (Para empresas con un solo ordenador)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700; color:#ffffff;&quot;&gt;&lt;br/&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-               </widget>
-              </item>
               <item row="1" column="1">
-               <widget class="QLineEdit" name="txtRutaBd">
+               <widget class="QLineEdit" name="archivo_sqlite">
                 <property name="enabled">
                  <bool>false</bool>
                 </property>
@@ -1978,16 +1973,10 @@
                 </property>
                </widget>
               </item>
-              <item row="2" column="1">
-               <widget class="QLineEdit" name="txtruta_bd_conta">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>20</height>
-                 </size>
+              <item row="2" column="0">
+               <widget class="QPushButton" name="btn_migrar">
+                <property name="text">
+                 <string>Migrar a BD Multipuesto</string>
                 </property>
                </widget>
               </item>
@@ -2010,7 +1999,7 @@
               </property>
               <layout class="QGridLayout" name="gridLayout_18">
                <item row="0" column="1">
-                <widget class="QLineEdit" name="txtHostPostgreSQL"/>
+                <widget class="QLineEdit" name="postgre_host"/>
                </item>
                <item row="1" column="0" colspan="2">
                 <widget class="QLabel" name="label_79">
@@ -2034,10 +2023,10 @@
                 </widget>
                </item>
                <item row="3" column="3" colspan="2">
-                <widget class="QLineEdit" name="txtPasswordPostgreSQL"/>
+                <widget class="QLineEdit" name="postgre_password"/>
                </item>
                <item row="0" column="4">
-                <widget class="QLineEdit" name="lineEdit"/>
+                <widget class="QLineEdit" name="postgre_port"/>
                </item>
                <item row="0" column="0">
                 <widget class="QLabel" name="label_56">
@@ -2047,7 +2036,7 @@
                 </widget>
                </item>
                <item row="1" column="3" colspan="2">
-                <widget class="QLineEdit" name="txtNombreBD_PostgreSQL"/>
+                <widget class="QLineEdit" name="postgre_name"/>
                </item>
                <item row="2" column="0" colspan="2">
                 <widget class="QLabel" name="label_80">
@@ -2057,7 +2046,7 @@
                 </widget>
                </item>
                <item row="2" column="3" colspan="2">
-                <widget class="QLineEdit" name="txtUsuarioPostgreSQL"/>
+                <widget class="QLineEdit" name="postgre_user"/>
                </item>
                <item row="4" column="0" colspan="2">
                 <widget class="QPushButton" name="btnCrearDBPostgreSQL">
@@ -2123,105 +2112,100 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>txtcodigo</tabstop>
-  <tabstop>txtNombreComercial</tabstop>
-  <tabstop>cboGrupoEmpresa</tabstop>
-  <tabstop>txtEmpresa</tabstop>
-  <tabstop>cboFormajuridica</tabstop>
-  <tabstop>cboPais</tabstop>
-  <tabstop>chkTVA</tabstop>
-  <tabstop>txtdireccion1</tabstop>
-  <tabstop>txtcp</tabstop>
-  <tabstop>txtpoblacion</tabstop>
-  <tabstop>txtprovincia</tabstop>
-  <tabstop>txtcif</tabstop>
-  <tabstop>txtSiret</tabstop>
-  <tabstop>txtAPE</tabstop>
-  <tabstop>txtNRS</tabstop>
-  <tabstop>txtCiudadRCS</tabstop>
-  <tabstop>txtRM</tabstop>
-  <tabstop>txtcInscripcion</tabstop>
-  <tabstop>txttelefono1</tabstop>
-  <tabstop>txttelefono2</tabstop>
-  <tabstop>txtMovil</tabstop>
-  <tabstop>txtcMail</tabstop>
-  <tabstop>txtweb</tabstop>
-  <tabstop>chkEnlace_web</tabstop>
-  <tabstop>chkInternacional</tabstop>
-  <tabstop>txtDiaCierre</tabstop>
-  <tabstop>tstMesCierre</tabstop>
-  <tabstop>chkAutocodificiar</tabstop>
-  <tabstop>txttamano_codigoart</tabstop>
-  <tabstop>chkIRPF</tabstop>
-  <tabstop>spinPorc_irpf</tabstop>
-  <tabstop>cboTarifa</tabstop>
-  <tabstop>spinMargen</tabstop>
-  <tabstop>spinMargen_minimo</tabstop>
-  <tabstop>chk_upate_divisas</tabstop>
-  <tabstop>cboDivisas</tabstop>
-  <tabstop>spinDigitos</tabstop>
-  <tabstop>cboSerie</tabstop>
-  <tabstop>txtDecimalesTotales</tabstop>
-  <tabstop>txtDecimalesPrecios</tabstop>
+  <tabstop>codigoempresa</tabstop>
+  <tabstop>nombre_comercial</tabstop>
+  <tabstop>nombre_fiscal</tabstop>
+  <tabstop>pais</tabstop>
+  <tabstop>direccion</tabstop>
+  <tabstop>cp</tabstop>
+  <tabstop>poblacion</tabstop>
+  <tabstop>provincia</tabstop>
+  <tabstop>cif_siren</tabstop>
+  <tabstop>siret</tabstop>
+  <tabstop>ape_naf</tabstop>
+  <tabstop>rcs</tabstop>
+  <tabstop>ciudad_rcs</tabstop>
+  <tabstop>registro_mercantil</tabstop>
+  <tabstop>inscripcion</tabstop>
+  <tabstop>telefono1</tabstop>
+  <tabstop>telefono2</tabstop>
+  <tabstop>movil</tabstop>
+  <tabstop>email</tabstop>
+  <tabstop>web</tabstop>
+  <tabstop>enlace_web</tabstop>
+  <tabstop>gestion_internacional</tabstop>
+  <tabstop>dia_cierre_ejercicio</tabstop>
+  <tabstop>mes_cierre_ejercicio</tabstop>
+  <tabstop>autocodificar_nuevos_articulos</tabstop>
+  <tabstop>tamano_codigo_articulo</tabstop>
+  <tabstop>irpf</tabstop>
+  <tabstop>porcentaje_irpf</tabstop>
+  <tabstop>id_tarifa</tabstop>
+  <tabstop>margen_articulos</tabstop>
+  <tabstop>margen_minimo_articulos</tabstop>
+  <tabstop>actualizar_divisas</tabstop>
+  <tabstop>id_divisa</tabstop>
+  <tabstop>digitos_factura</tabstop>
+  <tabstop>serie_factura</tabstop>
+  <tabstop>decimales_en_calculos</tabstop>
+  <tabstop>decimales_precios</tabstop>
   <tabstop>btnAddLogo</tabstop>
   <tabstop>btnDeleteLogo</tabstop>
-  <tabstop>txtcCometarioAlbaran</tabstop>
-  <tabstop>txtccomentario_factura</tabstop>
-  <tabstop>txt_horario_primer_dia</tabstop>
-  <tabstop>txt_horario_dia_normal</tabstop>
-  <tabstop>txt_horario_ultimo_dia</tabstop>
-  <tabstop>lineEdit_7</tabstop>
-  <tabstop>lineEdit_8</tabstop>
-  <tabstop>lineEdit_9</tabstop>
-  <tabstop>lineEdit_10</tabstop>
-  <tabstop>txtGoogleCalendarID</tabstop>
-  <tabstop>txtOauthToken</tabstop>
-  <tabstop>txtOauthRefreshToken</tabstop>
-  <tabstop>txtTokenExpirity</tabstop>
-  <tabstop>txtdigitos_cuentas</tabstop>
-  <tabstop>txtcuentaCliente</tabstop>
-  <tabstop>txtcuenta_proveedores</tabstop>
-  <tabstop>txtcuenta_acreedores</tabstop>
-  <tabstop>txtCuenta_venta_mercaderias</tabstop>
-  <tabstop>txtCuenta_venta_servicios</tabstop>
-  <tabstop>txtIvasoportado1</tabstop>
-  <tabstop>txtIvasoportado2</tabstop>
-  <tabstop>txtIvasoportado3</tabstop>
-  <tabstop>txtIvasoportado4</tabstop>
-  <tabstop>ivasoportadore1</tabstop>
-  <tabstop>ivasoportadore2</tabstop>
-  <tabstop>ivasoportadore3</tabstop>
-  <tabstop>ivasoportadore4</tabstop>
-  <tabstop>txtcuenta_cobros</tabstop>
-  <tabstop>ivarepercutido1</tabstop>
-  <tabstop>ivarepercutido2</tabstop>
-  <tabstop>ivarepercutido3</tabstop>
-  <tabstop>ivarepercutido4</tabstop>
-  <tabstop>ivarepercutidore1</tabstop>
-  <tabstop>ivarepercutidore2</tabstop>
-  <tabstop>ivarepercutidore3</tabstop>
-  <tabstop>ivarepercutidore4</tabstop>
-  <tabstop>txtcuenta_pagos</tabstop>
-  <tabstop>comboBox</tabstop>
-  <tabstop>txtRutaBd</tabstop>
+  <tabstop>cometarios_albaran</tabstop>
+  <tabstop>comentarios_contrato_servicio</tabstop>
+  <tabstop>horarios_lunes</tabstop>
+  <tabstop>horarios_martes</tabstop>
+  <tabstop>horarios_miercoles</tabstop>
+  <tabstop>horarios_jueves</tabstop>
+  <tabstop>horarios_viernes</tabstop>
+  <tabstop>horarios_sabado</tabstop>
+  <tabstop>horarios_domingo</tabstop>
+  <tabstop>google_id</tabstop>
+  <tabstop>google_acces_token</tabstop>
+  <tabstop>google_refresh_token</tabstop>
+  <tabstop>googletoken_expires_at</tabstop>
+  <tabstop>digitos_cuentas</tabstop>
+  <tabstop>cuenta_clientes</tabstop>
+  <tabstop>cuenta_proveedores</tabstop>
+  <tabstop>cuenta_acreedores</tabstop>
+  <tabstop>cuenta_venta_mercaderias</tabstop>
+  <tabstop>cuenta_venta_servicios</tabstop>
+  <tabstop>cuenta_iva_soportado_n</tabstop>
+  <tabstop>cuenta_iva_soportado_r</tabstop>
+  <tabstop>cuenta_iva_soportado_sr</tabstop>
+  <tabstop>cuenta_iva_soportado_e</tabstop>
+  <tabstop>cuenta_iva_soportado_re_n</tabstop>
+  <tabstop>cuenta_iva_soportado_re_r</tabstop>
+  <tabstop>cuenta_iva_soportado_re_sr</tabstop>
+  <tabstop>cuenta_iva_soportado_re_e</tabstop>
+  <tabstop>cuenta_cobros</tabstop>
+  <tabstop>cuenta_iva_repercutido_n</tabstop>
+  <tabstop>cuenta_iva_repercutido_r</tabstop>
+  <tabstop>cuenta_iva_repercutido_sr</tabstop>
+  <tabstop>cuenta_iva_repercutido_e</tabstop>
+  <tabstop>cuenta_iva_repercutido_re_n</tabstop>
+  <tabstop>cuenta_iva_repercutido_re_r</tabstop>
+  <tabstop>cuenta_iva_repercutido_re_sr</tabstop>
+  <tabstop>cuenta_iva_repercutido_re_e</tabstop>
+  <tabstop>cuenta_pagos</tabstop>
+  <tabstop>motordb</tabstop>
+  <tabstop>archivo_sqlite</tabstop>
   <tabstop>btnSelecionarBDSQLite</tabstop>
-  <tabstop>txtruta_bd_conta</tabstop>
-  <tabstop>btnSeleccionarBDSQLiteConta</tabstop>
   <tabstop>btn_migrar</tabstop>
-  <tabstop>txtHostMariaDB</tabstop>
-  <tabstop>txtPortMariadb</tabstop>
-  <tabstop>txtNombreBD_MariaDB</tabstop>
-  <tabstop>txtUsuarioMariaDB</tabstop>
-  <tabstop>txtPasswordMariaDB</tabstop>
-  <tabstop>txtHostPostgreSQL</tabstop>
-  <tabstop>lineEdit</tabstop>
-  <tabstop>txtNombreBD_PostgreSQL</tabstop>
-  <tabstop>txtUsuarioPostgreSQL</tabstop>
-  <tabstop>txtPasswordPostgreSQL</tabstop>
+  <tabstop>mariadb_host</tabstop>
+  <tabstop>mariadb_port</tabstop>
+  <tabstop>mariadb_name</tabstop>
+  <tabstop>mariadb_user</tabstop>
+  <tabstop>mariadb_password</tabstop>
+  <tabstop>postgre_host</tabstop>
+  <tabstop>postgre_port</tabstop>
+  <tabstop>postgre_name</tabstop>
+  <tabstop>postgre_user</tabstop>
+  <tabstop>postgre_password</tabstop>
   <tabstop>btn_guardar_nuevo</tabstop>
-  <tabstop>pushButton</tabstop>
+  <tabstop>btn_deshacer</tabstop>
   <tabstop>btn_salir</tabstop>
-  <tabstop>chkContabilidad</tabstop>
+  <tabstop>activar_contabilidad</tabstop>
   <tabstop>tabWidget_2</tabstop>
   <tabstop>tableView</tabstop>
   <tabstop>tabWidget</tabstop>

@@ -35,10 +35,12 @@ cd /home/marc/Artstudio3D/CreativeFlow
 
 Este script:
 - ✅ Compila todos los `.ui` a `.py`
+- ✅ Compila el archivo `.qrc` (recursos/iconos)
 - ✅ Elimina código de paleta que bloquea estilos
 - ✅ Corrige imports de `designer_rc`
 - ✅ Limpia colores hardcodeados
 - ✅ Respeta la estructura de carpetas
+- ℹ️ Ejecuta tests opcionales (si pytest está instalado)
 
 #### **Opción B: Compilar UN solo archivo**
 
@@ -203,4 +205,19 @@ Si una pantalla específica no se ve bien:
 3. Verifica que los widgets sean estándar de Qt (QLineEdit, QComboBox, etc.)
 
 **En el 99% de los casos, funcionará automáticamente.** 🎉
+
+---
+
+## 🧪 **Tests opcionales**
+
+El script ejecuta tests automáticos si tienes `pytest` instalado:
+
+```bash
+# Instalar pytest (opcional, solo para desarrollo)
+.venv/bin/pip install pytest
+
+# Los tests verifican que todos los imports funcionen correctamente
+```
+
+Si no tienes `pytest`, el script simplemente omite los tests y compila todo correctamente.
 
