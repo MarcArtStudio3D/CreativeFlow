@@ -206,8 +206,7 @@ class MainWindow(QMainWindow):
             self.controlador_empresas = EmpresaController(
                 self.vista_empresas,
                 modelo_empresas,
-                self.session_data.get('id_empresa')
-            )
+                self.session_data.get('id_empresa'))
 
             self.content_layout.addWidget(self.vista_empresas)
             self.vista_empresas.show()

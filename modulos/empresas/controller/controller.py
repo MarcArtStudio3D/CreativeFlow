@@ -2,22 +2,29 @@ from PySide6 import QtCore
 from PySide6.QtWidgets import QLineEdit, QTextEdit, QCheckBox, QComboBox, QSpinBox, QDoubleSpinBox, QMessageBox
 
 from helpers.mapeoCampos import MapeoCampos
+from modulos.empresas.view.EmpresaConfigView import EmpresaConfigView
+from modulos.comun.view.DBConsultaView import DBConsultaView
 
 
 
 class EmpresaController:
-    def __init__(self, vista, modelo, id_empresa):
+    def __init__(self, vista: EmpresaConfigView, modelo, id_empresa):
         self.vista = vista
         self.modelo = modelo
         self.id_empresa = id_empresa
         self.columnas_actuales = []
 
+
         #conecto botones
         self.vista.btn_guardar_nuevo.clicked.connect(self.guardar_datos)
+        self.vista.btn_deshacer.clicked.connect(self.cargar_datos)
+        self.vista.btn_salir.clicked.connect(self.vista.close)
+        self.vista.btnBuscarPais.clicked.connect(self.abrir_selector_paises)
 
-        # Solo cargamos datos si hay un id_empresa válido (no modo admin)
+        # Solo cargamos datos si hay un id_empresa válido
         if self.id_empresa and self.id_empresa > 0:
             self.cargar_datos()
+
 
     def cargar_datos(self):
         # 1. Obtenemos los datos del modelo (el ID viene del __init__)
@@ -62,3 +69,32 @@ class EmpresaController:
             titulo = QtCore.QCoreApplication.translate(contexto, "Error")
             mensaje = QtCore.QCoreApplication.translate(contexto, "No se pudieron guardar los datos en la base de datos.")
             QMessageBox.critical(self.vista, titulo, mensaje)
+
+    def abrir_selector_paises(self):
+
+        #conectamos a la base de datos:
+        from PySide6.QtSql import QSqlDatabase
+
+        # Esto se hace una sola vez al arrancar
+        db = QSqlDatabase.addDatabase("QSQLITE")
+        db.setDatabaseName("creativeflow.db")
+        db.open()
+        # Instanciamos el buscador genérico
+        buscador = DBConsultaView(db)
+
+        # Lo configuramos igual que hacías en C++
+        buscador.set_config(
+            titulo="Seleccione País",
+            sql_base="SELECT id, nombre, iso FROM paises",
+            campos_busqueda=["nombre", "iso"],
+            headers=["ID", "País", "Código ISO"]
+        )
+
+        if buscador.exec():
+            # Recuperamos el ID y el nombre
+            id_pais = buscador.id_seleccionado
+            nombre_pais = buscador.registro.value("nombre")
+
+            # Actualizamos la vista de empresas
+            self.vista.pais.setText(nombre_pais)
+            # Guardamos el ID en alguna parte para el UPDATE

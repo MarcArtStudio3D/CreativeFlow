@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="modules">
+    <file>../images/find.png</file>
     <file>../images/modules/LogoIcono.png</file>
     <file>../images/modules/LogoIconoCreative.ico</file>
     <file>../images/modules/ventas.png</file>

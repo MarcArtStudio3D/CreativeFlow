@@ -73,6 +73,8 @@ class EmpresaModel:
                 cursor = conn.cursor()
                 cursor.execute(sql, valores)
                 conn.commit()
+                conn.close()
+
                 return True
             except Exception as e:
                 print(f"Error obteniendo nombres de columnas: {e}")
