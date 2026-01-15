@@ -40,7 +40,9 @@ class LoginController:
                 "empresa": datos['empresa'],
                 "usuario": datos['usuario'],
                 "rol": resultado["rol"],
-                "ejercicio": "2026"
+                "ejercicio": "2026", # TODO: Obtener del json de configuración de la aplicación
+                "idioma": "es", #TODO: Obtener del json de configuración de la aplicación
+                "pais": "España" # TODO: Obtener del json de configuración de la aplicación
             }
 
             # Verificamos si la BD de la empresa existe
@@ -55,16 +57,76 @@ class LoginController:
             else:
                 # Si la BD no existe, mostramos el botón de rescate/admin
                 print("DEBUG: BD no existe, mostrando botón ADMIN")
-                QMessageBox.warning(
-                    self.view,
-                    "Base de Datos No Disponible",
-                    f"⚠️ No se puede acceder a la base de datos\n\n{error_msg}\n\n"
-                    f"Use el botón ADMIN para configurar la base de datos."
-                )
+
+                # Crear QMessageBox personalizado con estilo de alerta
+                msg_box = QMessageBox(self.view)
+                msg_box.setIcon(QMessageBox.Warning)
+                msg_box.setWindowTitle("Base de Datos No Disponible")
+                msg_box.setText(f"⚠️ No se puede acceder a la base de datos\n\n{error_msg}\n\n"
+                               f"Use el botón ADMIN para configurar la base de datos.")
+
+                # Aplicar estilo inline con fondo rojizo de alerta
+                msg_box.setStyleSheet("""
+                    QMessageBox {
+                        background-color: #4d1f1f;
+                    }
+                    QLabel {
+                        color: #ffdddd;
+                        background-color: #4d1f1f;
+                        padding: 10px;
+                    }
+                    QPushButton {
+                        background-color: #8b0000;
+                        border: 1px solid #aa0000;
+                        color: white;
+                        min-width: 70px;
+                        padding: 6px 12px;
+                        border-radius: 4px;
+                    }
+                    QPushButton:hover {
+                        background-color: #a00000;
+                    }
+                    QPushButton:pressed {
+                        background-color: #660000;
+                    }
+                """)
+
+                msg_box.exec()
                 self.view.agregar_boton_admin()
         else:
-            # Sustituimos AlertaPersonalizada por QMessageBox nativo o el tuyo
-            QMessageBox.critical(self.view, "Error de Acceso", resultado["error"])
+            # Crear QMessageBox critical personalizado con fondo rojizo
+            msg_box = QMessageBox(self.view)
+            msg_box.setIcon(QMessageBox.Critical)
+            msg_box.setWindowTitle("Error de Acceso")
+            msg_box.setText(resultado["error"])
+
+            # Aplicar el mismo estilo rojizo de alerta
+            msg_box.setStyleSheet("""
+                QMessageBox {
+                    background-color: #4d1f1f;
+                }
+                QLabel {
+                    color: #ffdddd;
+                    background-color: #4d1f1f;
+                    padding: 10px;
+                }
+                QPushButton {
+                    background-color: #8b0000;
+                    border: 1px solid #aa0000;
+                    color: white;
+                    min-width: 70px;
+                    padding: 6px 12px;
+                    border-radius: 4px;
+                }
+                QPushButton:hover {
+                    background-color: #a00000;
+                }
+                QPushButton:pressed {
+                    background-color: #660000;
+                }
+            """)
+
+            msg_box.exec()
 
     def verificar_existencia_bd_empresa(self, id_empresa):
         """
@@ -154,11 +216,14 @@ class LoginController:
     def handle_admin(self):
         self.view.hide()
         session_data = {
-            "id_empresa": 0,
-            "empresa": "MODO ADMIN",
-            "usuario": "Administrador",
-            "rol": "admin",
-            "ejercicio": "2026"
+
+                "id_empresa": 0,
+                "empresa": "MODO ADMIN",
+                "usuario": "admin",
+                "rol": "Administrador",
+                "ejercicio": "2026", # TODO: Obtener del json de configuración de la aplicación
+                "idioma": "es", #TODO: Obtener del json de configuración de la aplicación
+                "pais": "France" # TODO: Obtener del json de configuración de la aplicación
         }
 
         # En modo admin, intentamos obtener la configuración de la primera empresa disponible

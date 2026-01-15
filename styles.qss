@@ -353,3 +353,36 @@ QLabel#textoTitulo {
     background-color: #2d2d2d;
     border-radius: 6px;
 }
+
+/* --- Message Boxes --- */
+/* QMessageBox Warning (fondo rojizo de alerta) */
+QMessageBox {
+    background-color: #3d2020; /* Rojo oscuro */
+    border: 2px solid #8b0000;
+    border-radius: 8px;
+}
+
+QMessageBox QLabel {
+    color: #ffcccc; /* Texto claro pero rojizo */
+    background-color: transparent;
+    padding: 10px;
+}
+
+QMessageBox QPushButton {
+    background-color: #8b0000; /* Botones en rojo oscuro */
+    border: 1px solid #ff4444;
+    color: white;
+    min-width: 80px;
+    padding: 6px 12px;
+    border-radius: 4px;
+}
+
+QMessageBox QPushButton:hover {
+    background-color: #aa0000;
+    border-color: #ff6666;
+}
+
+QMessageBox QPushButton:pressed {
+    background-color: #660000;
+}
+

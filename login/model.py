@@ -1,6 +1,6 @@
-import sqlite3
 import os
 import bcrypt
+from PySide6.QtSql import QSqlDatabase, QSqlQuery
 
 
 class DataModel:
@@ -16,44 +16,70 @@ class DataModel:
 
         print(f"DEBUG: Buscando base de datos en: {self.sqlite_path}")
 
+        # Inicializar conexión QSqlDatabase
+        self._init_db_connection()
+
+    def _init_db_connection(self):
+        """Inicializa la conexión a la base de datos SQLite usando QSqlDatabase"""
+        connection_name = "creativeflow_main"
+
+        if QSqlDatabase.contains(connection_name):
+            self.db = QSqlDatabase.database(connection_name)
+        else:
+            self.db = QSqlDatabase.addDatabase("QSQLITE", connection_name)
+            self.db.setDatabaseName(self.sqlite_path)
+            if not self.db.open():
+                print(f"Error abriendo la base de datos: {self.db.lastError().text()}")
+
     def get_empresas_list(self):
         """Devuelve nombres de empresas para el ComboBox"""
-        # Usamos 'uri=True' para que si no existe, falle en lugar de crear una vacía
         try:
-            conn = sqlite3.connect(self.sqlite_path)
-            cursor = conn.cursor()
-            cursor.execute("SELECT nombre_comercial FROM empresas")
-            res = [row[0] for row in cursor.fetchall()]
-            conn.close()
-            return res
-        except sqlite3.OperationalError as e:
+            query = QSqlQuery(self.db)
+            if query.exec("SELECT nombre_comercial FROM empresas"):
+                res = []
+                while query.next():
+                    res.append(query.value(0))
+                return res
+            else:
+                print(f"Error en query: {query.lastError().text()}")
+                return []
+        except Exception as e:
             print(f"Error crítico: ¿Existe el archivo .db? {e}")
             return []
 
     def get_empresa_id(self, nombre_empresa):
         """Devuelve el ID de la empresa dado su nombre"""
         try:
-            conn = sqlite3.connect(self.sqlite_path)
-            cursor = conn.cursor()
-            cursor.execute("SELECT id FROM empresas WHERE nombre_comercial = ?", (nombre_empresa,))
-            result = cursor.fetchone()
-            conn.close()
-            return result[0] if result else None
-        except sqlite3.OperationalError as e:
-            print(f"Error crítico: ¿Existe el archivo .db? {e}")
+            query = QSqlQuery(self.db)
+            query.prepare("SELECT id FROM empresas WHERE nombre_comercial = ?")
+            query.addBindValue(nombre_empresa)
+
+            if query.exec() and query.next():
+                return query.value(0)
+            else:
+                print(f"Error en query: {query.lastError().text()}")
+                return None
+        except Exception as e:
+            print(f"Error crítico: {e}")
             return None
 
     def get_empresa(self, id_empresa):
         """Devuelve todos los datos de la empresa dado su id"""
         try:
-            conn = sqlite3.connect(self.sqlite_path)
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM empresas WHERE id = ?", (id_empresa,))
-            result = cursor.fetchone()
-            conn.close()
-            return result
-        except sqlite3.OperationalError as e:
-            print(f"Error crítico: ¿Existe el archivo .db? {e}")
+            query = QSqlQuery(self.db)
+            query.prepare("SELECT * FROM empresas WHERE id = ?")
+            query.addBindValue(id_empresa)
+
+            if query.exec() and query.next():
+                # Recopilar todos los valores de la fila
+                record = query.record()
+                result = tuple(query.value(i) for i in range(record.count()))
+                return result
+            else:
+                print(f"Error en query: {query.lastError().text()}")
+                return None
+        except Exception as e:
+            print(f"Error crítico: {e}")
             return None
 
     def get_empresa_db_config(self, id_empresa):
@@ -67,11 +93,10 @@ class DataModel:
             Diccionario con la configuración de conexión a MariaDB/PostgreSQL o None
         """
         try:
-            conn = sqlite3.connect(self.sqlite_path)
-            cursor = conn.cursor()
+            query = QSqlQuery(self.db)
 
             # Obtenemos los campos de configuración de la base de datos
-            query = """
+            sql = """
                 SELECT motordb, mariadb_host, mariadb_port, mariadb_name, 
                        mariadb_user, mariadb_password,
                        postgre_host, postgre_port, postgre_name,
@@ -79,32 +104,31 @@ class DataModel:
                 FROM empresas 
                 WHERE id = ?
             """
-            cursor.execute(query, (id_empresa,))
-            result = cursor.fetchone()
-            conn.close()
+            query.prepare(sql)
+            query.addBindValue(id_empresa)
 
-            if not result:
+            if not query.exec() or not query.next():
                 print(f"No se encontró la empresa con ID {id_empresa}")
                 return None
 
-            motor = result[0] or "MariaDB"
+            motor = query.value(0) or "MariaDB"
 
             if motor.lower() == "mariadb":
                 return {
-                    'host': result[1] or 'localhost',
-                    'port': int(result[2]) if result[2] else 3306,
-                    'database': result[3] or 'creativeflow',
-                    'user': result[4] or 'root',
-                    'password': result[5] or '',
+                    'host': query.value(1) or 'localhost',
+                    'port': int(query.value(2)) if query.value(2) else 3306,
+                    'database': query.value(3) or 'creativeflow',
+                    'user': query.value(4) or 'root',
+                    'password': query.value(5) or '',
                     'charset': 'utf8mb4'
                 }
             elif motor.lower() == "postgresql":
                 return {
-                    'host': result[6] or 'localhost',
-                    'port': int(result[7]) if result[7] else 5432,
-                    'database': result[8] or 'creativeflow',
-                    'user': result[9] or 'postgres',
-                    'password': result[10] or '',
+                    'host': query.value(6) or 'localhost',
+                    'port': int(query.value(7)) if query.value(7) else 5432,
+                    'database': query.value(8) or 'creativeflow',
+                    'user': query.value(9) or 'postgres',
+                    'password': query.value(10) or '',
                     'motor': 'postgresql'
                 }
             else:
@@ -117,41 +141,40 @@ class DataModel:
 
     def validar_acceso(self, empresa, usuario, password_ingresada):
         try:
-            conn = sqlite3.connect(self.sqlite_path)
-            cursor = conn.cursor()
+            query = QSqlQuery(self.db)
 
-            query = """
-                    SELECT u.contrasena, r.nombre_rol
-                    FROM usuarios u
-                             JOIN roles r ON u.id_rol = r.id
-                    WHERE u.nombre = ? \
-                    """
-            cursor.execute(query, (usuario,))
-            result = cursor.fetchone()
-            conn.close()
+            sql = """
+                SELECT u.contrasena, r.nombre_rol
+                FROM usuarios u
+                JOIN roles r ON u.id_rol = r.id
+                WHERE u.nombre = ?
+            """
+            query.prepare(sql)
+            query.addBindValue(usuario)
 
-            if result:
-                hash_db_str = result[0]
-                rol_nombre = result[1]
+            if not query.exec() or not query.next():
+                return {"success": False, "error": "Usuario no encontrado."}
 
-                # EL TRUCO ESTÁ AQUÍ:
-                # 1. Convertimos la password del usuario a bytes
-                password_bytes = password_ingresada.encode('utf-8')
+            hash_db_str = query.value(0)
+            rol_nombre = query.value(1)
 
-                # 2. Convertimos el hash de la base de datos a bytes
-                # Si el hash es None o vacío, bcrypt fallará, así que validamos
-                if not hash_db_str:
-                    return {"success": False, "error": "El usuario no tiene contraseña asignada."}
+            # EL TRUCO ESTÁ AQUÍ:
+            # 1. Convertimos la password del usuario a bytes
+            password_bytes = password_ingresada.encode('utf-8')
 
-                hash_db_bytes = hash_db_str.encode('utf-8')
+            # 2. Convertimos el hash de la base de datos a bytes
+            # Si el hash es None o vacío, bcrypt fallará, así que validamos
+            if not hash_db_str:
+                return {"success": False, "error": "El usuario no tiene contraseña asignada."}
 
-                # 3. Comparación binaria
-                if bcrypt.checkpw(password_bytes, hash_db_bytes):
-                    return {"success": True, "rol": rol_nombre}
-                else:
-                    return {"success": False, "error": "Contraseña incorrecta."}
+            hash_db_bytes = hash_db_str.encode('utf-8')
 
-            return {"success": False, "error": "Usuario no encontrado."}
+            # 3. Comparación binaria
+            if bcrypt.checkpw(password_bytes, hash_db_bytes):
+                return {"success": True, "rol": rol_nombre}
+            else:
+                return {"success": False, "error": "Contraseña incorrecta."}
+
 
         except Exception as e:
             # Esto capturará el error de 'PyBytes' si algo falla y te lo mostrará en tu popup

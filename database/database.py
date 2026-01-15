@@ -112,7 +112,7 @@ def inicializar_db_desde_archivo(ruta_db, ruta_sql_init, nombre_db, motor, db_co
             with open(ruta_sql_init, 'r', encoding='utf-8') as f:
                 script_sql = f.read()
 
-            # 3. Conectar y ejecutar
+            """# 3. Conectar y ejecutar
             conn = sqlite3.connect(ruta_db)
             cursor = conn.cursor()
 
@@ -122,7 +122,21 @@ def inicializar_db_desde_archivo(ruta_db, ruta_sql_init, nombre_db, motor, db_co
             conn.commit()
             conn.close()
             print(f"✅ Base de datos '{ruta_db}' creada con éxito desde script.")
+            """
+            from PySide6.QtSql import QSqlDatabase
 
+            # Dentro de tu clase de login/datos
+            def abrir_conexion_qt(self, ruta_db):
+                # 'QSQLITE' es el driver para SQLite en Qt
+                self.db_qt = QSqlDatabase.addDatabase("QSQLITE")
+                self.db_qt.setDatabaseName(ruta_db)
+
+                if not self.db_qt.open():
+                    print(f"Error al abrir QSqlDatabase: {self.db_qt.lastError().text()}")
+                    return False
+
+                print("Conexión QSqlDatabase establecida correctamente.")
+                return True
         except FileNotFoundError:
             print(f"❌ Error: No se encontró el archivo SQL en {ruta_sql_init}")
         except sqlite3.Error as e:

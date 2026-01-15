@@ -126,7 +126,7 @@ class LoginView(QWidget):
         self.card_layout.addWidget(self.btn_salir)
 
         # BOTÓN ADMIN (Oculto inicialmente)
-        self.btn_admin = self.crear_boton_naranja("GESTIONAR EMPRESAS (ADMIN)", COLOR_ROJO_ERROR)
+        self.btn_admin = self.crear_boton_naranja("ADMIN", COLOR_ROJO_ERROR)
         self.btn_admin.clicked.connect(self.controller.handle_admin)
         self.btn_admin.hide()
         self.card_layout.addWidget(self.btn_admin)

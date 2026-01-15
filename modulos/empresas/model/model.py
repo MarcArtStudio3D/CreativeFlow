@@ -1,4 +1,6 @@
-import sqlite3
+from PySide6.QtSql import QSqlQuery
+
+
 class EmpresaModel:
     def __init__(self, sqlite_model):
         """
@@ -19,14 +21,18 @@ class EmpresaModel:
         if not registro:
             return None, []
 
-        # Para obtener los nombres de columnas de SQLite
-        import sqlite3
+        # Para obtener los nombres de columnas de SQLite usando QSqlQuery
         try:
-            conn = sqlite3.connect(self.sqlite_model.sqlite_path)
-            cursor = conn.cursor()
-            cursor.execute("SELECT * FROM empresas WHERE id = ? LIMIT 1", (id_empresa,))
-            columnas = [description[0] for description in cursor.description]
-            conn.close()
+            query = QSqlQuery(self.sqlite_model.db)
+            query.prepare("SELECT * FROM empresas WHERE id = ? LIMIT 1")
+            query.addBindValue(id_empresa)
+
+            if query.exec() and query.next():
+                record = query.record()
+                columnas = [record.fieldName(i) for i in range(record.count())]
+            else:
+                print(f"Error obteniendo nombres de columnas: {query.lastError().text()}")
+                columnas = []
         except Exception as e:
             print(f"Error obteniendo nombres de columnas: {e}")
             columnas = []
@@ -35,16 +41,20 @@ class EmpresaModel:
 
     def buscar_empresa_por_nombre(self, nombre):
         """Busca una empresa por su nombre (útil para el Login o validaciones)"""
-        if not self.sqlite_model: return None, []
+        if not self.sqlite_model:
+            return None, []
 
-        query = "SELECT * FROM empresas WHERE nombre_empresa = ?"
-        cursor = self.sqlite_model.db.cursor()
-        cursor.execute(query, (nombre,))
+        query = QSqlQuery(self.sqlite_model.db)
+        query.prepare("SELECT * FROM empresas WHERE nombre_empresa = ?")
+        query.addBindValue(nombre)
 
-        fila = cursor.fetchone()
-        columnas = [desc[0] for desc in cursor.description] if fila else []
-
-        return fila, columnas
+        if query.exec() and query.next():
+            record = query.record()
+            fila = tuple(query.value(i) for i in range(record.count()))
+            columnas = [record.fieldName(i) for i in range(record.count())]
+            return fila, columnas
+        else:
+            return None, []
 
     def actualizar_empresa(self, id_empresa, datos):
         """
@@ -58,27 +68,34 @@ class EmpresaModel:
             # Construimos la parte "CAMPO = ?" del SQL
             campos = ", ".join([f"{col} = ?" for col in datos.keys()])
             valores = list(datos.values())
-            valores.append(id_empresa)  # El último '?' es para el WHERE id = ?
-            #conectamos y ejecutamos
-            try:
-                conn = sqlite3.connect(self.sqlite_model.sqlite_path)
-                cursor = conn.cursor()
-                sql = f"UPDATE empresas SET {campos} WHERE id = ?"
-                # --- BLOQUE DE DEBUG ---
-                print("-" * 50)
-                print(f"SQL QUERY: {sql}")
-                print(f"VALORES: {valores}")
-                print(f"Nº CAMPOS: {len(datos.keys())} | Nº VALORES: {len(valores) - 1} + ID")
-                # -----------------------
-                cursor = conn.cursor()
-                cursor.execute(sql, valores)
-                conn.commit()
-                conn.close()
 
+            # Crear la query
+            query = QSqlQuery(self.sqlite_model.db)
+            sql = f"UPDATE empresas SET {campos} WHERE id = ?"
+
+            # --- BLOQUE DE DEBUG ---
+            print("-" * 50)
+            print(f"SQL QUERY: {sql}")
+            print(f"VALORES: {valores + [id_empresa]}")
+            print(f"Nº CAMPOS: {len(datos.keys())} | Nº VALORES: {len(valores)} + ID")
+            # -----------------------
+
+            query.prepare(sql)
+
+            # Agregar valores
+            for valor in valores:
+                query.addBindValue(valor)
+            query.addBindValue(id_empresa)
+
+            if query.exec():
                 return True
-            except Exception as e:
-                print(f"Error obteniendo nombres de columnas: {e}")
-                columnas = []
+            else:
+                print(f"Error ejecutando UPDATE: {query.lastError().text()}")
+                return False
+
+        except Exception as e:
+            print(f"Excepción al actualizar empresa: {e}")
+            return False
 
 
         except Exception as e:

@@ -1,4 +1,3 @@
-import sqlite3
 
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QLineEdit, QTableView, QComboBox, QLabel, QHBoxLayout, QPushButton
 from PySide6.QtSql import QSqlQueryModel, QSqlQuery
@@ -16,13 +15,14 @@ class DBConsultaView(QDialog):
         self.sql_filtrada = ""
         self.id_seleccionado = None
         self.registro = None
+        self.headers = []  # Inicializar headers
 
         self.setup_ui()
         self.modelo = QSqlQueryModel(self)
 
     def setup_ui(self):
         self.setWindowTitle("Buscar...")
-        self.resize(700, 500)
+        self.resize(800, 600)
         layout = QVBoxLayout(self)
 
         # Filtros superiores (Como en tu C++)
@@ -66,7 +66,10 @@ class DBConsultaView(QDialog):
         self.cmb_campo.clear()
         self.cmb_campo.addItems(campos_busqueda)
         self.headers = headers
+        # No ejecutamos el filtro aquí todavía,
+        # mejor esperar a tener los tamaños si se van a definir
         self.ejecutar_filtro()
+        self.txt_buscar.setFocus()
 
     def ejecutar_filtro(self):
         texto = self.txt_buscar.text()
@@ -90,8 +93,19 @@ class DBConsultaView(QDialog):
             self.tabla.setColumnHidden(0, True)
             for i, h in enumerate(self.headers):
                 self.modelo.setHeaderData(i, Qt.Horizontal, h)
+            self.tabla.horizontalHeader().setStretchLastSection(True)
         else:
             print(f"Error SQL: {query.lastError().text()}")
+
+    def set_tamano_columnas(self, lista_tamanos):
+        """
+        Recibe una lista de enteros con los píxeles.
+        Ejemplo: [0, 300, 100] (el primero es el ID oculto)
+        """
+        header = self.tabla.horizontalHeader()
+        for i, tamano in enumerate(lista_tamanos):
+            if i < self.modelo.columnCount():
+                self.tabla.setColumnWidth(i, tamano)
 
     def aceptar(self):
         idx = self.tabla.currentIndex()

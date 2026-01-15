@@ -4,7 +4,7 @@ from colores import *
 class VentasModule(ctk.CTkFrame):
     def __init__(self, master, session_data):
         super().__init__(master, fg_color="transparent")
-        self.session = session_data  # Aquí tenemos el 'archivo_sqlite'
+        self.session = session_data
 
         # --- SUB-MENÚ SUPERIOR ---
         self.submenu = ctk.CTkFrame(self, fg_color="transparent", height=40)

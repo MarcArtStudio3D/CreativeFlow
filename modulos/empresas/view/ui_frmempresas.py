@@ -67,26 +67,26 @@ class Ui_FrmEmpresas(object):
         self.gridLayout_12.setObjectName(u"gridLayout_12")
         self.gridLayout_6 = QGridLayout()
         self.gridLayout_6.setObjectName(u"gridLayout_6")
-        self.label_57 = QLabel(self.tabWidgetPage1)
-        self.label_57.setObjectName(u"label_57")
+        self.label_n_rm = QLabel(self.tabWidgetPage1)
+        self.label_n_rm.setObjectName(u"label_n_rm")
 
-        self.gridLayout_6.addWidget(self.label_57, 9, 8, 1, 1)
+        self.gridLayout_6.addWidget(self.label_n_rm, 9, 8, 1, 1)
 
         self.label_74 = QLabel(self.tabWidgetPage1)
         self.label_74.setObjectName(u"label_74")
 
         self.gridLayout_6.addWidget(self.label_74, 0, 1, 1, 1)
 
-        self.label_22 = QLabel(self.tabWidgetPage1)
-        self.label_22.setObjectName(u"label_22")
+        self.label_cif_siren = QLabel(self.tabWidgetPage1)
+        self.label_cif_siren.setObjectName(u"label_cif_siren")
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.label_22.sizePolicy().hasHeightForWidth())
-        self.label_22.setSizePolicy(sizePolicy)
-        self.label_22.setMinimumSize(QSize(66, 0))
+        sizePolicy.setHeightForWidth(self.label_cif_siren.sizePolicy().hasHeightForWidth())
+        self.label_cif_siren.setSizePolicy(sizePolicy)
+        self.label_cif_siren.setMinimumSize(QSize(66, 0))
 
-        self.gridLayout_6.addWidget(self.label_22, 8, 1, 1, 1)
+        self.gridLayout_6.addWidget(self.label_cif_siren, 8, 1, 1, 1)
 
         self.siret = QLineEdit(self.tabWidgetPage1)
         self.siret.setObjectName(u"siret")
@@ -151,10 +151,10 @@ class Ui_FrmEmpresas(object):
 
         self.gridLayout_6.addWidget(self.ape_naf, 8, 9, 1, 3)
 
-        self.label_53 = QLabel(self.tabWidgetPage1)
-        self.label_53.setObjectName(u"label_53")
+        self.label_N_RCS = QLabel(self.tabWidgetPage1)
+        self.label_N_RCS.setObjectName(u"label_N_RCS")
 
-        self.gridLayout_6.addWidget(self.label_53, 9, 1, 1, 1)
+        self.gridLayout_6.addWidget(self.label_N_RCS, 9, 1, 1, 1)
 
         self.label_19 = QLabel(self.tabWidgetPage1)
         self.label_19.setObjectName(u"label_19")
@@ -186,20 +186,20 @@ class Ui_FrmEmpresas(object):
 
         self.gridLayout_6.addWidget(self.label_13, 3, 1, 1, 1)
 
-        self.label_32 = QLabel(self.tabWidgetPage1)
-        self.label_32.setObjectName(u"label_32")
+        self.label_siret = QLabel(self.tabWidgetPage1)
+        self.label_siret.setObjectName(u"label_siret")
 
-        self.gridLayout_6.addWidget(self.label_32, 8, 6, 1, 1)
+        self.gridLayout_6.addWidget(self.label_siret, 8, 6, 1, 1)
 
         self.ciudad_rcs = QLineEdit(self.tabWidgetPage1)
         self.ciudad_rcs.setObjectName(u"ciudad_rcs")
 
         self.gridLayout_6.addWidget(self.ciudad_rcs, 9, 7, 1, 1)
 
-        self.label_34 = QLabel(self.tabWidgetPage1)
-        self.label_34.setObjectName(u"label_34")
+        self.label_APE_NAF = QLabel(self.tabWidgetPage1)
+        self.label_APE_NAF.setObjectName(u"label_APE_NAF")
 
-        self.gridLayout_6.addWidget(self.label_34, 8, 8, 1, 1)
+        self.gridLayout_6.addWidget(self.label_APE_NAF, 8, 8, 1, 1)
 
         self.movil = QLineEdit(self.tabWidgetPage1)
         self.movil.setObjectName(u"movil")
@@ -214,10 +214,10 @@ class Ui_FrmEmpresas(object):
 
         self.gridLayout_6.addWidget(self.label_23, 10, 1, 1, 1)
 
-        self.label_24 = QLabel(self.tabWidgetPage1)
-        self.label_24.setObjectName(u"label_24")
+        self.label_forma_juridica = QLabel(self.tabWidgetPage1)
+        self.label_forma_juridica.setObjectName(u"label_forma_juridica")
 
-        self.gridLayout_6.addWidget(self.label_24, 0, 9, 1, 1)
+        self.gridLayout_6.addWidget(self.label_forma_juridica, 0, 9, 1, 1)
 
         self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
@@ -235,10 +235,10 @@ class Ui_FrmEmpresas(object):
 
         self.gridLayout_6.addWidget(self.telefono2, 11, 6, 1, 1)
 
-        self.label_54 = QLabel(self.tabWidgetPage1)
-        self.label_54.setObjectName(u"label_54")
+        self.label_ciudad_rcs = QLabel(self.tabWidgetPage1)
+        self.label_ciudad_rcs.setObjectName(u"label_ciudad_rcs")
 
-        self.gridLayout_6.addWidget(self.label_54, 9, 6, 1, 1)
+        self.gridLayout_6.addWidget(self.label_ciudad_rcs, 9, 6, 1, 1)
 
         self.label_14 = QLabel(self.tabWidgetPage1)
         self.label_14.setObjectName(u"label_14")
@@ -348,12 +348,12 @@ class Ui_FrmEmpresas(object):
 
         self.gridLayout_6.addWidget(self.poblacion, 4, 5, 1, 4)
 
-        self.label_15 = QLabel(self.tabWidgetPage1)
-        self.label_15.setObjectName(u"label_15")
-        sizePolicy.setHeightForWidth(self.label_15.sizePolicy().hasHeightForWidth())
-        self.label_15.setSizePolicy(sizePolicy)
+        self.label_provincia = QLabel(self.tabWidgetPage1)
+        self.label_provincia.setObjectName(u"label_provincia")
+        sizePolicy.setHeightForWidth(self.label_provincia.sizePolicy().hasHeightForWidth())
+        self.label_provincia.setSizePolicy(sizePolicy)
 
-        self.gridLayout_6.addWidget(self.label_15, 4, 9, 1, 1)
+        self.gridLayout_6.addWidget(self.label_provincia, 4, 9, 1, 1)
 
         self.provincia = QLineEdit(self.tabWidgetPage1)
         self.provincia.setObjectName(u"provincia")
@@ -406,11 +406,11 @@ class Ui_FrmEmpresas(object):
 
         self.gridLayout_21.addWidget(self.groupBox_14, 2, 1, 1, 1)
 
-        self.groupBox_4 = QGroupBox(self.tab_12)
-        self.groupBox_4.setObjectName(u"groupBox_4")
-        self.gridLayout_17 = QGridLayout(self.groupBox_4)
+        self.groupBox_IRPF = QGroupBox(self.tab_12)
+        self.groupBox_IRPF.setObjectName(u"groupBox_IRPF")
+        self.gridLayout_17 = QGridLayout(self.groupBox_IRPF)
         self.gridLayout_17.setObjectName(u"gridLayout_17")
-        self.irpf = QCheckBox(self.groupBox_4)
+        self.irpf = QCheckBox(self.groupBox_IRPF)
         self.irpf.setObjectName(u"irpf")
         self.irpf.setMaximumSize(QSize(135, 16777215))
 
@@ -418,12 +418,12 @@ class Ui_FrmEmpresas(object):
 
         self.horizontalLayout_5 = QHBoxLayout()
         self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
-        self.label_71 = QLabel(self.groupBox_4)
+        self.label_71 = QLabel(self.groupBox_IRPF)
         self.label_71.setObjectName(u"label_71")
 
         self.horizontalLayout_5.addWidget(self.label_71)
 
-        self.porcentaje_irpf = QDoubleSpinBox(self.groupBox_4)
+        self.porcentaje_irpf = QDoubleSpinBox(self.groupBox_IRPF)
         self.porcentaje_irpf.setObjectName(u"porcentaje_irpf")
         self.porcentaje_irpf.setAlignment(Qt.AlignmentFlag.AlignRight|Qt.AlignmentFlag.AlignTrailing|Qt.AlignmentFlag.AlignVCenter)
         self.porcentaje_irpf.setMinimum(-999999.000000000000000)
@@ -435,7 +435,7 @@ class Ui_FrmEmpresas(object):
         self.gridLayout_17.addLayout(self.horizontalLayout_5, 2, 0, 1, 1)
 
 
-        self.gridLayout_21.addWidget(self.groupBox_4, 3, 0, 1, 1)
+        self.gridLayout_21.addWidget(self.groupBox_IRPF, 3, 0, 1, 1)
 
         self.groupBox_12 = QGroupBox(self.tab_12)
         self.groupBox_12.setObjectName(u"groupBox_12")
@@ -1450,9 +1450,9 @@ class Ui_FrmEmpresas(object):
         self.btn_guardar_nuevo.setText(QCoreApplication.translate("FrmEmpresas", u"Guardar cambios", None))
         self.btn_deshacer.setText(QCoreApplication.translate("FrmEmpresas", u"Deshacer cambios", None))
         self.btn_salir.setText(QCoreApplication.translate("FrmEmpresas", u"Salir", None))
-        self.label_57.setText(QCoreApplication.translate("FrmEmpresas", u"N\u00ba RM:", None))
+        self.label_n_rm.setText(QCoreApplication.translate("FrmEmpresas", u"N\u00ba RM:", None))
         self.label_74.setText(QCoreApplication.translate("FrmEmpresas", u"Codigo:", None))
-        self.label_22.setText(QCoreApplication.translate("FrmEmpresas", u"Cif:", None))
+        self.label_cif_siren.setText(QCoreApplication.translate("FrmEmpresas", u"Cif:", None))
         self.label_21.setText(QCoreApplication.translate("FrmEmpresas", u"Web:", None))
         self.label_20.setText(QCoreApplication.translate("FrmEmpresas", u"Mail:", None))
         self.forma_juridica.setItemText(0, QCoreApplication.translate("FrmEmpresas", u"EI (Entreprise Individuelle)", None))
@@ -1469,29 +1469,29 @@ class Ui_FrmEmpresas(object):
 
         self.label_50.setText(QCoreApplication.translate("FrmEmpresas", u"Poblaci\u00f3n:", None))
         self.label_18.setText(QCoreApplication.translate("FrmEmpresas", u"Telefono 2:", None))
-        self.label_53.setText(QCoreApplication.translate("FrmEmpresas", u"N\u00ba RCS:", None))
+        self.label_N_RCS.setText(QCoreApplication.translate("FrmEmpresas", u"N\u00ba RCS:", None))
         self.label_19.setText(QCoreApplication.translate("FrmEmpresas", u"Movil:", None))
         self.label_16.setText(QCoreApplication.translate("FrmEmpresas", u"Pais:", None))
         self.label_17.setText(QCoreApplication.translate("FrmEmpresas", u"Tel\u00e9fono 1:", None))
         self.label_13.setText(QCoreApplication.translate("FrmEmpresas", u"Direcci\u00f3n:", None))
-        self.label_32.setText(QCoreApplication.translate("FrmEmpresas", u"SIRET:", None))
-        self.label_34.setText(QCoreApplication.translate("FrmEmpresas", u"APE/NAF:", None))
+        self.label_siret.setText(QCoreApplication.translate("FrmEmpresas", u"SIRET:", None))
+        self.label_APE_NAF.setText(QCoreApplication.translate("FrmEmpresas", u"APE/NAF:", None))
         self.label_23.setText(QCoreApplication.translate("FrmEmpresas", u"Inscripci\u00f3n:", None))
-        self.label_24.setText(QCoreApplication.translate("FrmEmpresas", u"Forma juridica:", None))
+        self.label_forma_juridica.setText(QCoreApplication.translate("FrmEmpresas", u"Forma juridica:", None))
         self.telefono2.setText("")
-        self.label_54.setText(QCoreApplication.translate("FrmEmpresas", u"Ciudad RCS:", None))
+        self.label_ciudad_rcs.setText(QCoreApplication.translate("FrmEmpresas", u"Ciudad RCS:", None))
         self.label_14.setText(QCoreApplication.translate("FrmEmpresas", u"C.P.:", None))
         self.telefono1.setText("")
         self.btnBuscarPais.setText("")
         self.label_43.setText(QCoreApplication.translate("FrmEmpresas", u"Nombre comercial:", None))
         self.label_75.setText(QCoreApplication.translate("FrmEmpresas", u"Nombre Fiscal:", None))
         self.non_tva.setText(QCoreApplication.translate("FrmEmpresas", u"TVA non applicable", None))
-        self.label_15.setText(QCoreApplication.translate("FrmEmpresas", u"Provincia:", None))
+        self.label_provincia.setText(QCoreApplication.translate("FrmEmpresas", u"Provincia:", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabWidgetPage1), QCoreApplication.translate("FrmEmpresas", u"Datos Fiscales y de Gesti\u00f3n", None))
         self.groupBox_14.setTitle(QCoreApplication.translate("FrmEmpresas", u"Divisas", None))
         self.actualizar_divisas.setText(QCoreApplication.translate("FrmEmpresas", u"Actualizar divisas al entrar", None))
         self.label_42.setText(QCoreApplication.translate("FrmEmpresas", u"Divisa: ", None))
-        self.groupBox_4.setTitle(QCoreApplication.translate("FrmEmpresas", u"IRPF", None))
+        self.groupBox_IRPF.setTitle(QCoreApplication.translate("FrmEmpresas", u"IRPF", None))
         self.irpf.setText(QCoreApplication.translate("FrmEmpresas", u"Autonomo / IRPF", None))
         self.label_71.setText(QCoreApplication.translate("FrmEmpresas", u"%IRPF:", None))
         self.groupBox_12.setTitle(QCoreApplication.translate("FrmEmpresas", u"Decimales", None))
