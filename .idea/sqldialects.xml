@@ -3,5 +3,6 @@
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/database/init_empresa.sql" dialect="SQLite" />
     <file url="file://$PROJECT_DIR$/database/init_empresa_mariadb.sql" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/database/init_empresa_postgresql.sql" dialect="DB2" />
   </component>
 </project>

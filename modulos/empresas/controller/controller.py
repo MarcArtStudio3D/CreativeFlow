@@ -29,7 +29,8 @@ class EmpresaController:
         self.vista.btnBuscarPais.clicked.connect(self.abrir_selector_paises)
         self.vista.btnCrearDBMariaDb.clicked.connect(self.preparar_base_datos_mariadb)
         self.vista.btnTestBDMariaDB.clicked.connect(self.probar_conexion_mariadb)
-
+        self.vista.btnCrearDBPostgreSQL.clicked.connect(self.preparar_base_datos_postgresql)
+        self.vista.btnTestDBPostgreSQL.clicked.connect(self.probar_conexion_postgresql)
         #conecto señales de campos
         self.vista.cp.editingFinished.connect(self.buscar_poblacion_cp_handler)
         self.vista.poblacion.editingFinished.connect(self.buscar_poblacion_handler)
@@ -496,7 +497,33 @@ class EmpresaController:
         msg_box.setText(msg)
         aplicar_estilo_messagebox(msg_box, tipo_msg)
         msg_box.exec()
+    def probar_conexion_postgresql(self):
+        contexto = "EmpresaController"
+        host = self.vista.postgre_host.text().strip()
+        puerto = self.vista.postgre_port.text()
+        usuario = self.vista.postgre_user.text().strip()
+        password = self.vista.postgre_password.text()
+        nombre_bd = self.vista.postgre_name.text().strip()
 
+        exito, mensaje = self.modelo.probar_conexion_postgresql(host, puerto, usuario, password, nombre_bd)
+
+        if exito:
+            titulo = QtCore.QCoreApplication.translate(contexto, "Conexión exitosa")
+            msg = QtCore.QCoreApplication.translate(contexto, "La conexión a la base de datos PostgreSQL fue exitosa.")
+            icono = QMessageBox.Information
+            tipo_msg = "information"
+        else:
+            titulo = QtCore.QCoreApplication.translate(contexto, "Error de conexión")
+            msg = QtCore.QCoreApplication.translate(contexto, f"No se pudo conectar a la base de datos PostgreSQL:\n\n{mensaje}")
+            icono = QMessageBox.Critical
+            tipo_msg = "critical"
+
+        msg_box = QMessageBox(self.vista)
+        msg_box.setIcon(icono)
+        msg_box.setWindowTitle(titulo)
+        msg_box.setText(msg)
+        aplicar_estilo_messagebox(msg_box, tipo_msg)
+        msg_box.exec()
     # Crear base de datos para la empresa seleccionada (MariaDB/PostgreSQL)
     def preparar_base_datos_mariadb(self):
         """
@@ -613,8 +640,238 @@ class EmpresaController:
         temp_db.close()
         QSqlDatabase.removeDatabase("temp_conn")
 
+    def preparar_base_datos_postgresql(self):
+        """
+        Crea la base de datos usando Qt SQL (QPSQL driver).
+        Compatible con QTableView y QSqlTableModel.
+        Detecta automáticamente el motor y usa el script SQL correcto.
+        """
+        db_name = self.vista.postgre_name.text().strip()
+
+        # Detectar motor de BD desde la pestaña activa o config
+        # Por ahora asumimos MariaDB (puedes añadir lógica para detectar)
+        motor_bd = "postgresql"  # TODO: detectar desde vista si hay selector
+
+        # Ruta al script SQL específico según el motor
+        project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+
+        if motor_bd == "postgresql":
+            ruta_sql = os.path.join(project_root, "database", "init_empresa_postgresql.sql")
+            driver_qt = "QPSQL"
+
+        # 1. Configuración de parámetros
+        host = self.vista.postgre_host.text().strip()
+        user = self.vista.postgre_user.text().strip()
+        pasw = self.vista.postgre_password.text().strip()
+
+        try:
+            puerto = int(self.vista.postgre_port.text().strip() or 5432)
+        except ValueError:
+            puerto = 5432
+
+        # 2. Conexión inicial al SERVIDOR PostgreSQL (conectar a 'postgres' database)
+        # Usamos "temp_conn" para no pisar la conexión principal si ya existiera
+        temp_db = QSqlDatabase.addDatabase(driver_qt, "temp_conn")
+        temp_db.setHostName(host)
+        temp_db.setUserName(user)
+        temp_db.setPassword(pasw)
+        temp_db.setPort(puerto)
+        temp_db.setDatabaseName("postgres")  # ← Conectar a BD por defecto de PostgreSQL
+
+        if not temp_db.open():
+            msg_box = QMessageBox(self.vista)
+            msg_box.setIcon(QMessageBox.Critical)
+            msg_box.setWindowTitle("Error")
+            msg_box.setText(f"No se pudo conectar al servidor {motor_bd.upper()}:\n{temp_db.lastError().text()}")
+            msg_box.exec()
+            return
+
+        # 3. Verificar si existe la DB y contar sus tablas
+        query = QSqlQuery(temp_db)
+
+        # Verificar existencia de la BD
+        query.exec(f"SELECT 1 FROM pg_database WHERE datname = '{db_name}'")
+
+        bd_existe = query.next()
+
+        if bd_existe:
+            # La BD existe, vamos a ver si tiene tablas
+            # Necesitamos conectar a ella para contar tablas
+            temp_db.close()
+            QSqlDatabase.removeDatabase("temp_conn")
+
+            temp_db_check = QSqlDatabase.addDatabase(driver_qt, "temp_conn_check")
+            temp_db_check.setHostName(host)
+            temp_db_check.setUserName(user)
+            temp_db_check.setPassword(pasw)
+            temp_db_check.setPort(puerto)
+            temp_db_check.setDatabaseName(db_name)
+
+            if temp_db_check.open():
+                query_check = QSqlQuery(temp_db_check)
+                query_check.exec("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE'")
+
+                num_tablas = 0
+                if query_check.next():
+                    num_tablas = query_check.value(0)
+
+                temp_db_check.close()
+                QSqlDatabase.removeDatabase("temp_conn_check")
+
+                if num_tablas > 0:
+                    # BD existe con datos, no permitir recrearla
+                    msg_box = QMessageBox(self.vista)
+                    msg_box.setIcon(QMessageBox.Warning)
+                    msg_box.setWindowTitle("Aviso")
+                    msg_box.setText(f"La base de datos '{db_name}' ya existe y contiene {num_tablas} tablas.\n\nNo se puede recrear una base de datos que contiene datos.")
+                    msg_box.exec()
+                    return
+                else:
+                    # BD existe pero está vacía, preguntar si desea recrearla
+                    msg_box = QMessageBox(self.vista)
+                    msg_box.setIcon(QMessageBox.Question)
+                    msg_box.setWindowTitle("Base de datos vacía")
+                    msg_box.setText(f"La base de datos '{db_name}' ya existe pero está vacía.\n\n¿Desea ejecutar el script de creación de tablas?")
+                    msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+                    msg_box.setDefaultButton(QMessageBox.Yes)
+
+                    if msg_box.exec() == QMessageBox.No:
+                        return
+
+                    # El usuario aceptó, continuamos con el script (sin crear la BD)
+                    # Reconectamos para ejecutar el script
+                    temp_db = QSqlDatabase.addDatabase(driver_qt, "temp_conn")
+                    temp_db.setHostName(host)
+                    temp_db.setUserName(user)
+                    temp_db.setPassword(pasw)
+                    temp_db.setPort(puerto)
+                    temp_db.setDatabaseName(db_name)
+
+                    if not temp_db.open():
+                        msg_box = QMessageBox(self.vista)
+                        msg_box.setIcon(QMessageBox.Critical)
+                        msg_box.setWindowTitle("Error")
+                        msg_box.setText(f"No se pudo conectar a la BD existente:\n{temp_db.lastError().text()}")
+                        msg_box.exec()
+                        return
+
+                    # Saltar la creación de BD y ejecutar directamente el script
+                    query_nueva = QSqlQuery(temp_db)
+                    if self.ejecutar_script_sql(query_nueva, ruta_sql):
+                        msg_box = QMessageBox(self.vista)
+                        msg_box.setIcon(QMessageBox.Information)
+                        msg_box.setWindowTitle("Éxito")
+                        msg_box.setText(f"Tablas creadas correctamente en '{db_name}'.")
+                        msg_box.exec()
+
+                        # Cerramos la conexión temporal
+                        temp_db.close()
+                        QSqlDatabase.removeDatabase("temp_conn")
+
+                        # Creamos la conexión oficial Default
+                        self.db_principal = QSqlDatabase.addDatabase(driver_qt)
+                        self.db_principal.setHostName(host)
+                        self.db_principal.setUserName(user)
+                        self.db_principal.setPassword(pasw)
+                        self.db_principal.setPort(puerto)
+                        self.db_principal.setDatabaseName(db_name)
+
+                        if not self.db_principal.open():
+                            msg_box = QMessageBox(self.vista)
+                            msg_box.setIcon(QMessageBox.Warning)
+                            msg_box.setWindowTitle("Advertencia")
+                            msg_box.setText(f"Tablas creadas pero no se pudo abrir la conexión principal:\n{self.db_principal.lastError().text()}")
+                            msg_box.exec()
+                    else:
+                        msg_box = QMessageBox(self.vista)
+                        msg_box.setIcon(QMessageBox.Warning)
+                        msg_box.setWindowTitle("Error Parcial")
+                        msg_box.setText("Falló la ejecución del script SQL.")
+                        msg_box.exec()
+
+                    temp_db.close()
+                    QSqlDatabase.removeDatabase("temp_conn")
+                    return
+
+        # 4. Crear DB y ejecutar Script
+        if motor_bd == "postgresql":
+            # PostgreSQL usa CREATE DATABASE sin opciones de charset
+            crear_db_sql = f"CREATE DATABASE {db_name}"
+
+        if query.exec(crear_db_sql):
+            # PostgreSQL NO soporta USE, debemos reconectar a la nueva BD
+            print(f"✅ Base de datos '{db_name}' creada. Reconectando para ejecutar script...")
+
+            # Cerrar conexión temporal a 'postgres'
+            temp_db.close()
+            QSqlDatabase.removeDatabase("temp_conn")
+
+            # Crear nueva conexión a la BD recién creada
+            db_nueva = QSqlDatabase.addDatabase(driver_qt, "temp_conn_nueva")
+            db_nueva.setHostName(host)
+            db_nueva.setUserName(user)
+            db_nueva.setPassword(pasw)
+            db_nueva.setPort(puerto)
+            db_nueva.setDatabaseName(db_name)  # ← Conectar a la nueva BD
+
+            if not db_nueva.open():
+                msg_box = QMessageBox(self.vista)
+                msg_box.setIcon(QMessageBox.Critical)
+                msg_box.setWindowTitle("Error")
+                msg_box.setText(f"BD creada pero no se pudo conectar a ella:\n{db_nueva.lastError().text()}")
+                msg_box.exec()
+                QSqlDatabase.removeDatabase("temp_conn_nueva")
+                return
+
+            # Ahora ejecutamos el script sobre la nueva BD
+            query_nueva = QSqlQuery(db_nueva)
+            if self.ejecutar_script_sql(query_nueva, ruta_sql):
+                msg_box = QMessageBox(self.vista)
+                msg_box.setIcon(QMessageBox.Information)
+                msg_box.setWindowTitle("Éxito")
+                msg_box.setText(f"Base de datos '{db_name}' y tablas creadas correctamente.")
+                msg_box.exec()
+
+                # --- AHORA QUE LA DB EXISTE ---
+                # Cerramos la conexión temporal
+                db_nueva.close()
+                QSqlDatabase.removeDatabase("temp_conn_nueva")
+
+                # Creamos la conexión oficial Default que usarán todos los QSqlTableModels
+                self.db_principal = QSqlDatabase.addDatabase(driver_qt)  # Sin nombre = Default
+                self.db_principal.setHostName(host)
+                self.db_principal.setUserName(user)
+                self.db_principal.setPassword(pasw)
+                self.db_principal.setPort(puerto)
+                self.db_principal.setDatabaseName(db_name)
+
+                if not self.db_principal.open():
+                    msg_box = QMessageBox(self.vista)
+                    msg_box.setIcon(QMessageBox.Warning)
+                    msg_box.setWindowTitle("Advertencia")
+                    msg_box.setText(f"BD creada pero no se pudo abrir la conexión principal:\n{self.db_principal.lastError().text()}")
+                    msg_box.exec()
+            else:
+                msg_box = QMessageBox(self.vista)
+                msg_box.setIcon(QMessageBox.Warning)
+                msg_box.setWindowTitle("Error Parcial")
+                msg_box.setText("BD creada pero falló la ejecución del script SQL.")
+                msg_box.exec()
+
+            db_nueva.close()
+            QSqlDatabase.removeDatabase("temp_conn_nueva")
+        else:
+            msg_box = QMessageBox(self.vista)
+            msg_box.setIcon(QMessageBox.Critical)
+            msg_box.setWindowTitle("Error")
+            msg_box.setText(f"No se pudo crear la base de datos:\n{query.lastError().text()}")
+            msg_box.exec()
+
+            temp_db.close()
+            QSqlDatabase.removeDatabase("temp_conn")
+
     def ejecutar_script_sql(self, query_obj, ruta):
-        """Lee el archivo .sql y ejecuta comando por comando"""
+        """Lee el archivo .sql y ejecuta comando por comando, ignorando comentarios."""
         if not os.path.exists(ruta):
             message = f"Archivo no encontrado en: {ruta}"
             QMessageBox.critical(self.vista, "ERROR CRITICO", message)
@@ -622,20 +879,35 @@ class EmpresaController:
 
         try:
             with open(ruta, 'r', encoding='utf-8') as f:
-                # Quitamos comentarios y unimos líneas
-                sql_completo = ""
-                for linea in f:
-                    if not linea.strip().startswith("--") and linea.strip():
-                        sql_completo += linea
+                full_script = f.read()
 
-                # Separamos por punto y coma y ejecutamos cada instrucción
-                comandos = sql_completo.split(';')
-                for comando in comandos:
-                    if comando.strip():
-                        if not query_obj.exec(comando):
-                            print(f"Fallo en: {comando[:50]}... Error: {query_obj.lastError().text()}")
-                            return False
-                return True
+            # Eliminar comentarios de bloque /* ... */ (no anidados)
+            import re
+            full_script = re.sub(r'/\*.*?\*/', '', full_script, flags=re.DOTALL)
+
+            # Dividir el script por punto y coma
+            comandos_brutos = full_script.split(';')
+
+            comandos_limpios = []
+            for cmd in comandos_brutos:
+                # Eliminar comentarios de línea -- ...
+                cmd_sin_comentarios = '\n'.join([line for line in cmd.splitlines() if not line.strip().startswith('--')])
+                if cmd_sin_comentarios.strip():
+                    comandos_limpios.append(cmd_sin_comentarios)
+
+            total_comandos = len(comandos_limpios)
+            print(f"Se encontraron {total_comandos} comandos SQL para ejecutar.")
+
+            for i, comando in enumerate(comandos_limpios):
+                print(f"Ejecutando comando {i + 1}/{total_comandos}...")
+                if not query_obj.exec(comando):
+                    print(f"\n❌ ERROR en comando #{i + 1}:")
+                    print(f"SQL: {comando[:300].strip()}...")
+                    print(f"Error: {query_obj.lastError().text()}\n")
+                    return False
+
+            print(f"✅ Script completado: {total_comandos} comandos ejecutados correctamente.")
+            return True
         except Exception as e:
-            print(f"Error leyendo el archivo: {e}")
+            print(f"❌ Error leyendo o procesando el archivo SQL: {e}")
             return False

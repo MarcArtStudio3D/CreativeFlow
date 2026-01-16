@@ -78,10 +78,13 @@ class LoginController:
     def verificar_existencia_bd_empresa(self, id_empresa):
         """
         Verifica si la base de datos de la empresa existe y es accesible.
+        Usa QSqlDatabase para ser consistente con el resto de la aplicación.
 
         Returns:
             tuple: (existe: bool, db_config: dict or None, error_msg: str or None)
         """
+        from PySide6.QtSql import QSqlDatabase, QSqlQuery
+        
         try:
             # Obtenemos la configuración de la BD desde SQLite
             db_config = self.model.get_empresa_db_config(id_empresa)
@@ -91,47 +94,93 @@ class LoginController:
                 print("DEBUG: No hay db_config, retornando False")
                 return False, None, "No se encontró configuración de base de datos para esta empresa"
 
-            # Intentamos conectar a la base de datos
-            import mysql.connector
-
             motor = db_config.get('motor', 'mariadb').lower()
             print(f"DEBUG: Motor de BD: {motor}")
 
+            # Seleccionar el driver Qt apropiado
             if motor == 'postgresql':
-                # TODO: Implementar verificación para PostgreSQL
-                print("DEBUG: PostgreSQL no implementado, retornando False")
-                return False, db_config, "PostgreSQL aún no está implementado"
+                driver_qt = "QPSQL"
+            elif motor in ['mariadb', 'mysql']:
+                driver_qt = "QMYSQL"
+            else:
+                return False, db_config, f"Motor de base de datos '{motor}' no soportado"
 
-            # Para MariaDB/MySQL
-            try:
-                print(f"DEBUG: Intentando conectar a MariaDB: {db_config['host']}:{db_config['port']}/{db_config['database']}")
-                conn = mysql.connector.connect(**db_config)
-                # Verificamos que la base de datos tiene tablas
-                cursor = conn.cursor()
-                cursor.execute("SHOW TABLES")
-                tables = cursor.fetchall()
-                cursor.close()
-                conn.close()
+            # Crear conexión temporal para verificar
+            temp_conn_name = f"verify_db_{id_empresa}"
+            if QSqlDatabase.contains(temp_conn_name):
+                QSqlDatabase.removeDatabase(temp_conn_name)
+            
+            temp_db = QSqlDatabase.addDatabase(driver_qt, temp_conn_name)
+            temp_db.setHostName(db_config['host'])
+            temp_db.setPort(db_config['port'])
+            temp_db.setUserName(db_config['user'])
+            temp_db.setPassword(db_config['password'])
+            temp_db.setDatabaseName(db_config['database'])
 
-                print(f"DEBUG: Conectado exitosamente, tablas encontradas: {len(tables)}")
+            print(f"DEBUG: Intentando conectar a {motor.upper()}: {db_config['host']}:{db_config['port']}/{db_config['database']}")
 
-                if len(tables) == 0:
-                    print("DEBUG: Base de datos vacía, retornando False")
-                    return False, db_config, f"La base de datos '{db_config['database']}' existe pero está vacía"
-
-                print("DEBUG: BD existe con tablas, retornando True")
-                return True, db_config, None
-
-            except mysql.connector.Error as err:
-                print(f"DEBUG: Error de MySQL: {err.errno} - {err}")
-                if err.errno == 1049:  # Unknown database
+            # Intentar abrir la conexión
+            if not temp_db.open():
+                error_text = temp_db.lastError().text()
+                print(f"DEBUG: No se pudo abrir la conexión: {error_text}")
+                
+                # Cerrar y limpiar
+                temp_db.close()
+                QSqlDatabase.removeDatabase(temp_conn_name)
+                
+                # Analizar el tipo de error
+                if "database" in error_text.lower() and "does not exist" in error_text.lower():
                     return False, db_config, f"La base de datos '{db_config['database']}' no existe"
-                elif err.errno == 2003:  # Can't connect to MySQL server
-                    return False, db_config, f"No se puede conectar al servidor {db_config['host']}:{db_config['port']}"
-                elif err.errno == 1045:  # Access denied
+                elif "authentication" in error_text.lower() or "password" in error_text.lower():
                     return False, db_config, f"Acceso denegado para el usuario '{db_config['user']}'"
+                elif "connect" in error_text.lower():
+                    return False, db_config, f"No se puede conectar al servidor {db_config['host']}:{db_config['port']}"
                 else:
-                    return False, db_config, f"Error de conexión: {err}"
+                    return False, db_config, f"Error de conexión: {error_text}"
+
+            # Verificar que la base de datos tiene tablas
+            query = QSqlQuery(temp_db)
+            
+            if motor == 'postgresql':
+                # PostgreSQL usa información del esquema público
+                sql_check = """
+                    SELECT COUNT(*) 
+                    FROM information_schema.tables 
+                    WHERE table_schema = 'public' AND table_type = 'BASE TABLE'
+                """
+            else:
+                # MariaDB/MySQL
+                sql_check = "SHOW TABLES"
+            
+            if not query.exec(sql_check):
+                error_text = query.lastError().text()
+                print(f"DEBUG: Error ejecutando query de verificación: {error_text}")
+                temp_db.close()
+                QSqlDatabase.removeDatabase(temp_conn_name)
+                return False, db_config, f"Error consultando tablas: {error_text}"
+
+            # Contar tablas
+            num_tables = 0
+            if motor == 'postgresql':
+                if query.next():
+                    num_tables = query.value(0)
+            else:
+                while query.next():
+                    num_tables += 1
+
+            print(f"DEBUG: Conectado exitosamente, tablas encontradas: {num_tables}")
+
+            # Cerrar conexión temporal
+            temp_db.close()
+            QSqlDatabase.removeDatabase(temp_conn_name)
+
+            if num_tables == 0:
+                print("DEBUG: Base de datos vacía, retornando False")
+                return False, db_config, f"La base de datos '{db_config['database']}' existe pero está vacía"
+
+            print("DEBUG: BD existe con tablas, retornando True")
+            return True, db_config, None
+
 
         except Exception as e:
             print(f"DEBUG: Excepción general: {e}")
