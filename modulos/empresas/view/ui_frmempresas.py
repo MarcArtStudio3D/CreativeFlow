@@ -532,10 +532,10 @@ class Ui_FrmEmpresas(object):
         self.groupBox_5.setObjectName(u"groupBox_5")
         self.enlace_web = QCheckBox(self.groupBox_5)
         self.enlace_web.setObjectName(u"enlace_web")
-        self.enlace_web.setGeometry(QRect(0, 50, 307, 22))
+        self.enlace_web.setGeometry(QRect(30, 40, 307, 22))
         self.gestion_internacional = QCheckBox(self.groupBox_5)
         self.gestion_internacional.setObjectName(u"gestion_internacional")
-        self.gestion_internacional.setGeometry(QRect(0, 80, 307, 22))
+        self.gestion_internacional.setGeometry(QRect(30, 70, 307, 22))
 
         self.gridLayout_21.addWidget(self.groupBox_5, 0, 0, 1, 1)
 

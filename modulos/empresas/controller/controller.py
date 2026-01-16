@@ -1,12 +1,14 @@
+import os
+
 from PySide6 import QtCore
-from PySide6.QtSql import QSqlQuery
+from PySide6.QtSql import QSqlQuery, QSqlDatabase
 from PySide6.QtWidgets import QMessageBox
 
 from helpers.mapeoCampos import MapeoCampos
+from helpers.messagebox_styles import aplicar_estilo_messagebox
 from modulos.empresas.view.EmpresaConfigView import EmpresaConfigView
 from modulos.comun.view.DBConsultaView import DBConsultaView
 from helpers.validadores import ValidadorFiscal
-
 
 
 class EmpresaController:
@@ -25,6 +27,8 @@ class EmpresaController:
         self.vista.btn_deshacer.clicked.connect(self.cargar_datos)
         self.vista.btn_salir.clicked.connect(self.vista.close)
         self.vista.btnBuscarPais.clicked.connect(self.abrir_selector_paises)
+        self.vista.btnCrearDBMariaDb.clicked.connect(self.preparar_base_datos_mariadb)
+        self.vista.btnTestBDMariaDB.clicked.connect(self.probar_conexion_mariadb)
 
         #conecto señales de campos
         self.vista.cp.editingFinished.connect(self.buscar_poblacion_cp_handler)
@@ -91,7 +95,13 @@ class EmpresaController:
             ctx = "EmpresaController"
             titulo = QtCore.QCoreApplication.translate(ctx, "Error de carga")
             msg = QtCore.QCoreApplication.translate(ctx, f"No se encontró la empresa con ID: {self.id_empresa}")
-            QMessageBox.critical(self.vista, titulo, msg)
+
+            msg_box = QMessageBox(self.vista)
+            msg_box.setIcon(QMessageBox.Critical)
+            msg_box.setWindowTitle(titulo)
+            msg_box.setText(msg)
+            aplicar_estilo_messagebox(msg_box, "critical")
+            msg_box.exec()
             return
 
         # 2. La magia: MapeoCampos rellena TODO el formulario de golpe
@@ -109,7 +119,13 @@ class EmpresaController:
         if not valido:
             msg = QtCore.QCoreApplication.translate(contexto, "Los siguientes campos son obligatorios:\n\n- ") + "\n- ".join(campos_faltantes)
             tit = QtCore.QCoreApplication.translate(contexto, "Faltan datos")
-            QMessageBox.warning(self.vista,tit, msg)
+
+            msg_box = QMessageBox(self.vista)
+            msg_box.setIcon(QMessageBox.Warning)
+            msg_box.setWindowTitle(tit)
+            msg_box.setText(msg)
+            aplicar_estilo_messagebox(msg_box, "warning")
+            msg_box.exec()
             return
 
         # 2. Capturar (usando tu lógica espejo)
@@ -119,11 +135,23 @@ class EmpresaController:
         if self.modelo.actualizar_empresa(self.id_empresa, datos):
             titulo = QtCore.QCoreApplication.translate(contexto, "Éxito")
             mensaje = QtCore.QCoreApplication.translate(contexto, "Empresa actualizada correctamente")
-            QMessageBox.information(self.vista,titulo, mensaje)
+
+            msg_box = QMessageBox(self.vista)
+            msg_box.setIcon(QMessageBox.Information)
+            msg_box.setWindowTitle(titulo)
+            msg_box.setText(mensaje)
+            aplicar_estilo_messagebox(msg_box, "information")
+            msg_box.exec()
         else:
             titulo = QtCore.QCoreApplication.translate(contexto, "Error")
             mensaje = QtCore.QCoreApplication.translate(contexto, "No se pudieron guardar los datos en la base de datos.")
-            QMessageBox.critical(self.vista, titulo, mensaje)
+
+            msg_box = QMessageBox(self.vista)
+            msg_box.setIcon(QMessageBox.Critical)
+            msg_box.setWindowTitle(titulo)
+            msg_box.setText(mensaje)
+            aplicar_estilo_messagebox(msg_box, "critical")
+            msg_box.exec()
 
     def abrir_selector_paises(self):
         """
@@ -372,7 +400,14 @@ class EmpresaController:
                 self._validando = True  # Bloquear otras validaciones
                 titulo = QtCore.QCoreApplication.translate("EmpresaController", "Identificador no válido")
                 mensaje = QtCore.QCoreApplication.translate("EmpresaController", "El CIF introducido no es válido según las reglas de España.")
-                QMessageBox.warning(self.vista, titulo, mensaje)
+
+                msg_box = QMessageBox(self.vista)
+                msg_box.setIcon(QMessageBox.Warning)
+                msg_box.setWindowTitle(titulo)
+                msg_box.setText(mensaje)
+                aplicar_estilo_messagebox(msg_box, "warning")
+                msg_box.exec()
+
                 self._validando = False  # Desbloquear
                 # Devolver el foco al campo erróneo para que el usuario lo corrija
                 self.vista.cif_siren.setFocus()
@@ -390,7 +425,14 @@ class EmpresaController:
                 self._validando = True  # Bloquear otras validaciones
                 titulo = QtCore.QCoreApplication.translate("EmpresaController", "Identificador no válido")
                 mensaje = QtCore.QCoreApplication.translate("EmpresaController", "El SIREN introducido no es válido según las reglas de Francia.")
-                QMessageBox.warning(self.vista, titulo, mensaje)
+
+                msg_box = QMessageBox(self.vista)
+                msg_box.setIcon(QMessageBox.Warning)
+                msg_box.setWindowTitle(titulo)
+                msg_box.setText(mensaje)
+                aplicar_estilo_messagebox(msg_box, "warning")
+                msg_box.exec()
+
                 self._validando = False  # Desbloquear
                 # Devolver el foco al campo erróneo para evitar que se dispare validar_siret()
                 self.vista.cif_siren.setFocus()
@@ -415,8 +457,185 @@ class EmpresaController:
                 self._validando = True  # Bloquear otras validaciones
                 titulo = QtCore.QCoreApplication.translate("EmpresaController", "Identificador no válido")
                 mensaje = QtCore.QCoreApplication.translate("EmpresaController", "El SIRET introducido no es válido según las reglas de Francia.")
-                QMessageBox.warning(self.vista, titulo, mensaje)
+
+                msg_box = QMessageBox(self.vista)
+                msg_box.setIcon(QMessageBox.Warning)
+                msg_box.setWindowTitle(titulo)
+                msg_box.setText(mensaje)
+                aplicar_estilo_messagebox(msg_box, "warning")
+                msg_box.exec()
+
                 self._validando = False  # Desbloquear
                 # Devolver el foco al campo erróneo
                 self.vista.siret.setFocus()
                 return
+    def probar_conexion_mariadb(self):
+        contexto = "EmpresaController"
+        host = self.vista.mariadb_host.text().strip()
+        puerto = self.vista.mariadb_port.value()
+        usuario = self.vista.mariadb_user.text().strip()
+        password = self.vista.mariadb_password.text()
+        nombre_bd = self.vista.mariadb_name.text().strip()
+
+        exito, mensaje = self.modelo.probar_conexion_mariadb(host, puerto, usuario, password, nombre_bd)
+
+        if exito:
+            titulo = QtCore.QCoreApplication.translate(contexto, "Conexión exitosa")
+            msg = QtCore.QCoreApplication.translate(contexto, "La conexión a la base de datos MariaDB fue exitosa.")
+            icono = QMessageBox.Information
+            tipo_msg = "information"
+        else:
+            titulo = QtCore.QCoreApplication.translate(contexto, "Error de conexión")
+            msg = QtCore.QCoreApplication.translate(contexto, f"No se pudo conectar a la base de datos MariaDB:\n\n{mensaje}")
+            icono = QMessageBox.Critical
+            tipo_msg = "critical"
+
+        msg_box = QMessageBox(self.vista)
+        msg_box.setIcon(icono)
+        msg_box.setWindowTitle(titulo)
+        msg_box.setText(msg)
+        aplicar_estilo_messagebox(msg_box, tipo_msg)
+        msg_box.exec()
+
+    # Crear base de datos para la empresa seleccionada (MariaDB/PostgreSQL)
+    def preparar_base_datos_mariadb(self):
+        """
+        Crea la base de datos usando Qt SQL (QMYSQL o QPSQL driver).
+        Compatible con QTableView y QSqlTableModel.
+        Detecta automáticamente el motor y usa el script SQL correcto.
+        """
+        db_name = self.vista.mariadb_name.text().strip()
+
+        # Detectar motor de BD desde la pestaña activa o config
+        # Por ahora asumimos MariaDB (puedes añadir lógica para detectar)
+        motor_bd = "mariadb"  # TODO: detectar desde vista si hay selector
+
+        # Ruta al script SQL específico según el motor
+        project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+
+        if motor_bd == "postgresql":
+            ruta_sql = os.path.join(project_root, "database", "init_empresa_postgresql.sql")
+            driver_qt = "QPSQL"
+        else:  # mariadb/mysql
+            ruta_sql = os.path.join(project_root, "database", "init_empresa_mariadb.sql")
+            driver_qt = "QMYSQL"
+
+        # 1. Configuración de parámetros
+        host = self.vista.mariadb_host.text().strip()
+        user = self.vista.mariadb_user.text().strip()
+        pasw = self.vista.mariadb_password.text().strip()
+
+        try:
+            puerto = int(self.vista.mariadb_port.text().strip() or 3306)
+        except ValueError:
+            puerto = 3306
+
+        # 2. Conexión inicial al SERVIDOR (sin especificar DB aún)
+        # Usamos "temp_conn" para no pisar la conexión principal si ya existiera
+        temp_db = QSqlDatabase.addDatabase(driver_qt, "temp_conn")
+        temp_db.setHostName(host)
+        temp_db.setUserName(user)
+        temp_db.setPassword(pasw)
+        temp_db.setPort(puerto)
+
+        if not temp_db.open():
+            msg_box = QMessageBox(self.vista)
+            msg_box.setIcon(QMessageBox.Critical)
+            msg_box.setWindowTitle("Error")
+            msg_box.setText(f"No se pudo conectar al servidor {motor_bd.upper()}:\n{temp_db.lastError().text()}")
+            msg_box.exec()
+            return
+
+        # 3. Verificar si existe la DB
+        query = QSqlQuery(temp_db)
+        query.exec(f"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '{db_name}'")
+
+        if query.next():
+            msg_box = QMessageBox(self.vista)
+            msg_box.setIcon(QMessageBox.Warning)
+            msg_box.setWindowTitle("Aviso")
+            msg_box.setText(f"La base de datos '{db_name}' ya existe.")
+            msg_box.exec()
+            temp_db.close()
+            QSqlDatabase.removeDatabase("temp_conn")
+            return
+
+        # 4. Crear DB y ejecutar Script
+        if motor_bd == "postgresql":
+            # PostgreSQL usa CREATE DATABASE sin opciones de charset
+            crear_db_sql = f"CREATE DATABASE {db_name}"
+        else:
+            # MariaDB/MySQL con charset y collation
+            crear_db_sql = f"CREATE DATABASE `{db_name}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+
+        if query.exec(crear_db_sql):
+            query.exec(f"USE `{db_name}`") if motor_bd != "postgresql" else query.exec(f"\\c {db_name}")
+
+            if self.ejecutar_script_sql(query, ruta_sql):
+                msg_box = QMessageBox(self.vista)
+                msg_box.setIcon(QMessageBox.Information)
+                msg_box.setWindowTitle("Éxito")
+                msg_box.setText(f"Base de datos '{db_name}' y tablas creadas correctamente.")
+                msg_box.exec()
+
+                # --- AHORA QUE LA DB EXISTE ---
+                # Cerramos la conexión temporal
+                temp_db.close()
+                QSqlDatabase.removeDatabase("temp_conn")
+
+                # Creamos la conexión oficial Default que usarán todos los QSqlTableModels
+                self.db_principal = QSqlDatabase.addDatabase(driver_qt)  # Sin nombre = Default
+                self.db_principal.setHostName(host)
+                self.db_principal.setUserName(user)
+                self.db_principal.setPassword(pasw)
+                self.db_principal.setPort(puerto)
+                self.db_principal.setDatabaseName(db_name)
+
+                if not self.db_principal.open():
+                    msg_box = QMessageBox(self.vista)
+                    msg_box.setIcon(QMessageBox.Warning)
+                    msg_box.setWindowTitle("Advertencia")
+                    msg_box.setText(f"BD creada pero no se pudo abrir la conexión principal:\n{self.db_principal.lastError().text()}")
+                    msg_box.exec()
+            else:
+                msg_box = QMessageBox(self.vista)
+                msg_box.setIcon(QMessageBox.Warning)
+                msg_box.setWindowTitle("Error Parcial")
+                msg_box.setText("BD creada pero falló la ejecución del script SQL.")
+                msg_box.exec()
+        else:
+            msg_box = QMessageBox(self.vista)
+            msg_box.setIcon(QMessageBox.Critical)
+            msg_box.setWindowTitle("Error")
+            msg_box.setText(f"No se pudo crear la base de datos:\n{query.lastError().text()}")
+            msg_box.exec()
+
+        temp_db.close()
+        QSqlDatabase.removeDatabase("temp_conn")
+
+    def ejecutar_script_sql(self, query_obj, ruta):
+        """Lee el archivo .sql y ejecuta comando por comando"""
+        if not os.path.exists(ruta):
+            message = f"Archivo no encontrado en: {ruta}"
+            QMessageBox.critical(self.vista, "ERROR CRITICO", message)
+            return False
+
+        try:
+            with open(ruta, 'r', encoding='utf-8') as f:
+                # Quitamos comentarios y unimos líneas
+                sql_completo = ""
+                for linea in f:
+                    if not linea.strip().startswith("--") and linea.strip():
+                        sql_completo += linea
+
+                # Separamos por punto y coma y ejecutamos cada instrucción
+                comandos = sql_completo.split(';')
+                for comando in comandos:
+                    if comando.strip():
+                        if not query_obj.exec(comando):
+                            print(f"Fallo en: {comando[:50]}... Error: {query_obj.lastError().text()}")
+                            return False
+                return True
+        except Exception as e:
+            print(f"Error leyendo el archivo: {e}")
+            return False

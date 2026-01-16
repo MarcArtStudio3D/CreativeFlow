@@ -60,37 +60,10 @@ class LoginController:
 
                 # Crear QMessageBox personalizado con estilo de alerta
                 msg_box = QMessageBox(self.view)
-                msg_box.setIcon(QMessageBox.Warning)
+                msg_box.setIcon(QMessageBox.Critical)
                 msg_box.setWindowTitle("Base de Datos No Disponible")
                 msg_box.setText(f"⚠️ No se puede acceder a la base de datos\n\n{error_msg}\n\n"
                                f"Use el botón ADMIN para configurar la base de datos.")
-
-                # Aplicar estilo inline con fondo rojizo de alerta
-                msg_box.setStyleSheet("""
-                    QMessageBox {
-                        background-color: #4d1f1f;
-                    }
-                    QLabel {
-                        color: #ffdddd;
-                        background-color: #4d1f1f;
-                        padding: 10px;
-                    }
-                    QPushButton {
-                        background-color: #8b0000;
-                        border: 1px solid #aa0000;
-                        color: white;
-                        min-width: 70px;
-                        padding: 6px 12px;
-                        border-radius: 4px;
-                    }
-                    QPushButton:hover {
-                        background-color: #a00000;
-                    }
-                    QPushButton:pressed {
-                        background-color: #660000;
-                    }
-                """)
-
                 msg_box.exec()
                 self.view.agregar_boton_admin()
         else:
@@ -99,32 +72,6 @@ class LoginController:
             msg_box.setIcon(QMessageBox.Critical)
             msg_box.setWindowTitle("Error de Acceso")
             msg_box.setText(resultado["error"])
-
-            # Aplicar el mismo estilo rojizo de alerta
-            msg_box.setStyleSheet("""
-                QMessageBox {
-                    background-color: #4d1f1f;
-                }
-                QLabel {
-                    color: #ffdddd;
-                    background-color: #4d1f1f;
-                    padding: 10px;
-                }
-                QPushButton {
-                    background-color: #8b0000;
-                    border: 1px solid #aa0000;
-                    color: white;
-                    min-width: 70px;
-                    padding: 6px 12px;
-                    border-radius: 4px;
-                }
-                QPushButton:hover {
-                    background-color: #a00000;
-                }
-                QPushButton:pressed {
-                    background-color: #660000;
-                }
-            """)
 
             msg_box.exec()
 

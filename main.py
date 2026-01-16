@@ -1,7 +1,9 @@
 import os
 import sys
-from PySide6.QtCore import Qt, QTranslator, QLocale
+
+from PySide6.QtCore import QTranslator, QLocale
 from PySide6.QtWidgets import QApplication
+from helpers.messagebox_styles import MessageBoxStyler
 
 
 def aplicar_estilo_personalizado(app):
@@ -24,7 +26,12 @@ def aplicar_estilo_personalizado(app):
         print(f"❌ Error cargando estilos: {e}")
 
 def main():
+    # Suprimir warnings de drivers SQL que no afectan la funcionalidad
+    os.environ["QT_LOGGING_RULES"] = "qt.sql.qsqldatabase.warning=false"
+
     app = QApplication(sys.argv)
+
+
 
     # Cargar traductor
     translator = QTranslator()
@@ -37,6 +44,11 @@ def main():
 
     # Aplicar el QSS de Creative ERP
     aplicar_estilo_personalizado(app)
+
+    # Instalar el interceptor global de QMessageBox para aplicar estilos automáticamente
+    messagebox_styler = MessageBoxStyler()
+    app.installEventFilter(messagebox_styler)
+    print("✓ Estilos automáticos de QMessageBox activados")
 
     # Iniciar controlador
     from login.controller import LoginController

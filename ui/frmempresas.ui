@@ -840,8 +840,8 @@
                  <widget class="QCheckBox" name="enlace_web">
                   <property name="geometry">
                    <rect>
-                    <x>0</x>
-                    <y>50</y>
+                    <x>30</x>
+                    <y>40</y>
                     <width>307</width>
                     <height>22</height>
                    </rect>
@@ -853,8 +853,8 @@
                  <widget class="QCheckBox" name="gestion_internacional">
                   <property name="geometry">
                    <rect>
-                    <x>0</x>
-                    <y>80</y>
+                    <x>30</x>
+                    <y>70</y>
                     <width>307</width>
                     <height>22</height>
                    </rect>
