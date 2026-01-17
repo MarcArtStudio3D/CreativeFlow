@@ -158,7 +158,7 @@ qtcreator ui/frmClientes.ui
 ./scripts/compile_ui.sh
 
 # 3. Crear la vista
-cat > modulos/ventas/view/ClientesView.py << 'EOF'
+cat > modulos/ventas/view/clientes_view.py << 'EOF'
 from PySide6.QtWidgets import QDialog
 from .ui_frmClientes import Ui_FrmClientes
 

@@ -1,12 +1,17 @@
 import os
 from PySide6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-                               QLabel, QPushButton, QFrame, QSizePolicy, QToolButton)
+                               QLabel, QPushButton, QFrame, QSizePolicy, QToolButton, QGridLayout)
 from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtCore import Qt, QSize
 from colores import *
 from modulos.empresas.controller.controller import EmpresaController
 from modulos.empresas.model.model import EmpresaModel
 from modulos.empresas.view.EmpresaConfigView import EmpresaConfigView
+
+from modulos.ventas.controller import ClientesController
+from modulos.ventas.model import ClientesModel
+from modulos.ventas.view import clientes_view
+
 
 # Detección de rutas
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -187,7 +192,7 @@ class MainWindow(QMainWindow):
         lbl.setStyleSheet(f"color: {COLOR_GRIS_TECNICO}; font-size: 11px; font-weight: bold; border: none;")
         return lbl
 
-    def cambiar_modulo(self, nombre_modulo):
+    """def cambiar_modulo(self, nombre_modulo):
         print(f"DEBUG: Cargando {nombre_modulo}")
 
         # Limpiar completamente el área de contenido - ELIMINAR widgets de memoria
@@ -218,11 +223,45 @@ class MainWindow(QMainWindow):
         #     controlador_usuarios = UsuariosController(vista_usuarios, modelo_usuarios)
         #     self.content_layout.addWidget(vista_usuarios)
         #
-        # elif nombre_modulo == "VENTAS":
-        #     vista_ventas = VentasView()
-        #     modelo_ventas = VentasModel(self.data_manager)
-        #     controlador_ventas = VentasController(vista_ventas, modelo_ventas)
-        #     self.content_layout.addWidget(vista_ventas)
+        elif nombre_modulo == "VENTAS":
+            # Creamos un contenedor sencillo para los botones de ventas
+            self.vista_ventas = QWidget()
+            layout_ventas = QVBoxLayout(self.vista_ventas)
+            layout_ventas.setSpacing(10)
+            layout_ventas.setContentsMargins(20, 20, 20, 20)
+
+            # Añadimos un encabezado (usando tu función existente)
+            layout_ventas.addWidget(self.crear_label_header("GESTIÓN DE VENTAS"))
+
+            # Lista de botones que querías
+            botones_ventas = [
+                ("CLIENTES", self.abrir_gestion_clientes),
+                ("PRESUPUESTOS", None),  # Iremos añadiendo funciones luego
+                ("ALBARANES", None),
+                ("FACTURAS", None),
+                ("ARTÍCULOS", None)
+            ]
+
+            for texto, funcion in botones_ventas:
+                btn = QPushButton(texto)
+                btn.setFixedHeight(50)
+                btn.setStyleSheet(f""
+                        QPushButton {{
+                            background-color: {COLOR_FONDO_COMBOS};
+                            color: white;
+                            border-radius: 8px;
+                            text-align: left;
+                            padding-left: 20px;
+                            font-weight: bold;
+                        }}
+                        QPushButton:hover {{ background-color: {COLOR_NARANJA}; }}
+                    "")
+                if funcion:
+                    btn.clicked.connect(funcion)
+                layout_ventas.addWidget(btn)
+
+            layout_ventas.addStretch()  # Empuja todo hacia arriba
+            self.content_layout.addWidget(self.vista_ventas)
 
         else:
             # Mensaje para módulos no implementados
@@ -231,3 +270,146 @@ class MainWindow(QMainWindow):
             lbl_placeholder.setAlignment(Qt.AlignmentFlag.AlignCenter)
             self.content_layout.addWidget(lbl_placeholder)
             self.content_layout.addStretch()
+    """
+
+    def cambiar_modulo(self, nombre_modulo, view_class=None):
+        print(f"DEBUG: Cargando {nombre_modulo}")
+
+        # 1. LIMPIEZA (Tu código original, no se toca)
+        while self.content_layout.count():
+            item = self.content_layout.takeAt(0)
+            widget = item.widget()
+            if widget:
+                widget.deleteLater()
+
+        # 2. CARGA DINÁMICA (Para las 80+ pantallas futuras)
+        # Si pasamos una clase, la montamos automáticamente y salimos
+        if view_class:
+            instancia = view_class()
+            if hasattr(instancia, 'set_db'):
+                instancia.set_db(self.data_manager)
+
+            self.content_layout.addWidget(instancia)
+            self.content_layout.setContentsMargins(0, 0, 0, 0)
+            return instancia
+
+        # 3. LÓGICA DE MENÚS Y CASOS ESPECIALES (Tu código original)
+        if nombre_modulo == "EMPRESAS":
+            self.vista_empresas = EmpresaConfigView()
+            modelo_empresas = EmpresaModel(self.sqlite_model)
+            self.controlador_empresas = EmpresaController(
+                self.vista_empresas, modelo_empresas, self.session_data)
+            self.content_layout.addWidget(self.vista_empresas)
+
+
+        elif nombre_modulo == "VENTAS":
+
+            # Ahora pasamos también el nombre del icono
+
+            modulos_ventas = [
+
+                ("CLIENTES", self.abrir_gestion_clientes, "clientes.png"),
+
+                ("PRESUPUESTOS", None, "ventas.png"),
+
+                ("ALBARANES", None, "ventas.png"),
+
+                ("FACTURAS", None, "ventas.png"),
+
+                ("ARTÍCULOS", None, "ventas.png"),
+
+            ]
+
+            self.crear_menu_botones("GESTIÓN DE VENTAS", modulos_ventas)
+
+        else:
+            # Tu label de "en desarrollo"
+            lbl_placeholder = QLabel(f"Módulo '{nombre_modulo}' en desarrollo")
+            lbl_placeholder.setStyleSheet("color: #999; font-size: 16px;")
+            lbl_placeholder.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            self.content_layout.addWidget(lbl_placeholder)
+            self.content_layout.addStretch()
+
+    def crear_menu_botones(self, titulo, lista_modulos):
+        """
+            titulo: Str
+            lista_modulos: [(texto, funcion, nombre_archivo_icono), ...]
+            """
+        container = QWidget()
+        layout_principal = QVBoxLayout(container)
+        layout_principal.setContentsMargins(40, 30, 40, 30)
+        layout_principal.setSpacing(25)
+
+        # Encabezado dinámico
+        layout_principal.addWidget(self.crear_label_header(titulo))
+
+        # Grid para las tarjetas
+        grid = QGridLayout()
+        grid.setSpacing(20)
+        grid.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+
+        columnas_max = 5  # Ajusta según el ancho de tu pantalla
+
+        for i, (texto, funcion, icono) in enumerate(lista_modulos):
+            # El botón es el contenedor de la tarjeta
+            card = QPushButton()
+            card.setFixedSize(180, 180)
+            card.setCursor(Qt.PointingHandCursor)
+
+            # Layout interno de la tarjeta
+            card_layout = QVBoxLayout(card)
+            card_layout.setContentsMargins(15, 20, 15, 15)
+            card_layout.setSpacing(10)
+            card_layout.addStretch(1)
+            # Icono
+            lbl_icono = QLabel()
+            path_icono = f"images/modules/{icono}"
+            if os.path.exists(path_icono):
+                pixmap = QPixmap(path_icono).scaled(70, 70, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                lbl_icono.setPixmap(pixmap)
+            lbl_icono.setAlignment(Qt.AlignCenter)
+            lbl_icono.setStyleSheet("background: transparent; border: none;")
+
+            # Texto
+            lbl_texto = QLabel(texto)
+            lbl_texto.setAlignment(Qt.AlignCenter)
+            lbl_texto.setWordWrap(True)
+            lbl_texto.setStyleSheet(
+                "color: white; font-weight: bold; font-size: 14px; background: transparent; border: none;")
+
+            card_layout.addWidget(lbl_icono)
+            card_layout.addWidget(lbl_texto)
+            card_layout.addStretch(1)
+
+            # Estilo QSS para la tarjeta (Moderno y oscuro)
+            card.setStyleSheet(f"""
+                    QPushButton {{
+                        background-color: #1e1e1e;
+                        border: 1px solid #333;
+                        border-radius: 12px;
+                    }}
+                    QPushButton:hover {{
+                        background-color: #2a2a2a;
+                        border: 2px solid {COLOR_NARANJA};
+                    }}
+                    QPushButton:pressed {{
+                        background-color: #111;
+                    }}
+                """)
+
+            if funcion:
+                card.clicked.connect(funcion)
+
+            fila = i // columnas_max
+            columna = i % columnas_max
+            grid.addWidget(card, fila, columna)
+
+        layout_principal.addLayout(grid)
+        layout_principal.addStretch()  # Empuja todo hacia arriba
+
+        self.content_layout.addWidget(container)
+
+    def abrir_gestion_clientes(self):
+        from modulos.ventas.view.clientes_view import ClientesView  # Cambia por el nombre de tu archivo
+
+        self.vista_clientes_detalle = self.cambiar_modulo("CLIENTES", view_class=ClientesView)

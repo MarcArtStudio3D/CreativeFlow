@@ -1,58 +1,51 @@
 import os
 import sys
-
-from PySide6.QtCore import QTranslator, QLocale
+from PySide6.QtCore import QTranslator, QLocale, QCoreApplication
 from PySide6.QtWidgets import QApplication
 from helpers.messagebox_styles import MessageBoxStyler
+# Importamos el nuevo DataManager (asumiendo que está en database/manager.py)
+from database.DataManager import DataManager
 
 
 def aplicar_estilo_personalizado(app):
-
     style_path = "styles.qss"
-    if not os.path.exists(style_path):
-        print(f"⚠ No se encontró el archivo {style_path}")
-        return
-
-    try:
+    if os.path.exists(style_path):
         with open(style_path, "r", encoding="utf-8") as f:
-            qss = f.read()
+            app.setStyleSheet(f.read())
+        print(f"✓ Estilos cargados desde {style_path}")
 
-        # Aplicar directamente al QApplication
-        app.setStyleSheet(qss)
-        print(f"✓ Estilos cargados desde {style_path} (Creative ERP)")
-        print(f"✓ Total caracteres QSS: {len(qss)}")
-
-    except Exception as e:
-        print(f"❌ Error cargando estilos: {e}")
 
 def main():
-    # Suprimir warnings de drivers SQL que no afectan la funcionalidad
+    # 1. Ajustes específicos para Arch Linux y Qt
     os.environ["QT_LOGGING_RULES"] = "qt.sql.qsqldatabase.warning=false"
+    # Forzamos la ruta de plugins por si acaso en Arch
+    QCoreApplication.addLibraryPath("/usr/lib/qt6/plugins")
 
     app = QApplication(sys.argv)
 
+    # 2. Inicializar DataManager Global (SIN conectar aún)
+    # Este objeto vivirá durante toda la sesión
+    data_manager = DataManager()
 
-
-    # Cargar traductor
+    # 3. Traducciones y Estilos
     translator = QTranslator()
-    # Supongamos que tus archivos se llaman 'app_fr.qm', 'app_ca.qm'...
-    idioma = QLocale.system().name()  # Detecta si es fr_FR, ca_ES, es_ES...
+    idioma = QLocale.system().name()
     if translator.load(f"translations/app_{idioma}.qm"):
         app.installTranslator(translator)
 
     app.setApplicationName("Creative Flow - Projects Pipeline System")
-
-    # Aplicar el QSS de Creative ERP
     aplicar_estilo_personalizado(app)
 
-    # Instalar el interceptor global de QMessageBox para aplicar estilos automáticamente
+    # 4. Estilos de Mensajes
     messagebox_styler = MessageBoxStyler()
     app.installEventFilter(messagebox_styler)
-    print("✓ Estilos automáticos de QMessageBox activados")
 
-    # Iniciar controlador
+    # 5. Iniciar Login pasándole el DataManager
     from login.controller import LoginController
-    login_ctrl = LoginController()
+
+    # IMPORTANTE: Pasamos el data_manager al controlador para que
+    # este pueda realizar la conexión inicial a SQLite
+    login_ctrl = LoginController(data_manager)
 
     login_ctrl.view.show()
     sys.exit(app.exec())
@@ -60,4 +53,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
