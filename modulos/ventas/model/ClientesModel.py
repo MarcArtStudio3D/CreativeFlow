@@ -1,3 +1,4 @@
+from PySide6.QtCore import Qt
 from PySide6.QtSql import QSqlQuery
 
 
@@ -10,6 +11,38 @@ class ClienteModel:
             db_model: Instancia de DataModel para acceder a la base de datos
         """
         self.db_model = db_model
+
+    def get_todos_clientes(self):
+        """
+        Retorna un QSqlQueryModel con todos los clientes para el QTableView.
+        """
+        from PySide6.QtSql import QSqlQueryModel
+
+        # 1. Creamos el modelo de tabla de Qt
+        model = QSqlQueryModel()
+
+        # 2. Definimos la query (puedes elegir qué columnas mostrar)
+        sql = """
+              SELECT id, nombre_fiscal, nombre_comercial, email, telefono1, poblacion
+              FROM clientes
+              ORDER BY nombre_fiscal DESC
+              """
+
+        # 3. Ejecutamos la consulta sobre la conexión de PostgreSQL
+        # self.db_model.db es el objeto QSqlDatabase que configuramos
+        model.setQuery(sql, self.db_model.db)
+        if model.lastError().isValid():
+            print(f"Error SQL: {model.lastError().text()}")
+
+        # 4. (Opcional) Cambiar los nombres de las cabeceras para que queden bien
+        model.setHeaderData(0, Qt.Horizontal, "ID")
+        model.setHeaderData(1, Qt.Horizontal, "Nombre Fiscal")
+        model.setHeaderData(2, Qt.Horizontal, "Nombre Comercial")
+        model.setHeaderData(3, Qt.Horizontal, "Email")
+        model.setHeaderData(4, Qt.Horizontal, "Teléfono")
+        model.setHeaderData(5, Qt.Horizontal, "Ciudad")
+
+        return model
 
     def get_datos_cliente(self, id_cliente):
         """Obtiene los datos de un cliente desde la base de datos"""

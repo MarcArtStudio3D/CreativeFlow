@@ -287,7 +287,7 @@ class MainWindow(QMainWindow):
         if view_class:
             instancia = view_class()
             if hasattr(instancia, 'set_db'):
-                instancia.set_db(self.data_manager)
+                instancia.set_db(self.data_manager, self.session_data)
 
             self.content_layout.addWidget(instancia)
             self.content_layout.setContentsMargins(0, 0, 0, 0)

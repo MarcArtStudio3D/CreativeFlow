@@ -692,7 +692,7 @@ font: 14pt &quot;Sans Serif&quot;;</string>
               </widget>
              </item>
              <item row="1" column="4">
-              <widget class="QLabel" name="LblSIRET">
+              <widget class="QLabel" name="label_siret">
                <property name="text">
                 <string>SIRET</string>
                </property>
@@ -702,7 +702,7 @@ font: 14pt &quot;Sans Serif&quot;;</string>
               <widget class="QLineEdit" name="pais"/>
              </item>
              <item row="1" column="0">
-              <widget class="QLabel" name="label_2">
+              <widget class="QLabel" name="label_cif_siren">
                <property name="styleSheet">
                 <string/>
                </property>
@@ -2651,6 +2651,39 @@ color: rgb(255,255,255);</string>
         <number>20</number>
        </property>
        <item row="0" column="0">
+        <widget class="QComboBox" name="cboBuscarPor">
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>0</height>
+          </size>
+         </property>
+         <item>
+          <property name="text">
+           <string>Nombre Fiscal</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Nombre Comercial</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Teléfono</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Identificador fiscal</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLineEdit" name="lineEdit"/>
+       </item>
+       <item row="1" column="0" colspan="3">
         <widget class="QTableView" name="tabla_busquedas">
          <property name="autoFillBackground">
           <bool>true</bool>
@@ -2681,6 +2714,20 @@ color: rgb(255,255,255);</string>
          </attribute>
         </widget>
        </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="cboOrden">
+         <item>
+          <property name="text">
+           <string>A....Z</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Z....A</string>
+          </property>
+         </item>
+        </widget>
+       </item>
       </layout>
      </widget>
     </widget>
@@ -2688,34 +2735,34 @@ color: rgb(255,255,255);</string>
   </layout>
  </widget>
  <tabstops>
-  <tabstop>btnAnadir</tabstop>
-  <tabstop>btnSiguiente</tabstop>
-  <tabstop>btnAnterior</tabstop>
-  <tabstop>btnBuscar</tabstop>
-  <tabstop>btnEditar</tabstop>
-  <tabstop>btnGuardar</tabstop>
-  <tabstop>btnDeshacer</tabstop>
-  <tabstop>btnBorrar</tabstop>
+  <tabstop>lineEdit</tabstop>
+  <tabstop>cboBuscarPor</tabstop>
+  <tabstop>cboOrden</tabstop>
   <tabstop>codigo_cliente</tabstop>
-  <tabstop>cif_vies</tabstop>
   <tabstop>cif_nif_siret</tabstop>
+  <tabstop>cif_vies</tabstop>
+  <tabstop>btnValidarVIES</tabstop>
+  <tabstop>siret</tabstop>
   <tabstop>nombre</tabstop>
   <tabstop>apellido1</tabstop>
   <tabstop>apellido2</tabstop>
   <tabstop>nombre_fiscal</tabstop>
   <tabstop>nombre_comercial</tabstop>
+  <tabstop>pais</tabstop>
+  <tabstop>direccion1</tabstop>
+  <tabstop>direccion2</tabstop>
   <tabstop>cp</tabstop>
   <tabstop>poblacion</tabstop>
   <tabstop>provincia</tabstop>
   <tabstop>telefono1</tabstop>
   <tabstop>telefono2</tabstop>
+  <tabstop>movil</tabstop>
   <tabstop>email</tabstop>
   <tabstop>web</tabstop>
   <tabstop>observaciones</tabstop>
-  <tabstop>btnVer_OtrosContactos</tabstop>
   <tabstop>lista_tipos</tabstop>
   <tabstop>btnEdita_tipoCliente</tabstop>
-  <tabstop>tabwidget</tabstop>
+  <tabstop>btnVer_OtrosContactos</tabstop>
   <tabstop>lista_direccionesAlternativas</tabstop>
   <tabstop>descripcion_direccion</tabstop>
   <tabstop>poblacion_alternativa</tabstop>
@@ -2744,6 +2791,15 @@ color: rgb(255,255,255);</string>
   <tabstop>cuenta_cobros</tabstop>
   <tabstop>irpf</tabstop>
   <tabstop>recargo_equivalencia</tabstop>
+  <tabstop>grupo_iva</tabstop>
+  <tabstop>iban</tabstop>
+  <tabstop>bic_swift</tabstop>
+  <tabstop>fecha_ultima_compra</tabstop>
+  <tabstop>tabWidget_2</tabstop>
+  <tabstop>TablaAlbaranes</tabstop>
+  <tabstop>tablaProyectos</tabstop>
+  <tabstop>tablaPedidos</tabstop>
+  <tabstop>tablaFacturas</tabstop>
   <tabstop>TablaDeudas</tabstop>
   <tabstop>radPendientes</tabstop>
   <tabstop>radPagadas</tabstop>
@@ -2753,18 +2809,24 @@ color: rgb(255,255,255);</string>
   <tabstop>comentario_bloqueo</tabstop>
   <tabstop>acceso_web</tabstop>
   <tabstop>password_web</tabstop>
+  <tabstop>fecha_alta</tabstop>
   <tabstop>id_agente</tabstop>
   <tabstop>riesgo_maximo</tabstop>
   <tabstop>id_transportista</tabstop>
   <tabstop>txtcomentarios</tabstop>
   <tabstop>id_idioma_documentos</tabstop>
-  <tabstop>tabWidget_2</tabstop>
   <tabstop>tablaPresupuestos</tabstop>
   <tabstop>tablaAsientos</tabstop>
-  <tabstop>tablaPedidos</tabstop>
-  <tabstop>TablaAlbaranes</tabstop>
-  <tabstop>tablaFacturas</tabstop>
-  <tabstop>tablaProyectos</tabstop>
+  <tabstop>btnAnadir</tabstop>
+  <tabstop>btnSiguiente</tabstop>
+  <tabstop>btnAnterior</tabstop>
+  <tabstop>btnBuscar</tabstop>
+  <tabstop>btnEditar</tabstop>
+  <tabstop>btnGuardar</tabstop>
+  <tabstop>btnDeshacer</tabstop>
+  <tabstop>btnBorrar</tabstop>
+  <tabstop>btnCerrar</tabstop>
+  <tabstop>tabwidget</tabstop>
   <tabstop>tabla_busquedas</tabstop>
  </tabstops>
  <resources>

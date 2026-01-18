@@ -2,11 +2,11 @@ import os
 
 from PySide6 import QtCore
 from PySide6.QtSql import QSqlQuery, QSqlDatabase
-from PySide6.QtWidgets import QMessageBox
+from PySide6.QtWidgets import QMessageBox, QHeaderView
 
 from helpers.mapeoCampos import MapeoCampos
 from helpers.messagebox_styles import aplicar_estilo_messagebox
-from modulos.ventas.view import clientes_view
+from modulos.ventas.view.clientes_view import ClientesView
 from modulos.comun.view.DBConsultaView import DBConsultaView
 from helpers.validadores import ValidadorFiscal
 
@@ -15,7 +15,6 @@ class ClientesController:
     def __init__(self, vista: ClientesView, modelo, session_data: dict):
         self.vista = vista
         self.modelo = modelo
-        self.id_cliente = session_data.get("id_cliente", 0)
         self.columnas_actuales = []
         self.session_data = session_data
         self.validador = ValidadorFiscal()
@@ -23,64 +22,50 @@ class ClientesController:
 
 
         #conecto botones
-        self.vista.btn_guardar_nuevo.clicked.connect(self.guardar_datos)
-        self.vista.btn_deshacer.clicked.connect(self.cargar_datos)
-        self.vista.btn_salir.clicked.connect(self.vista.close)
+        self.vista.btnGuardar.clicked.connect(self.guardar_datos)
+        self.vista.btnDeshacer.clicked.connect(self.cargar_datos)
+        self.vista.btnCerrar.clicked.connect(self.vista.close)
 
         #conecto señales de campos
         self.vista.cp.editingFinished.connect(self.buscar_poblacion_cp_handler)
         self.vista.poblacion.editingFinished.connect(self.buscar_poblacion_handler)
-        self.vista.cif_siren.editingFinished.connect(self.validar_codigo_identificacion)
+        self.vista.cif_nif_siret.editingFinished.connect(self.validar_codigo_identificacion)
         self.vista.siret.editingFinished.connect(self.validar_siret)
 
         # Desactivo campos que no deben editarse
         self.vista.pais.setReadOnly(True)
 
         #campos que dependen del pais seleccionado
-        if (session_data.get("pais", "") == "España"):
+        if (self.session_data.get("pais", "") == "España"):
             self.vista.provincia.setVisible(True)
-            self.vista.label_provincia.setVisible(True)
+            self.vista.lblProvincia.setVisible(True)
             self.vista.label_cif_siren.setText("CIF:")
             self.vista.label_siret.setVisible(False)
             self.vista.siret.setVisible(False)
-            self.vista.label_APE_NAF.setVisible(False)
-            self.vista.ape_naf.setVisible(False)
-            self.vista.label_N_RCS.setVisible(False)
-            self.vista.rcs.setVisible(False)
-            self.vista.label_ciudad_rcs.setVisible(False)
-            self.vista.ciudad_rcs.setVisible(False)
-            self.vista.label_forma_juridica.setVisible(False)
-            self.vista.forma_juridica.setVisible(False)
-            self.vista.non_tva.setVisible(False)
-            self.vista.label_n_rm.setVisible(False)
-            self.vista.registro_mercantil.setVisible(False)
-            self.vista.groupBox_IRPF.setVisible(True)
+            self.vista.irpf.setVisible(True)
 
 
         else:
             self.vista.provincia.setVisible(False)
-            self.vista.label_provincia.setVisible(False)
+            self.vista.lblProvincia.setVisible(False)
             self.vista.label_cif_siren.setText("SIREN:")
             self.vista.label_siret.setVisible(True)
             self.vista.siret.setVisible(True)
-            self.vista.label_APE_NAF.setVisible(True)
-            self.vista.ape_naf.setVisible(True)
-            self.vista.label_N_RCS.setVisible(True)
-            self.vista.rcs.setVisible(True)
-            self.vista.label_ciudad_rcs.setVisible(True)
-            self.vista.ciudad_rcs.setVisible(True)
-            self.vista.label_forma_juridica.setVisible(True)
-            self.vista.forma_juridica.setVisible(True)
-            self.vista.label_n_rm.setVisible(True)
-            self.vista.non_tva.setVisible(True)
-            self.vista.registro_mercantil.setVisible(True)
-            self.vista.groupBox_IRPF.setVisible(False)
+            self.vista.irpf.setVisible(False)
 
+        self.cargar_tabla_principal()
+        self.vista.stackedWidget.setCurrentIndex(1)
 
-        # Solo cargamos datos si hay un id_empresa válido
-        if self.id_cliente > 0:
-            self.cargar_datos()
+    def cargar_tabla_principal(self):
+        # Obtenemos el modelo de datos
+        tabla_model = self.modelo.get_todos_clientes()
 
+        # Lo inyectamos directamente al QTableView de la UI
+        # Asegúrate de que en el .ui el objeto se llama 'tabla_busquedas' o similar
+        self.vista.tabla_busquedas.setModel(tabla_model)
+
+        # Ajuste visual rápido: expandir columnas
+        self.vista.tabla_busquedas.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
     def cargar_datos(self):
         # 1. Obtenemos los datos del modelo (el ID viene del __init__)

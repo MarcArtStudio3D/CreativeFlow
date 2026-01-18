@@ -2,22 +2,23 @@
 from PySide6.QtWidgets import QDialog
 from .ui_frmClientes import Ui_frmClientes
 
-
 class ClientesView(QDialog, Ui_frmClientes):
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
 
-    def set_db(self, data_manager):
+    def set_db(self, data_manager,session):
         """Este es el método que le falta a tu clase"""
         self.db = data_manager
+        self.session_data = session
         print("✓ Conexión de base de datos recibida en ClientesView")
 
-        # Una vez que tenemos la DB, podemos cargar los datos
-        self.cargar_datos_iniciales()
+        # Ahora que tenemos DB, instanciamos Modelo y Controlador
+        from modulos.ventas.model.ClientesModel import ClienteModel
+        from modulos.ventas.controller.ClientesController import ClientesController
 
-    def cargar_datos_iniciales(self):
-        # Aquí es donde más adelante haremos:
-        # self.db.consultar("SELECT * FROM clientes")
-        pass
+        self.modelo = ClienteModel(self.db)
+        parent_window = self.window()
+        # Al crear el controlador, este llamará a cargar_tabla_principal()
+        self.controller = ClientesController(self, self.modelo, self.session_data)
