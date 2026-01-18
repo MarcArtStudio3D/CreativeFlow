@@ -1,16 +1,52 @@
 import os
 
 from PySide6 import QtCore
+from PySide6.QtCore import Qt
 from PySide6.QtSql import QSqlQuery, QSqlDatabase
 from PySide6.QtWidgets import QMessageBox, QHeaderView
 
+from colores import COLOR_NARANJA
 from helpers.mapeoCampos import MapeoCampos
 from helpers.messagebox_styles import aplicar_estilo_messagebox
 from modulos.ventas.view.clientes_view import ClientesView
 from modulos.comun.view.DBConsultaView import DBConsultaView
 from helpers.validadores import ValidadorFiscal
 
+import unicodedata
+from PySide6.QtCore import QSortFilterProxyModel
 
+
+def eliminar_acentos(texto):
+    """Convierte 'Árbol' en 'Arbol'"""
+    if not texto: return ""
+    return ''.join(c for c in unicodedata.normalize('NFD', texto)
+                   if unicodedata.category(c) != 'Mn').lower()
+
+
+class ProxyBusquedaFlexible(QSortFilterProxyModel):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._texto_busqueda = ""
+
+    def setFilterFixedString(self, pattern):
+        # Guardamos el texto normalizado antes de llamar al padre
+        self._texto_busqueda = eliminar_acentos(pattern)
+        super().setFilterFixedString(pattern)
+
+    def filterAcceptsRow(self, source_row, source_parent):
+        # Si no hay texto de búsqueda, mostramos todo (optimización)
+        if not self._texto_busqueda:
+            return True
+
+        # 1. Obtener el índice y el texto de la celda
+        idx = self.sourceModel().index(source_row, self.filterKeyColumn(), source_parent)
+        if not idx.isValid():
+            return False
+
+        texto_celda = str(self.sourceModel().data(idx))
+
+        # 2. Comparar usando el texto que ya normalizamos en setFilterFixedString
+        return self._texto_busqueda in eliminar_acentos(texto_celda)
 class ClientesController:
     def __init__(self, vista: ClientesView, modelo, session_data: dict):
         self.vista = vista
@@ -56,16 +92,74 @@ class ClientesController:
         self.cargar_tabla_principal()
         self.vista.stackedWidget.setCurrentIndex(1)
 
+        # Conectamos el cambio de orden al actualizador del label de búsqueda
+        cabecera = self.vista.tabla_busquedas.horizontalHeader()
+        cabecera.sortIndicatorChanged.connect(self.actualizar_label_busqueda)
+
+        # Establecemos el texto inicial (por defecto columna 1: Nombre)
+        self.actualizar_label_busqueda(1)
+
     def cargar_tabla_principal(self):
         # Obtenemos el modelo de datos
-        tabla_model = self.modelo.get_todos_clientes()
+        """tabla_model = self.modelo.get_todos_clientes()
 
         # Lo inyectamos directamente al QTableView de la UI
         # Asegúrate de que en el .ui el objeto se llama 'tabla_busquedas' o similar
         self.vista.tabla_busquedas.setModel(tabla_model)
+        self.vista.tabla_busquedas.setSortingEnabled(True)
 
         # Ajuste visual rápido: expandir columnas
         self.vista.tabla_busquedas.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        """
+        from PySide6.QtCore import QSortFilterProxyModel
+
+        self.modelo_original = self.modelo.get_todos_clientes()
+
+        # 2. Crear el Proxy de ordenación
+        self.proxy_model = ProxyBusquedaFlexible()
+        self.proxy_model.setSourceModel(self.modelo_original)
+
+        # 3. Configurar el comportamiento del proxy
+        # Esto hace que sea insensible a mayúsculas/minúsculas al ordenar
+        self.proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
+        self.proxy_model.setSortCaseSensitivity(Qt.CaseInsensitive)
+
+        # 4. Asignar el PROXY a la vista, no el modelo original
+        self.vista.tabla_busquedas.setModel(self.proxy_model)
+
+        # 5. Habilitar el clic en las cabeceras
+        self.vista.tabla_busquedas.setSortingEnabled(True)
+        # 1. Conectamos el cambio de cabecera a una nueva función
+        cabecera = self.vista.tabla_busquedas.horizontalHeader()
+        cabecera.sortIndicatorChanged.connect(self.actualizar_columna_filtro)
+
+        # 2. Inicializamos la columna de filtro con la que esté ordenada por defecto (ej: la 1)
+        self.columna_actual_filtro = 1
+        # 6. (Opcional) Ordenar por defecto por la columna "Nombre Fiscal" (índice 1)
+        self.vista.tabla_busquedas.sortByColumn(1, Qt.AscendingOrder)
+
+        self.vista.txtBuscar_cliente.textChanged.connect(self.filtrar_clientes)
+
+    def actualizar_label_busqueda(self, index_columna, orden=None):
+        """
+        Actualiza el texto del label según la columna seleccionada.
+        index_columna: int (proporcionado por la señal sortIndicatorChanged)
+        """
+        # Guardamos la columna para el filtro
+        self.columna_actual_filtro = index_columna
+
+        # Obtenemos el título de la columna directamente del modelo
+        # Usamos el modelo original porque el proxy hereda sus cabeceras
+        titulo_columna = self.modelo_original.headerData(index_columna, Qt.Horizontal)
+
+        # Actualizamos el label en la interfaz
+        self.vista.lbl_buscar_criterio.setText(f"Buscar por {titulo_columna}:")
+
+        # (Opcional) Cambiamos el color para que resalte que el criterio cambió
+        self.vista.lbl_buscar_criterio.setStyleSheet(f"color: {COLOR_NARANJA}; font-weight: bold;")
+
+        # Si hay texto, refrescamos el filtro inmediatamente
+        self.filtrar_clientes(self.vista.txtBuscar_cliente.text())
 
     def cargar_datos(self):
         # 1. Obtenemos los datos del modelo (el ID viene del __init__)
@@ -92,6 +186,26 @@ class ClientesController:
 
         # 3. Guardamos las columnas para cuando toque capturar los datos al guardar
         self.columnas_actuales = columnas
+
+    def actualizar_columna_filtro(self, logica_columna, orden):
+        """
+        Se ejecuta cada vez que el usuario hace clic en una cabecera.
+        """
+        self.columna_actual_filtro = logica_columna
+        print(f"DEBUG: Buscador vinculado ahora a la columna: {logica_columna}")
+
+        # Si ya había texto escrito, relanzamos el filtro con la nueva columna
+        texto_actual = self.vista.txtBuscar_cliente.text()
+        if texto_actual:
+            self.filtrar_clientes(texto_actual)
+
+    def filtrar_clientes(self, texto):
+        """
+        Filtra usando la columna que el usuario seleccionó al ordenar.
+        """
+        # Usamos la columna que guardamos en 'actualizar_columna_filtro'
+        self.proxy_model.setFilterKeyColumn(self.columna_actual_filtro)
+        self.proxy_model.setFilterFixedString(texto)
 
     def guardar_datos(self):
         contexto = "ClientesController"

@@ -1559,20 +1559,10 @@ class Ui_frmClientes(object):
         self.gridLayout_28 = QGridLayout(self.paginaBisquedas)
         self.gridLayout_28.setObjectName(u"gridLayout_28")
         self.gridLayout_28.setContentsMargins(-1, -1, 20, -1)
-        self.cboBuscarPor = QComboBox(self.paginaBisquedas)
-        self.cboBuscarPor.addItem("")
-        self.cboBuscarPor.addItem("")
-        self.cboBuscarPor.addItem("")
-        self.cboBuscarPor.addItem("")
-        self.cboBuscarPor.setObjectName(u"cboBuscarPor")
-        self.cboBuscarPor.setMinimumSize(QSize(200, 0))
+        self.txtBuscar_cliente = QLineEdit(self.paginaBisquedas)
+        self.txtBuscar_cliente.setObjectName(u"txtBuscar_cliente")
 
-        self.gridLayout_28.addWidget(self.cboBuscarPor, 0, 0, 1, 1)
-
-        self.lineEdit = QLineEdit(self.paginaBisquedas)
-        self.lineEdit.setObjectName(u"lineEdit")
-
-        self.gridLayout_28.addWidget(self.lineEdit, 0, 2, 1, 1)
+        self.gridLayout_28.addWidget(self.txtBuscar_cliente, 0, 2, 1, 1)
 
         self.tabla_busquedas = QTableView(self.paginaBisquedas)
         self.tabla_busquedas.setObjectName(u"tabla_busquedas")
@@ -1588,20 +1578,16 @@ class Ui_frmClientes(object):
 
         self.gridLayout_28.addWidget(self.tabla_busquedas, 1, 0, 1, 3)
 
-        self.cboOrden = QComboBox(self.paginaBisquedas)
-        self.cboOrden.addItem("")
-        self.cboOrden.addItem("")
-        self.cboOrden.setObjectName(u"cboOrden")
+        self.lbl_buscar_criterio = QLabel(self.paginaBisquedas)
+        self.lbl_buscar_criterio.setObjectName(u"lbl_buscar_criterio")
 
-        self.gridLayout_28.addWidget(self.cboOrden, 0, 1, 1, 1)
+        self.gridLayout_28.addWidget(self.lbl_buscar_criterio, 0, 1, 1, 1)
 
         self.stackedWidget.addWidget(self.paginaBisquedas)
 
         self.gridLayout_3.addWidget(self.stackedWidget, 1, 0, 1, 5)
 
-        QWidget.setTabOrder(self.lineEdit, self.cboBuscarPor)
-        QWidget.setTabOrder(self.cboBuscarPor, self.cboOrden)
-        QWidget.setTabOrder(self.cboOrden, self.codigo_cliente)
+        QWidget.setTabOrder(self.txtBuscar_cliente, self.codigo_cliente)
         QWidget.setTabOrder(self.codigo_cliente, self.cif_nif_siret)
         QWidget.setTabOrder(self.cif_nif_siret, self.cif_vies)
         QWidget.setTabOrder(self.cif_vies, self.btnValidarVIES)
@@ -1871,13 +1857,6 @@ class Ui_frmClientes(object):
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.tab_12), QCoreApplication.translate("frmClientes", u"Proyectos", None))
         self.label_10.setText(QCoreApplication.translate("frmClientes", u"Asientos Contables", None))
         self.tabwidget.setTabText(self.tabwidget.indexOf(self.tab_3), QCoreApplication.translate("frmClientes", u"Historial", None))
-        self.cboBuscarPor.setItemText(0, QCoreApplication.translate("frmClientes", u"Nombre Fiscal", None))
-        self.cboBuscarPor.setItemText(1, QCoreApplication.translate("frmClientes", u"Nombre Comercial", None))
-        self.cboBuscarPor.setItemText(2, QCoreApplication.translate("frmClientes", u"Tel\u00e9fono", None))
-        self.cboBuscarPor.setItemText(3, QCoreApplication.translate("frmClientes", u"Identificador fiscal", None))
-
-        self.cboOrden.setItemText(0, QCoreApplication.translate("frmClientes", u"A....Z", None))
-        self.cboOrden.setItemText(1, QCoreApplication.translate("frmClientes", u"Z....A", None))
-
+        self.lbl_buscar_criterio.setText(QCoreApplication.translate("frmClientes", u"Buscar:", None))
     # retranslateUi
 
