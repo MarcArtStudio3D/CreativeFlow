@@ -40,37 +40,38 @@ class ClienteModel:
         model.setHeaderData(2, Qt.Horizontal, "Nombre Comercial")
         model.setHeaderData(3, Qt.Horizontal, "Email")
         model.setHeaderData(4, Qt.Horizontal, "Teléfono")
-        model.setHeaderData(5, Qt.Horizontal, "Ciudad")
+        model.setHeaderData(5, Qt.Horizontal, "Población")
 
         return model
 
+    from PySide6.QtSql import QSqlQuery
+
     def get_datos_cliente(self, id_cliente):
-        """Obtiene los datos de un cliente desde la base de datos"""
-        if self.db_model is None:
+        """Obtiene los datos y nombres de columna de un cliente en una sola consulta."""
+        if not self.db_model or not self.db_model.db.isOpen():
+            print("Error: La base de datos no está abierta.")
             return None, []
 
-        # Usamos el método get_empresa del DataModel
-        registro = self.db_model.get_empresa(id_cliente)
-        if not registro:
+        # 1. Preparamos la query directamente sobre la conexión existente
+        query = QSqlQuery(self.db_model.db)
+        query.prepare("SELECT * FROM clientes WHERE id = :id")
+        query.bindValue(":id", id_cliente)
+
+        # 2. Ejecutamos y extraemos todo
+        if query.exec() and query.next():
+            record = query.record()
+
+            # Extraemos los nombres de las columnas
+            columnas = [record.fieldName(i) for i in range(record.count())]
+
+            # Extraemos los valores del registro
+            valores = [query.value(i) for i in range(record.count())]
+
+            return valores, columnas
+        else:
+            error_msg = query.lastError().text()
+            print(f"Error al recuperar cliente ID {id_cliente}: {error_msg}")
             return None, []
-
-        # Para obtener los nombres de columnas de la tabla clientes usando QSqlQuery
-        try:
-            query = QSqlQuery(self.db_model.db)
-            query.prepare("SELECT * FROM clientes WHERE id = ? LIMIT 1")
-            query.addBindValue(id_cliente)
-
-            if query.exec() and query.next():
-                record = query.record()
-                columnas = [record.fieldName(i) for i in range(record.count())]
-            else:
-                print(f"Error obteniendo nombres de columnas: {query.lastError().text()}")
-                columnas = []
-        except Exception as e:
-            print(f"Error obteniendo nombres de columnas: {e}")
-            columnas = []
-
-        return registro, columnas
 
     def buscar_cliente_por_nombre_fiscal(self, nombre):
         """Busca un cliente por su nombre"""

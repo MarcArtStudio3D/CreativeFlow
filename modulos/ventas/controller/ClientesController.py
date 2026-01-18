@@ -68,6 +68,9 @@ class ClientesController:
         self.vista.cif_nif_siret.editingFinished.connect(self.validar_codigo_identificacion)
         self.vista.siret.editingFinished.connect(self.validar_siret)
 
+        # Conectamos el doble clic de la tabla a la función de carga
+        self.vista.tabla_busquedas.doubleClicked.connect(self.preparar_edicion_cliente)
+
         # Desactivo campos que no deben editarse
         self.vista.pais.setReadOnly(True)
 
@@ -140,6 +143,26 @@ class ClientesController:
 
         self.vista.txtBuscar_cliente.textChanged.connect(self.filtrar_clientes)
 
+        # Ajuste visual rápido: expandir columnas
+        header = self.vista.tabla_busquedas.horizontalHeader()
+        # Oculta la columna 0 (que suele ser la del ID)
+        self.vista.tabla_busquedas.setColumnHidden(0, True)
+        # Primero ponemos el modo en manual/fijo para esas columnas
+        header.setStretchLastSection(False)
+        header.setSectionResizeMode(1, QHeaderView.Stretch)
+        header.setSectionResizeMode(2, QHeaderView.Stretch)
+        header.setSectionResizeMode(3, QHeaderView.Fixed)
+        header.setSectionResizeMode(4, QHeaderView.Fixed)
+        header.setSectionResizeMode(5, QHeaderView.Fixed)
+
+
+        # Luego definimos el ancho en píxeles
+
+        self.vista.tabla_busquedas.setColumnWidth(3, 300)  # Email
+        self.vista.tabla_busquedas.setColumnWidth(4, 200)  # teléfono
+        self.vista.tabla_busquedas.setColumnWidth(5, 200)  # Poblacion
+
+
     def actualizar_label_busqueda(self, index_columna, orden=None):
         """
         Actualiza el texto del label según la columna seleccionada.
@@ -161,16 +184,35 @@ class ClientesController:
         # Si hay texto, refrescamos el filtro inmediatamente
         self.filtrar_clientes(self.vista.txtBuscar_cliente.text())
 
-    def cargar_datos(self):
+    def preparar_edicion_cliente(self, index):
+        """
+        Se activa al hacer doble clic. Recupera el ID real y cambia de pestaña.
+        """
+        # 1. TRUCO VITAL: Mapear el índice del Proxy al Modelo Original
+        # Sin esto, si la tabla está filtrada, editarías al cliente equivocado.
+        model_index = self.proxy_model.mapToSource(index)
+
+        # 2. Obtener el ID del cliente (asumiendo que está en la columna 0)
+        id_cliente = self.modelo_original.data(self.modelo_original.index(model_index.row(), 0))
+
+        print(f"Editando cliente con ID: {id_cliente}")
+
+        # 3. Cargar los datos en los inputs (esta función la crearemos ahora)
+        self.cargar_datos(id_cliente)
+
+        # 4. Cambiar a la página de edición (Página 0)
+        self.vista.stackedWidget.setCurrentIndex(0)
+
+    def cargar_datos(self, id_cliente=None):
         # 1. Obtenemos los datos del modelo (el ID viene del __init__)
         # El modelo debe devolver: (la_fila_de_datos, lista_nombres_columnas)
-        fila, columnas = self.modelo.get_datos_cliente(self.id_empresa)
+        fila, columnas = self.modelo.get_datos_cliente(id_cliente)
 
         if not fila:
             # Aquí puedes usar tu nuevo sistema de traducción
             ctx = "ClientesController"
             titulo = QtCore.QCoreApplication.translate(ctx, "Error de carga")
-            msg = QtCore.QCoreApplication.translate(ctx, f"No se encontró el cliente con ID: {self.id_cliente}")
+            msg = QtCore.QCoreApplication.translate(ctx, f"No se encontró el cliente con ID: {id_cliente}")
 
             msg_box = QMessageBox(self.vista)
             msg_box.setIcon(QMessageBox.Critical)
