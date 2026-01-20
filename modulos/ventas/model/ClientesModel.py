@@ -12,27 +12,34 @@ class ClienteModel:
         """
         self.db_model = db_model
 
-    def get_todos_clientes(self):
+    def get_lista_clientes(self,orden_columna="nombre_fiscal"):
         """
-        Retorna un QSqlQueryModel con todos los clientes para el QTableView.
+        Retorna un QSqlQueryModel con  los clientes para el QTableView.
         """
         from PySide6.QtSql import QSqlQueryModel
 
-        # 1. Creamos el modelo de tabla de Qt
+
+        """
+        Crea y devuelve un QSqlQueryModel listo para la tabla.
+        """
         model = QSqlQueryModel()
 
-        # 2. Definimos la query (puedes elegir qué columnas mostrar)
-        sql = """
-              SELECT id, nombre_fiscal, nombre_comercial, email, telefono1, poblacion
-              FROM clientes
-              ORDER BY nombre_fiscal DESC
-              """
+        # IMPORTANTE: En SQL, el ORDER BY no admite bindValue (:order).
+        # Debes insertar el nombre de la columna directamente en el string.
+        sql = f"SELECT id, nombre_fiscal, nombre_comercial, email, telefono1, poblacion FROM clientes ORDER BY {orden_columna} DESC"
 
-        # 3. Ejecutamos la consulta sobre la conexión de PostgreSQL
-        # self.db_model.db es el objeto QSqlDatabase que configuramos
+        # Ejecutamos la query directamente en el modelo
         model.setQuery(sql, self.db_model.db)
+
+        # Comprobamos si hubo error
         if model.lastError().isValid():
-            print(f"Error SQL: {model.lastError().text()}")
+            print(f"Error en SQL: {model.lastError().text()}")
+
+        # Asignamos cabeceras (esto sí lo hace el modelo)
+        titulos = ["ID", "Nombre Fiscal", "Nombre Comercial", "Email", "Teléfono", "Población"]
+        for i, titulo in enumerate(titulos):
+            model.setHeaderData(i, Qt.Horizontal, titulo)
+
 
         # 4. (Opcional) Cambiar los nombres de las cabeceras para que queden bien
         model.setHeaderData(0, Qt.Horizontal, "ID")
@@ -44,7 +51,7 @@ class ClienteModel:
 
         return model
 
-    from PySide6.QtSql import QSqlQuery
+
 
     def get_datos_cliente(self, id_cliente):
         """Obtiene los datos y nombres de columna de un cliente en una sola consulta."""
@@ -138,3 +145,16 @@ class ClienteModel:
             print(f"ERROR DATABASE: {e}")
             print("!" * 50)
             return False
+
+    def siguiente_cliente_id(self,id_cliente):
+        """Obtiene el siguiente ID disponible para un nuevo cliente."""
+        query = QSqlQuery(self.db_model.db)
+        idcliente = id_cliente + 1
+        query.prepare("SELECT * FROM clientes where id = :id_cliente")
+        query.bindValue(":id_cliente", idcliente)
+
+        if query.exec() and query.next():
+            return True
+        else:
+            print(f"Error al obtener la ficha del cliente: {query.lastError().text()}")
+            return 1

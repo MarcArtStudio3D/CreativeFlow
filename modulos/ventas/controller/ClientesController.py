@@ -61,6 +61,7 @@ class ClientesController:
         self.vista.btnGuardar.clicked.connect(self.guardar_datos)
         self.vista.btnDeshacer.clicked.connect(self.cargar_datos)
         self.vista.btnCerrar.clicked.connect(self.vista.close)
+        self.vista.btnSiguiente.clicked.connect(self.siguiente)
 
         #conecto señales de campos
         self.vista.cp.editingFinished.connect(self.buscar_poblacion_cp_handler)
@@ -95,53 +96,17 @@ class ClientesController:
         self.cargar_tabla_principal()
         self.vista.stackedWidget.setCurrentIndex(1)
 
-        # Conectamos el cambio de orden al actualizador del label de búsqueda
-        cabecera = self.vista.tabla_busquedas.horizontalHeader()
-        cabecera.sortIndicatorChanged.connect(self.actualizar_label_busqueda)
-
-        # Establecemos el texto inicial (por defecto columna 1: Nombre)
-        self.actualizar_label_busqueda(1)
 
     def cargar_tabla_principal(self):
         # Obtenemos el modelo de datos
-        """tabla_model = self.modelo.get_todos_clientes()
+        tabla_model = self.modelo.get_lista_clientes()
 
         # Lo inyectamos directamente al QTableView de la UI
-        # Asegúrate de que en el .ui el objeto se llama 'tabla_busquedas' o similar
+        # Asegúrate de que en el ui el objeto se llama 'tabla_busquedas'
         self.vista.tabla_busquedas.setModel(tabla_model)
-        self.vista.tabla_busquedas.setSortingEnabled(True)
 
         # Ajuste visual rápido: expandir columnas
         self.vista.tabla_busquedas.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        """
-        from PySide6.QtCore import QSortFilterProxyModel
-
-        self.modelo_original = self.modelo.get_todos_clientes()
-
-        # 2. Crear el Proxy de ordenación
-        self.proxy_model = ProxyBusquedaFlexible()
-        self.proxy_model.setSourceModel(self.modelo_original)
-
-        # 3. Configurar el comportamiento del proxy
-        # Esto hace que sea insensible a mayúsculas/minúsculas al ordenar
-        self.proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
-        self.proxy_model.setSortCaseSensitivity(Qt.CaseInsensitive)
-
-        # 4. Asignar el PROXY a la vista, no el modelo original
-        self.vista.tabla_busquedas.setModel(self.proxy_model)
-
-        # 5. Habilitar el clic en las cabeceras
-        self.vista.tabla_busquedas.setSortingEnabled(True)
-        # 1. Conectamos el cambio de cabecera a una nueva función
-        cabecera = self.vista.tabla_busquedas.horizontalHeader()
-        cabecera.sortIndicatorChanged.connect(self.actualizar_columna_filtro)
-
-        # 2. Inicializamos la columna de filtro con la que esté ordenada por defecto (ej: la 1)
-        self.columna_actual_filtro = 1
-        # 6. (Opcional) Ordenar por defecto por la columna "Nombre Fiscal" (índice 1)
-        self.vista.tabla_busquedas.sortByColumn(1, Qt.AscendingOrder)
-
-        self.vista.txtBuscar_cliente.textChanged.connect(self.filtrar_clientes)
 
         # Ajuste visual rápido: expandir columnas
         header = self.vista.tabla_busquedas.horizontalHeader()
@@ -163,11 +128,11 @@ class ClientesController:
         self.vista.tabla_busquedas.setColumnWidth(5, 200)  # Poblacion
 
 
-    def actualizar_label_busqueda(self, index_columna, orden=None):
-        """
+    """def actualizar_label_busqueda(self, index_columna, orden=None):
+        ""
         Actualiza el texto del label según la columna seleccionada.
         index_columna: int (proporcionado por la señal sortIndicatorChanged)
-        """
+        ""
         # Guardamos la columna para el filtro
         self.columna_actual_filtro = index_columna
 
@@ -183,24 +148,49 @@ class ClientesController:
 
         # Si hay texto, refrescamos el filtro inmediatamente
         self.filtrar_clientes(self.vista.txtBuscar_cliente.text())
+    """
 
     def preparar_edicion_cliente(self, index):
         """
-        Se activa al hacer doble clic. Recupera el ID real y cambia de pestaña.
+        Se activa al hacer doble clic.
+        Ahora que NO hay proxy, el 'index' es directo.
         """
-        # 1. TRUCO VITAL: Mapear el índice del Proxy al Modelo Original
-        # Sin esto, si la tabla está filtrada, editarías al cliente equivocado.
-        model_index = self.proxy_model.mapToSource(index)
+        try:
+            # 1. Accedemos directamente al modelo que tiene la tabla ahora mismo
+            # self.tabla_model es el QSqlQueryModel que asignamos en refrescar_tabla
+            model = self.vista.tabla_busquedas.model()
 
-        # 2. Obtener el ID del cliente (asumiendo que está en la columna 0)
-        id_cliente = self.modelo_original.data(self.modelo_original.index(model_index.row(), 0))
+            # 2. Obtenemos el ID (columna 0 de la fila donde se hizo doble clic)
+            id_cliente = model.data(model.index(index.row(), 0))
 
-        print(f"Editando cliente con ID: {id_cliente}")
+            if id_cliente is not None:
+                print(f"Editando cliente con ID: {id_cliente}")
 
-        # 3. Cargar los datos en los inputs (esta función la crearemos ahora)
+                # 3. Cargamos los datos y cambiamos de pestaña
+                self.cargar_datos(id_cliente)
+                self.vista.stackedWidget.setCurrentIndex(0)
+
+        except Exception as e:
+            print(f"Error al intentar editar: {e}")
+    def siguiente(self):
+        """
+        Cambia a la página de edición del cliente seleccionado.
+        """
+        # Obtenemos el índice seleccionado en la tabla
+        seleccion = self.vista.tabla_busquedas.currentIndex()
+
+        # Mapear el índice del Proxy al Modelo Original
+        model_index = self.proxy_model.mapToSource(seleccion)
+
+        # Obtener el ID del cliente (asumiendo que está en la columna 0)
+        id_cliente = self.modelo_original.data(self.modelo_original.index(model_index.row(), 0)) + 1
+
+        print(f"Siguiente: Editando cliente con ID: {id_cliente}")
+
+        # Cargar los datos en los inputs
         self.cargar_datos(id_cliente)
 
-        # 4. Cambiar a la página de edición (Página 0)
+        # Cambiar a la página de edición (Página 0)
         self.vista.stackedWidget.setCurrentIndex(0)
 
     def cargar_datos(self, id_cliente=None):
