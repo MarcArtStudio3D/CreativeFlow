@@ -61,7 +61,8 @@ class ClientesController:
         self.vista.btnGuardar.clicked.connect(self.guardar_datos)
         self.vista.btnDeshacer.clicked.connect(self.cargar_datos)
         self.vista.btnCerrar.clicked.connect(self.vista.close)
-        self.vista.btnSiguiente.clicked.connect(self.siguiente)
+        self.vista.btnSiguiente.clicked.connect(self.siguiente_nombre)
+        self.vista.btnBuscar.clicked.connect(self.mostrar_busqueda)
 
         #conecto señales de campos
         self.vista.cp.editingFinished.connect(self.buscar_poblacion_cp_handler)
@@ -127,28 +128,9 @@ class ClientesController:
         self.vista.tabla_busquedas.setColumnWidth(4, 200)  # teléfono
         self.vista.tabla_busquedas.setColumnWidth(5, 200)  # Poblacion
 
-
-    """def actualizar_label_busqueda(self, index_columna, orden=None):
-        ""
-        Actualiza el texto del label según la columna seleccionada.
-        index_columna: int (proporcionado por la señal sortIndicatorChanged)
-        ""
-        # Guardamos la columna para el filtro
-        self.columna_actual_filtro = index_columna
-
-        # Obtenemos el título de la columna directamente del modelo
-        # Usamos el modelo original porque el proxy hereda sus cabeceras
-        titulo_columna = self.modelo_original.headerData(index_columna, Qt.Horizontal)
-
-        # Actualizamos el label en la interfaz
-        self.vista.lbl_buscar_criterio.setText(f"Buscar por {titulo_columna}:")
-
-        # (Opcional) Cambiamos el color para que resalte que el criterio cambió
-        self.vista.lbl_buscar_criterio.setStyleSheet(f"color: {COLOR_NARANJA}; font-weight: bold;")
-
-        # Si hay texto, refrescamos el filtro inmediatamente
-        self.filtrar_clientes(self.vista.txtBuscar_cliente.text())
-    """
+    def mostrar_busqueda(self):
+        self.vista.stackedWidget.setCurrentIndex(1)
+        self.vista.txtBuscar_cliente.setFocus()
 
     def preparar_edicion_cliente(self, index):
         """
@@ -172,26 +154,14 @@ class ClientesController:
 
         except Exception as e:
             print(f"Error al intentar editar: {e}")
-    def siguiente(self):
-        """
-        Cambia a la página de edición del cliente seleccionado.
-        """
-        # Obtenemos el índice seleccionado en la tabla
-        seleccion = self.vista.tabla_busquedas.currentIndex()
 
-        # Mapear el índice del Proxy al Modelo Original
-        model_index = self.proxy_model.mapToSource(seleccion)
-
-        # Obtener el ID del cliente (asumiendo que está en la columna 0)
-        id_cliente = self.modelo_original.data(self.modelo_original.index(model_index.row(), 0)) + 1
-
-        print(f"Siguiente: Editando cliente con ID: {id_cliente}")
-
+    def siguiente_nombre(self):
+        nombre_fiscal = self.vista.nombre_fiscal.text().strip()
+        modelo = self.modelo.buscar_cliente_por_nombre_fiscal(nombre_fiscal,True)
         # Cargar los datos en los inputs
-        self.cargar_datos(id_cliente)
+        self.cargar_datos(id_cliente=modelo[0][0])
 
         # Cambiar a la página de edición (Página 0)
-        self.vista.stackedWidget.setCurrentIndex(0)
 
     def cargar_datos(self, id_cliente=None):
         # 1. Obtenemos los datos del modelo (el ID viene del __init__)
