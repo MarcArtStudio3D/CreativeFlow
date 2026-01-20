@@ -62,6 +62,7 @@ class ClientesController:
         self.vista.btnDeshacer.clicked.connect(self.cargar_datos)
         self.vista.btnCerrar.clicked.connect(self.vista.close)
         self.vista.btnSiguiente.clicked.connect(self.siguiente_nombre)
+        self.vista.btnAnterior.clicked.connect(self.anterior_nombre)
         self.vista.btnBuscar.clicked.connect(self.mostrar_busqueda)
 
         #conecto señales de campos
@@ -156,12 +157,31 @@ class ClientesController:
             print(f"Error al intentar editar: {e}")
 
     def siguiente_nombre(self):
+        # 1. Recuperamos el registro (tupla con fila y columnas)
         nombre_fiscal = self.vista.nombre_fiscal.text().strip()
-        modelo = self.modelo.buscar_cliente_por_nombre_fiscal(nombre_fiscal,True)
-        # Cargar los datos en los inputs
-        self.cargar_datos(id_cliente=modelo[0][0])
+        fila, columnas = self.modelo.buscar_cliente_por_nombre_fiscal(nombre_fiscal, 1)
 
-        # Cambiar a la página de edición (Página 0)
+        # 2. Verificamos que no sea None y que tenga datos
+        if fila and len(fila) > 0:
+            # Extraemos el ID (posición 0 de la fila)
+            id_a_cargar = fila[0]
+
+            # 3. Llamamos a cargar_datos enviando solo el ID
+            self.cargar_datos(id_cliente=id_a_cargar)
+
+    def anterior_nombre(self):
+        nombre_fiscal = self.vista.nombre_fiscal.text().strip()
+        # 1. Recuperamos el registro (tupla con fila y columnas)
+        fila, columnas = self.modelo.buscar_cliente_por_nombre_fiscal(nombre_fiscal, 2)
+
+        # 2. Verificamos que no sea None y que tenga datos
+        if fila and len(fila) > 0:
+            # Extraemos el ID (posición 0 de la fila)
+            id_a_cargar = fila[0]
+
+            # 3. Llamamos a cargar_datos enviando solo el ID
+            self.cargar_datos(id_cliente=id_a_cargar)
+
 
     def cargar_datos(self, id_cliente=None):
         # 1. Obtenemos los datos del modelo (el ID viene del __init__)

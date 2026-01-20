@@ -80,16 +80,19 @@ class ClienteModel:
             print(f"Error al recuperar cliente ID {id_cliente}: {error_msg}")
             return None, []
 
-    def buscar_cliente_por_nombre_fiscal(self, nombre,next=False):
+    def buscar_cliente_por_nombre_fiscal(self, nombre,direccion=0):
         """Busca un cliente por su nombre"""
         if not self.db_model:
             return None, []
 
         query = QSqlQuery(self.db_model.db)
-        if not next:
+        if direccion==0:
             query.prepare("SELECT * FROM clientes WHERE nombre_fiscal = ?")
-        else:
+        elif direccion==1: # siguiente
             query.prepare("SELECT * FROM clientes WHERE nombre_fiscal > ?  ORDER BY nombre_fiscal LIMIT 1")
+        elif direccion==2: #
+            query.prepare("SELECT * FROM clientes WHERE nombre_fiscal < ?  ORDER BY nombre_fiscal DESC LIMIT 1")
+
         query.addBindValue(nombre)
 
         if query.exec() and query.next():
