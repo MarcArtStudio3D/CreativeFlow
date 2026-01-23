@@ -87,65 +87,57 @@ class ValidadorFiscal:
 
         return letras[indice] == letra_control
 
-
     def validar_cif(self, cif):
-        """
-        Valida el CIF de empresas españolas.
-        """
-        cif = str(cif).upper().replace(" ", "").replace("-", "").strip()
+        if not cif: return False
+        cif = str(cif).upper().strip().replace("-", "").replace(" ", "")
 
-        if len(cif) != 9:
-            return False
+        if len(cif) != 9: return False
 
-        # El primer carácter debe ser una letra de organización
-        letras_tipo = "ABCDEFGHJNPQRSUVW"
-        if cif[0] not in letras_tipo:
-            return False
-
-        # Algoritmo de validación
         try:
             letra_inicial = cif[0]
             cuerpo = cif[1:8]
-            control = cif[8]
+            control_proporcionado = cif[8]
 
             suma_pares = 0
             suma_impares = 0
 
-            for i, digito in enumerate(cuerpo):
-                n = int(digito)
+            for i in range(len(cuerpo)):
+                n = int(cuerpo[i])
                 if (i + 1) % 2 == 0:
-                    # Posiciones pares: se suman tal cual
+                    # Posiciones pares (2, 4, 6): se suman tal cual
                     suma_pares += n
                 else:
-                    # Posiciones impares: se multiplican por 2 y se suman sus dígitos
-                    n *= 2
-                    suma_impares += (n // 10) + (n % 10)
+                    # Posiciones impares (1, 3, 5, 7): se multiplican por 2
+                    doble = n * 2
+                    # Se suman los dígitos del resultado (ej: 14 -> 1+4=5)
+                    suma_impares += (doble // 10) + (doble % 10)
 
             suma_total = suma_pares + suma_impares
-            digito_unidad = suma_total % 10
+            # El dígito de control es la decena superior menos la unidad
+            unidad_total = suma_total % 10
+            resultado_control_num = (10 - unidad_total) % 10
 
-            # El dígito de control es 10 menos la unidad (si es 10, es 0)
-            resultado_control = (10 - digito_unidad) % 10
+            letras_control = "JABCDEFGHI"
+            resultado_control_letra = letras_control[resultado_control_num]
 
-            letras_control = "JABCDEFGHI"  # J=0, A=1, B=2...
+            # Lógica de validación según el tipo de entidad
+            if letra_inicial in "ABEH":  # Solo número
+                return control_proporcionado == str(resultado_control_num)
 
-            # Casos especiales: ¿El control debe ser letra, número o ambos?
-            # Letra obligatoria: P, Q, R, S, W
-            if letra_inicial in "PQRSW":
-                return control == letras_control[resultado_control]
+            elif letra_inicial in "PQRSWNJ":  # Solo letra
+                return control_proporcionado == resultado_control_letra
 
-            # Número obligatorio: A, B, E, H
-            elif letra_inicial in "ABEH":
-                return control == str(resultado_control)
+            else:  # Otros (C, D, F, G, V...): letra o número
+                return (control_proporcionado == str(resultado_control_num) or
+                        control_proporcionado == resultado_control_letra)
 
-            # El resto (C, D, F, G, J, N, U, V): Puede ser letra o número
-            else:
-                return control == str(resultado_control) or control == letras_control[resultado_control]
-
-        except (ValueError, IndexError):
+        except Exception as e:
+            print(f"Error interno validando CIF: {e}")
             return False
 
-
+    """------------------------------------------------
+    Validación  para España decide si es DNI, NIE o CIF
+    ------------------------------------------------"""
     def validar_identidad_espana(self,documento):
         """
         Decide si validar como DNI o CIF basándose en la estructura del texto.
@@ -162,7 +154,8 @@ class ValidadorFiscal:
                 return self.validar_dni_nie(doc)
             else:
                 # El resto de letras iniciales son para Empresas (CIF)
-                return self.validar_cif(doc)
+                ok =self.validar_cif(doc)
+                return ok
 
         # CASO 2: Empieza por número
         elif doc[0].isdigit():

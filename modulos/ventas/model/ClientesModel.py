@@ -1,4 +1,6 @@
-from PySide6.QtCore import Qt
+import re
+
+from PySide6.QtCore import Qt, QDate, QDateTime
 from PySide6.QtSql import QSqlQuery
 
 
@@ -12,10 +14,29 @@ class ClienteModel:
         """
         self.db_model = db_model
 
-    def get_lista_clientes(self,orden_columna="nombre_fiscal"):
+    def get_lista_clientes(self,orden_columna="nombre_fiscal", filtro=""):
         """
         Retorna un QSqlQueryModel con  los clientes para el QTableView.
         """
+        mapa_columnas = {
+            # Español
+            "Nombre Fiscal": "nombre_fiscal",
+            "Nombre Comercial": "nombre_comercial",
+            "NIF": "nif",
+            "Población": "poblacion",
+            "Email": "email",
+            "Teléfono": "telefono1",
+
+            # Francés (si tu app lo requiere)
+            "Nom Fiscal": "nombre_fiscal",
+            "Nom Commercial": "nombre_comercial",
+            "Ville": "poblacion",
+            "E-mail": "email",
+            "Téléphone": "telefono1"
+        }
+
+        # El 'OTHERWISE' de FoxPro es el segundo argumento de .get()
+        columna_db = mapa_columnas.get(orden_columna, "nombre_fiscal")
         from PySide6.QtSql import QSqlQueryModel
 
 
@@ -26,7 +47,7 @@ class ClienteModel:
 
         # IMPORTANTE: En SQL, el ORDER BY no admite bindValue (:order).
         # Debes insertar el nombre de la columna directamente en el string.
-        sql = f"SELECT id, nombre_fiscal, nombre_comercial, email, telefono1, poblacion FROM clientes ORDER BY {orden_columna}  LIMIT 100"
+        sql = f"SELECT id, nombre_fiscal, nombre_comercial, email, telefono1, poblacion FROM clientes where unaccent({columna_db}) ilike unaccent('%{filtro}%')  ORDER BY {columna_db}  LIMIT 100"
 
         # Ejecutamos la query directamente en el modelo
         model.setQuery(sql, self.db_model.db)
@@ -103,47 +124,68 @@ class ClienteModel:
         else:
             return None, []
 
+    """---------------------------------------------------------------------
+    Actualiza los datos de un cliente en la base de datos de forma dinámica.
+    ---------------------------------------------------------------------"""
+
     def actualizar_cliente(self, id_cliente, datos):
-        """
-        Actualiza los registros de forma dinámica.
-        'datos' es el diccionario que viene del controlador.
-        """
         if not datos:
             return False
 
         try:
-            # Construimos la parte "CAMPO = ?" del SQL
-            campos = ", ".join([f"{col} = ?" for col in datos.keys()])
-            valores = list(datos.values())
+            datos_limpios = {}
+            for col, valor in datos.items():
+                if col.lower() == 'id':
+                    continue
 
-            # Crear la query
-            query = QSqlQuery(self.db_model.db)
+                val_str = str(valor)
+
+                # 1. SI ES UN OBJETO QDATE TEXTUALIZADO (PySide6.QtCore.QDate(2025, 3, 25))
+                if "QDate" in val_str:
+                    # Buscamos solo los números dentro de los paréntesis
+                    # El patrón r'\((\d+),\s*(\d+),\s*(\d+)\)' busca (año, mes, día)
+                    match = re.search(r'\((\d+),\s*(\d+),\s*(\d+)\)', val_str)
+
+                    if match:
+                        anio, mes, dia = match.groups()
+                        if anio != "0":  # Evitar QDate(0, 0, 0)
+                            # Formateamos con ceros a la izquierda (YYYY-MM-DD)
+                            datos_limpios[col] = f"{anio}-{mes.zfill(2)}-{dia.zfill(2)}"
+                        else:
+                            datos_limpios[col] = None
+                    else:
+                        datos_limpios[col] = None
+
+                # 2. MANEJO DE VACÍOS
+                elif valor == "" or valor is None or val_str == "None":
+                    datos_limpios[col] = None
+
+                # 3. RESTO DE DATOS
+                else:
+                    datos_limpios[col] = valor
+
+            # --- DEBUG FINAL ---
+            print(f"VALORES LIMPIOS: {datos_limpios['fecha_alta']}")  # Debería imprimir: 2025-03-25
+            # Construcción de la query
+            campos = ", ".join([f"{col} = ?" for col in datos_limpios.keys()])
+            valores = list(datos_limpios.values())
+
             sql = f"UPDATE clientes SET {campos} WHERE id = ?"
-
-            # --- BLOQUE DE DEBUG ---
-            print("-" * 50)
-            print(f"SQL QUERY: {sql}")
-            print(f"VALORES: {valores + [id_cliente]}")
-            print(f"Nº CAMPOS: {len(datos.keys())} | Nº VALORES: {len(valores)} + ID")
-            # -----------------------
-
+            query = QSqlQuery(self.db_model.db)
             query.prepare(sql)
 
-            # Agregar valores
-            for valor in valores:
-                query.addBindValue(valor)
-            query.addBindValue(id_cliente)
+            # Agregamos los valores convertidos
+            for v in valores:
+                query.addBindValue(v)
+
+            # El ID del WHERE siempre como entero
+            query.addBindValue(int(id_cliente))
 
             if query.exec():
                 return True
             else:
-                print(f"Error al guardar cliente: {query.lastError().text()}")
+                print(f"Error SQL: {query.lastError().text()}")
                 return False
-
-        except Exception as e:
-            print(f"Excepción al actualizar cliente: {e}")
-            return False
-
 
         except Exception as e:
             # ESTO ES LO QUE TE DIRÁ QUÉ CAMPO FALLA
@@ -152,6 +194,9 @@ class ClienteModel:
             print("!" * 50)
             return False
 
+    """-------------------------------------------------------
+     Obtiene el siguiente cliente ordenado por ID.
+     -------------------------------------------------------"""
     def siguiente_cliente_id(self,id_cliente):
         """Obtiene el siguiente ID disponible para un nuevo cliente."""
         query = QSqlQuery(self.db_model.db)
@@ -164,3 +209,31 @@ class ClienteModel:
         else:
             print(f"Error al obtener la ficha del cliente: {query.lastError().text()}")
             return 1
+
+    """---------------------------
+    CARGA DE DATOS AUXILIARES
+    ---------------------------"""
+
+    def obtener_datos_tabla_auxiliar(self, tabla, campo_nombre):
+        """
+        Recupera ID y un campo específico de cualquier tabla.
+        """
+        resultados = []
+        # Usamos los nombres que vienen de la lista 'configuracion'
+        sql = f"SELECT id, {campo_nombre} FROM {tabla} ORDER BY {campo_nombre} ASC"
+
+        query = QSqlQuery(self.db_model.db)  # Forzamos conexión Postgres
+
+        if not query.exec(sql):
+            # Si falla, esto te dirá EXACTAMENTE por qué
+            print(f"--- ERROR EN TABLA: {tabla} ---")
+            print(f"SQL: {sql}")
+            print(f"MOTIVO: {query.lastError().text()}")
+            return []
+
+        while query.next():
+            # query.value(0) es el 'id'
+            # query.value(1) es el 'campo_nombre' (nombre_divisa, idioma, etc.)
+            resultados.append((query.value(0), query.value(1)))
+
+        return resultados
