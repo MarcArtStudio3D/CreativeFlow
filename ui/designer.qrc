@@ -17,6 +17,7 @@
     <file>../images/modules/sinnombre.png</file>
   </qresource>
   <qresource prefix="icons">
+    <file>../images/find.png</file>
     <file>../images/chevron-down-dark.svg</file>
     <file>../images/chevron-down.svg</file>
     <file>../images/chevron-up.svg</file>

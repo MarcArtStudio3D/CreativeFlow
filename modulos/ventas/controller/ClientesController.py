@@ -34,8 +34,9 @@ class ClientesController:
         self.vista.btnBuscar.clicked.connect(self.mostrar_busqueda)
         self.vista.btnEditar.clicked.connect(self.editar_cliente)
         self.vista.btnGuardar.clicked.connect(self.guardar_datos)
-        self.vista.btnDeshacer.clicked.connect(self.cargar_datos)
+        self.vista.btnDeshacer.clicked.connect(self.deshacer_cambios)
         self.vista.btnCerrar.clicked.connect(self.vista.close)
+        self.vista.btnBorrar.clicked.connect(self.borrar_cliente)
 
         #conecto señales de campos
         self.vista.cp.editingFinished.connect(self.buscar_poblacion_cp_handler)
@@ -52,7 +53,7 @@ class ClientesController:
         #self.vista.pais.setReadOnly(True)
         self.vista.id_pais.setVisible(False)
 
-        #campos que dependen del pais seleccionado
+        """ #campos que dependen del pais seleccionado
         if (self.session_data.get("pais", "") == "España"):
             self.vista.provincia_region.setVisible(True)
             self.vista.lblProvincia.setVisible(True)
@@ -60,6 +61,8 @@ class ClientesController:
             self.vista.label_siret.setVisible(False)
             self.vista.siret.setVisible(False)
             self.vista.irpf.setVisible(True)
+            self.vista.lblSegundoApellido.setVisible(True)
+            self.vista.apellido2.setVisible(True)
 
 
         else:
@@ -69,7 +72,9 @@ class ClientesController:
             self.vista.label_siret.setVisible(True)
             self.vista.siret.setVisible(True)
             self.vista.irpf.setVisible(False)
-
+            self.vista.lblSegundoApellido.setVisible(False)
+            self.vista.apellido2.setVisible(False)
+        """
         self.cargar_tabla_principal()
         self.vista.stackedWidget.setCurrentIndex(1)
 
@@ -131,7 +136,34 @@ class ClientesController:
         self.vista.txtBuscar_cliente.setFocus()
 
     """------------------------------------
-    CARGAMOS DATOS AUXILIARES EN COMBOS
+    ACTIVAMOS CAMPOS SEGUN PAIS DE  LA EMPRESA
+    ------------------------------------"""
+    def activar_campos_segun_pais(self):
+        # campos que dependen del pais seleccionado
+        if (self.vista.pais.text() == "España"):
+            self.vista.provincia_region.setVisible(True)
+            self.vista.lblProvincia.setVisible(True)
+            self.vista.label_cif_siren.setText("CIF:")
+            self.vista.label_siret.setVisible(False)
+            self.vista.siret.setVisible(False)
+            self.vista.irpf.setVisible(True)
+            self.vista.recargo_equivalencia.setVisible(True)
+            self.vista.lblSegundoApellido.setVisible(True)
+            self.vista.apellido2.setVisible(True)
+
+        else:
+            self.vista.provincia_region.setVisible(False)
+            self.vista.lblProvincia.setVisible(False)
+            self.vista.label_cif_siren.setText("SIREN:")
+            self.vista.label_siret.setVisible(True)
+            self.vista.siret.setVisible(True)
+            self.vista.irpf.setVisible(False)
+            self.vista.recargo_equivalencia.setVisible(False)
+            self.vista.lblSegundoApellido.setVisible(False)
+            self.vista.apellido2.setVisible(False)
+
+    """------------------------------------
+        CARGAMOS DATOS AUXILIARES EN COMBOS
     ------------------------------------"""
     def cargar_datos_auxiliares(self):
         """Carga todos los combos de la ficha de una sola vez."""
@@ -142,8 +174,6 @@ class ClientesController:
             (self.vista.id_idioma_documentos, "idiomas","idioma"),
             (self.vista.id_tarifa, "tarifas", "nombre_tarifa"),
             (self.vista.id_forma_pago, "formpago","forma_pago"),
-            (self.vista.id_agente, "agentes","nombre"),
-            (self.vista.id_transportista, "transportista","transportista"),
             (self.vista.grupo_iva, "tiposiva","nombre_interno")
         ]
 
@@ -182,6 +212,7 @@ class ClientesController:
                 # 3. Cargamos los datos y cambiamos de pestaña
                 self.cargar_datos(id_cliente)
                 self.cargar_datos_auxiliares()
+                self.activar_campos_segun_pais()
                 self.vista.stackedWidget.setCurrentIndex(0)
 
         except Exception as e:
@@ -202,6 +233,7 @@ class ClientesController:
 
             # 3. Llamamos a cargar_datos enviando solo el ID
             self.cargar_datos(id_cliente=id_a_cargar)
+            self.activar_campos_segun_pais()
 
     """----------------------------------------------
         VAMOS AL CLIENTE ANTERIOR SEGÚN NOMBRE FISCAL
@@ -218,6 +250,7 @@ class ClientesController:
 
             # 3. Llamamos a cargar_datos enviando solo el ID
             self.cargar_datos(id_cliente=id_a_cargar)
+            self.activar_campos_segun_pais()
 
     """-----------------------------------------
     CARGAMOS LOS DATOS DE UN CLIENTE EN PANTALLA
@@ -225,6 +258,8 @@ class ClientesController:
     def cargar_datos(self, id_cliente=None):
         # 1. Obtenemos los datos del modelo (el ID viene del __init__)
         # El modelo debe devolver: (la_fila_de_datos, lista_nombres_columnas)
+        if id_cliente is None:
+            id_cliente = int(self.vista.id.text())
         fila, columnas = self.modelo.get_datos_cliente(id_cliente)
 
         if not fila:
@@ -255,6 +290,21 @@ class ClientesController:
         result = self.modelo.get_lista_clientes(self.vista.cboBuscarPor.currentText, texto)
         self.vista.tabla_busquedas.setModel(result)
 
+    """------------------------------------
+    NUEVO CLIENTE
+    ------------------------------------"""
+    def nuevo_cliente(self):
+        # Limpiamos el formulario usando MapeoCampos
+        MapeoCampos.limpiar_formulario(self.vista, self.modelo.columnas_clientes)
+
+        # Cargamos datos auxiliares en combos
+        self.cargar_datos_auxiliares()
+
+        # Ponemos el foco en el primer campo editable
+        self.vista.pais.setFocus()
+
+        # Pasamos a modo edición directamente
+        self.editar_cliente()
 
     """------------------------------------
     GUARDAMOS LOS DATOS DEL CLIENTE EDITADO
@@ -303,7 +353,44 @@ class ClientesController:
             aplicar_estilo_messagebox(msg_box, "critical")
             msg_box.exec()
 
+    """------------------------------------
+    DESHACEMOS LOS CAMBIOS REALIZADOS
+    ------------------------------------"""
+    def deshacer_cambios(self):
+        id_cliente = int(self.vista.id.text())
+        self.cargar_datos(id_cliente)
+        self.modo_no_edicion()
 
+    """------------------------------------
+    BORRAMOS EL CLIENTE  
+    ------------------------------------"""
+    def borrar_cliente(self):
+        if QMessageBox.question(
+            self.vista,
+            "Confirmar borrado",
+            "¿Está seguro de que desea borrar este cliente?",
+            QMessageBox.Yes | QMessageBox.No
+        ) == QMessageBox.Yes:
+            id_cliente = int(self.vista.id.text())
+            if QMessageBox.warning(self.vista,"Confirmar borrado de cliente",
+                                    "¡Esta acción es irreversible!. ¿Desea continuar?",
+                                    QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes:
+                if self.modelo.borrar_cliente(id_cliente):
+                    QMessageBox.information(
+                        self.vista,
+                        "Cliente borrado",
+                        "El cliente ha sido borrado correctamente."
+                    )
+                    self.anterior_nombre()
+
+                else:
+                    QMessageBox.critical(
+                        self.vista,
+                        "Error al borrar",
+                        "No se pudo borrar el cliente."
+                    )
+            else:
+                QMessageBox.information(self.vista,"Borrado cancelado", "Operación anulada.")
 
     """------------------------------------
             PASAMOS A MODO EDICIÓN

@@ -149,3 +149,38 @@ class MapeoCampos:
                     if nombre.startswith("txt_"):
                         faltantes.append(nombre)
         return len(faltantes) == 0, faltantes
+
+
+    """----------------------------------------------------------------------------
+    Limpia los campos del formulario basándose en columnas DB para un nuevo cliente
+    ----------------------------------------------------------------------------"""
+    @staticmethod
+    def limpiar_formulario(vista, columnas_db):
+        """Pone todos los widgets vinculados a las columnas en blanco o a 0."""
+        for col in columnas_db:
+            # Buscamos el widget igual que en la captura
+            widget = getattr(vista, col, None)
+            if not widget and hasattr(vista, 'ui'):
+                widget = getattr(vista.ui, col, None)
+
+            if not widget: continue
+
+            # Reset por tipo de widget
+            if isinstance(widget, (QLineEdit, QTextEdit)):
+                widget.clear()
+                # Si tiene máscara (como la fecha), al hacer clear() se queda el "  /  /  "
+                # pero el cursor vuelve al inicio.
+
+            elif isinstance(widget, (QSpinBox, QDoubleSpinBox)):
+                widget.setValue(0)
+
+            elif isinstance(widget, QCheckBox):
+                widget.setChecked(False)
+
+            elif isinstance(widget, QComboBox):
+                # Volver al "--- Seleccione ---" (índice 0)
+                widget.setCurrentIndex(0)
+
+            elif hasattr(widget, 'setDate'):
+                # Para QDateEdit, ponemos la fecha de hoy
+                widget.setDate(QDate.currentDate())
