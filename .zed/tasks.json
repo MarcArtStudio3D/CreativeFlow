@@ -1,0 +1,51 @@
+[
+  {
+    "label": "▶️ Run Creative Flow",
+    "command": "${workspaceFolder}/.venv/bin/python",
+    "args": ["main.py"],
+    "cwd": "${workspaceFolder}",
+    "env": {
+      "QT_LOGGING_RULES": "qt.sql.qsqldatabase.warning=false",
+      "PYTHONPATH": "${workspaceFolder}",
+      "QT_QPA_PLATFORM": "xcb",
+    },
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+  },
+  {
+    "label": "🐛 Debug Creative Flow",
+    "command": "${workspaceFolder}/.venv/bin/python",
+    "args": [
+      "-m",
+      "debugpy",
+      "--listen",
+      "5678",
+      "--wait-for-client",
+      "main.py",
+    ],
+    "cwd": "${workspaceFolder}",
+    "env": {
+      "QT_LOGGING_RULES": "qt.sql.qsqldatabase.warning=false",
+      "PYTHONPATH": "${workspaceFolder}",
+      "QT_QPA_PLATFORM": "xcb",
+    },
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+  },
+  {
+    "label": "🧪 Test Debug Config",
+    "command": "${workspaceFolder}/.venv/bin/python",
+    "args": [".zed/test_debug.py"],
+    "cwd": "${workspaceFolder}",
+    "env": {
+      "QT_LOGGING_RULES": "qt.sql.qsqldatabase.warning=false",
+      "PYTHONPATH": "${workspaceFolder}",
+      "QT_QPA_PLATFORM": "xcb",
+    },
+    "use_new_terminal": true,
+    "allow_concurrent_runs": false,
+    "reveal": "always",
+  },
+]

@@ -1,0 +1,33 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "🚀 Debug Creative Flow",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "console": "integratedTerminal",
+      "python": "${workspaceFolder}/.venv/bin/python",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "QT_LOGGING_RULES": "qt.sql.qsqldatabase.warning=false",
+        "PYTHONPATH": "${workspaceFolder}",
+        "QT_QPA_PLATFORM": "xcb"
+      }
+    },
+    {
+      "name": "🧪 Debug Test",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/.zed/test_debug.py",
+      "console": "integratedTerminal",
+      "python": "${workspaceFolder}/.venv/bin/python",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "QT_LOGGING_RULES": "qt.sql.qsqldatabase.warning=false",
+        "PYTHONPATH": "${workspaceFolder}",
+        "QT_QPA_PLATFORM": "xcb"
+      }
+    }
+  ]
+}

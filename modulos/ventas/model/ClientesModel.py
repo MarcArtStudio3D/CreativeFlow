@@ -1,19 +1,27 @@
 import re
+from ast import Return
 
-from PySide6.QtCore import Qt, QDate, QDateTime
-from PySide6.QtSql import QSqlQuery
+from PySide6.QtCore import QDate, QDateTime, Qt
+from PySide6.QtSql import QSqlDatabase, QSqlQuery
+from PySide6.QtWidgets import QMessageBox
+
+from modulos.comun.view.DBConsultaView import DBConsultaView
 
 
 class ClienteModel:
-    def __init__(self, db_model):
+    def __init__(self, db_maestros, db_empresa):
         """
         Modelo para gestionar datos de cliente desde la base de datos.
 
         Args:
-            db_model: Instancia de DataModel para acceder a la base de datos
+            db_maestros: Instancia de DataManager para acceder a la base de datos maestros (paises, poblaciones)
+            db_empresa: Instancia de DataManager para acceder a la base de datos de la empresa
         """
-        self.db_model = db_model
-
+        self.db_empresa = db_empresa
+        self.db_maestros = db_maestros
+    """-----------------------------------------------------
+    Obtiene la lista de clientes para el QTableView.
+    -----------------------------------------------------"""
     def get_lista_clientes(self,orden_columna="nombre_fiscal", filtro=""):
         """
         Retorna un QSqlQueryModel con  los clientes para el QTableView.
@@ -50,7 +58,7 @@ class ClienteModel:
         sql = f"SELECT id, nombre_fiscal, nombre_comercial, email, telefono1, poblacion FROM clientes where unaccent({columna_db}) ilike unaccent('%{filtro}%')  ORDER BY {columna_db}  LIMIT 100"
 
         # Ejecutamos la query directamente en el modelo
-        model.setQuery(sql, self.db_model.db)
+        model.setQuery(sql, self.db_empresa.db)
 
         # Comprobamos si hubo error
         if model.lastError().isValid():
@@ -72,16 +80,17 @@ class ClienteModel:
 
         return model
 
-
-
+    """-----------------------------------------------------
+    Obtiene los datos de un cliente y los nombres de columna.
+    -----------------------------------------------------"""
     def get_datos_cliente(self, id_cliente):
         """Obtiene los datos y nombres de columna de un cliente en una sola consulta."""
-        if not self.db_model or not self.db_model.db.isOpen():
+        if not self.db_empresa or not self.db_empresa.db.isOpen():
             print("Error: La base de datos no está abierta.")
             return None, []
 
         # 1. Preparamos la query directamente sobre la conexión existente
-        query = QSqlQuery(self.db_model.db)
+        query = QSqlQuery(self.db_empresa.db)
         query.prepare("SELECT * FROM clientes WHERE id = :id")
         query.bindValue(":id", id_cliente)
 
@@ -101,12 +110,15 @@ class ClienteModel:
             print(f"Error al recuperar cliente ID {id_cliente}: {error_msg}")
             return None, []
 
+    """--------------------------------------
+    Busca un cliente por su nombre fiscal.
+    --------------------------------------"""
     def buscar_cliente_por_nombre_fiscal(self, nombre,direccion=0):
         """Busca un cliente por su nombre"""
-        if not self.db_model:
+        if not self.db_empresa:
             return None, []
 
-        query = QSqlQuery(self.db_model.db)
+        query = QSqlQuery(self.db_empresa.db)
         if direccion==0:
             query.prepare("SELECT * FROM clientes WHERE nombre_fiscal = ?")
         elif direccion==1: # siguiente
@@ -127,7 +139,6 @@ class ClienteModel:
     """---------------------------------------------------------------------
     Actualiza los datos de un cliente en la base de datos de forma dinámica.
     ---------------------------------------------------------------------"""
-
     def actualizar_cliente(self, id_cliente, datos):
         if not datos:
             return False
@@ -171,7 +182,7 @@ class ClienteModel:
             valores = list(datos_limpios.values())
 
             sql = f"UPDATE clientes SET {campos} WHERE id = ?"
-            query = QSqlQuery(self.db_model.db)
+            query = QSqlQuery(self.db_empresa.db)
             query.prepare(sql)
 
             # Agregamos los valores convertidos
@@ -199,7 +210,7 @@ class ClienteModel:
      -------------------------------------------------------"""
     def siguiente_cliente_id(self,id_cliente):
         """Obtiene el siguiente ID disponible para un nuevo cliente."""
-        query = QSqlQuery(self.db_model.db)
+        query = QSqlQuery(self.db_empresa.db)
         idcliente = id_cliente + 1
         query.prepare("SELECT * FROM clientes where id = :id_cliente")
         query.bindValue(":id_cliente", idcliente)
@@ -214,26 +225,80 @@ class ClienteModel:
     CARGA DE DATOS AUXILIARES
     ---------------------------"""
 
-    def obtener_datos_tabla_auxiliar(self, tabla, campo_nombre):
+    def obtener_datos_tabla_auxiliar(self, tabla, campos="*", orden=None, db_key="default"):
         """
-        Recupera ID y un campo específico de cualquier tabla.
+        Obtiene datos de una tabla auxiliar.
+        Para paises y poblaciones usa db_maestros, para el resto db_empresa.
         """
-        resultados = []
-        # Usamos los nombres que vienen de la lista 'configuracion'
-        sql = f"SELECT id, {campo_nombre} FROM {tabla} ORDER BY {campo_nombre} ASC"
-
-        query = QSqlQuery(self.db_model.db)  # Forzamos conexión Postgres
-
-        if not query.exec(sql):
-            # Si falla, esto te dirá EXACTAMENTE por qué
-            print(f"--- ERROR EN TABLA: {tabla} ---")
-            print(f"SQL: {sql}")
-            print(f"MOTIVO: {query.lastError().text()}")
+        # Determinar qué base de datos usar según la tabla
+        if tabla.lower() in ["paises", "poblaciones"]:
+            db_conexion = self.db_maestros.db
+        else:
+            db_conexion = self.db_empresa.db
+        
+        if not db_conexion or not db_conexion.isOpen():
+            print(f"❌ Error: La conexión no está abierta para la tabla '{tabla}'.")
             return []
 
+        string_campos = ", ".join(campos) if isinstance(campos, list) else campos
+        sql = f"SELECT {string_campos} FROM {tabla}"
+
+        campo_orden = orden if orden else (campos[0] if isinstance(campos, list) and campos[0] != "*" else None)
+        if campo_orden and campo_orden != "*":
+            sql += f" ORDER BY {campo_orden} ASC"
+
+        # 2. Pasamos la conexión específica a la query
+        query = QSqlQuery(db_conexion)
+
+        if not query.exec(sql):
+            print(f"❌ ERROR SQL en [{db_key} - {tabla}]: {query.lastError().text()}")
+            return []
+
+        resultados = []
+        num_columnas = query.record().count()
+        nombres_columnas = [query.record().fieldName(i) for i in range(num_columnas)]
+
         while query.next():
-            # query.value(0) es el 'id'
-            # query.value(1) es el 'campo_nombre' (nombre_divisa, idioma, etc.)
-            resultados.append((query.value(0), query.value(1)))
+            if num_columnas == 1:
+                resultados.append(query.value(0))
+            else:
+                # Devolver diccionario para facilitar el acceso por nombre de columna
+                fila = {nombres_columnas[i]: query.value(i) for i in range(num_columnas)}
+                resultados.append(fila)
 
         return resultados
+
+    """--------------------------------------
+                Buscar Países
+    --------------------------------------"""
+    def buscar_paises(self, criterio):
+        """
+        Abre el selector de países.
+        """
+        # Usamos db_maestros para paises
+        db = self.db_maestros.db
+
+        if not db or not db.isOpen():
+            print("La base de datos maestros no está abierta.")
+            return
+
+        # Instanciamos el buscador genérico
+        buscador = DBConsultaView(db)
+
+        buscador.set_config(
+            titulo="Seleccione País",
+            sql_base="SELECT id, nombre, iso FROM paises",
+            campos_busqueda=["nombre", "iso"],
+            headers=["ID", "País", "Código ISO"],
+        )
+        buscador.set_tamano_columnas([0, 600, 80])
+
+        if buscador.exec():
+            # Recuperamos el ID y el nombre
+            id_pais = buscador.id_seleccionado
+            nombre_pais = buscador.registro.value("nombre")
+            DatosPais = {"id": id_pais, "nombre": nombre_pais}
+            # Actualizamos la vista de empresas
+            return DatosPais
+            # Guardamos el ID en alguna parte para el UPDATE
+            # (podrías agregar un campo oculto en la vista o un atributo temporal)

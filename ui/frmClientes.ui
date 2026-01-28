@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1073</width>
-    <height>828</height>
+    <height>830</height>
    </rect>
   </property>
   <property name="baseSize">
@@ -339,7 +339,7 @@ font: 14pt &quot;Sans Serif&quot;;</string>
           <bool>false</bool>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>5</number>
          </property>
          <widget class="QWidget" name="tab_datos">
           <property name="styleSheet">

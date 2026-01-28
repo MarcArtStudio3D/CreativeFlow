@@ -10,9 +10,10 @@ from database.DataManager import DataManager
 
 
 class LoginController:
-    def __init__(self, data_manager=None):
-        # 1. Usamos el DataManager que viene del main o creamos uno nuevo
-        self.data_manager = data_manager if data_manager else DataManager()
+    def __init__(self, data_maestros=None, data_empresa=None):
+        # 1. Creamos los DataManager para la base de datos maestros y empresa
+        self.db_maestros = data_maestros 
+        self.db_empresa = data_empresa 
 
         # 2. El DataModel (SQLite de config) sigue igual
         self.model = DataModel()
@@ -112,12 +113,14 @@ class LoginController:
         motor_str = db_config.get('motor', 'mariadb').lower()
         motor_qt = "QPSQL" if motor_str == 'postgresql' else "QMARIADB"
 
-        self.data_manager.conectar(motor_qt, db_config)
+        self.db_empresa.conectar(motor_qt, db_config)
+        self.db_maestros.conectar(motor_qt, db_config)
 
         self.main_window = MainWindow(
-            self.data_manager,
-            session_data,
+            db_maestros=self.db_maestros,
+            db_empresa=self.db_empresa,
             sqlite_model=self.model,
+            session_data=session_data,
             modo_rescate=False
         )
         self.main_window.show()
@@ -146,21 +149,25 @@ class LoginController:
                 db_config = self.model.get_empresa_db_config(primer_id_empresa)
                 session_data["id_empresa"] = primer_id_empresa
 
-                # Si hay config, intentamos que el data_manager se prepare
+                # Si hay config, intentamos conectar los DataManager
                 if db_config:
                     motor_str = db_config.get('motor', 'mariadb').lower()
                     motor_qt = "QPSQL" if motor_str == 'postgresql' else "QMARIADB"
-                    self.data_manager.conectar(motor_qt, db_config)
+                    if self.db_empresa:
+                        self.db_empresa.conectar(motor_qt, db_config)
+                    if self.db_maestros:
+                        self.db_maestros.conectar(motor_qt, db_config)
 
         except Exception as e:
             print(f"Error obteniendo configuración en modo admin: {e}")
 
         # 3. Iniciamos MainWindow en modo_rescate=True
-        # Le pasamos el data_manager (que puede estar conectado o no)
+        # Le pasamos db_maestros y db_empresa (que pueden estar conectados o no)
         self.main_window = MainWindow(
-            self.data_manager,
-            session_data,
+            db_maestros=self.db_maestros,
+            db_empresa=self.db_empresa,
             sqlite_model=self.model,
+            session_data=session_data,
             modo_rescate=True
         )
 

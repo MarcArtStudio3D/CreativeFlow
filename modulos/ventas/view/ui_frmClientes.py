@@ -29,7 +29,7 @@ class Ui_frmClientes(object):
         if not frmClientes.objectName():
             frmClientes.setObjectName(u"frmClientes")
         frmClientes.setWindowModality(Qt.WindowModality.WindowModal)
-        frmClientes.resize(1073, 828)
+        frmClientes.resize(1073, 830)
         frmClientes.setBaseSize(QSize(1024, 500))
         frmClientes.setModal(True)
         self.gridLayout_3 = QGridLayout(frmClientes)
@@ -1776,7 +1776,7 @@ class Ui_frmClientes(object):
         self.retranslateUi(frmClientes)
 
         self.stackedWidget.setCurrentIndex(0)
-        self.tabwidget.setCurrentIndex(0)
+        self.tabwidget.setCurrentIndex(5)
         self.blink_stack.setCurrentIndex(0)
         self.tabWidget_2.setCurrentIndex(4)
 

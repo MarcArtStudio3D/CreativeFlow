@@ -1,0 +1,39 @@
+{
+  "lsp": {
+    "python": {
+      "command": "pyright-langserver",
+      "args": ["--stdio"],
+      "settings": {
+        "python": {
+          "pythonPath": "/home/marc/Artstudio3D/CreativeFlow/.venv/bin/python",
+          "venvPath": "/home/marc/Artstudio3D/CreativeFlow/.venv",
+          "analysis": {
+            "typeCheckingMode": "basic",
+            "autoSearchPaths": true,
+            "useLibraryCodeForTypes": true
+          }
+        }
+      }
+    }
+  },
+  "languages": {
+    "Python": {
+      "debugger": {
+        "adapter": {
+          "type": "debugpy",
+          "python": "/home/marc/Artstudio3D/CreativeFlow/.venv/bin/python"
+        }
+      },
+      "format_on_save": "off",
+      "formatter": {
+        "external": {
+          "command": "/home/marc/Artstudio3D/CreativeFlow/.venv/bin/python",
+          "arguments": ["-m", "black", "-"]
+        }
+      }
+    }
+  },
+  "terminal": {
+    "working_directory": "current_project_directory"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "reportAttributeAccessIssue": false,
+  "reportGeneralTypeIssues": "none",
+  "reportOptionalMemberAccess": "none",
+  "pythonVersion": "3.12",
+  "typeCheckingMode": "off"
+}

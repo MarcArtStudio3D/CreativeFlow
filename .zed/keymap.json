@@ -1,0 +1,26 @@
+[
+  {
+    "context": "Workspace",
+    "bindings": {
+      "f5": "task::Spawn"
+    }
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "f5": "debugger::Start",
+      "f9": "debugger::ToggleBreakpoint",
+      "f10": "debugger::StepOver",
+      "f11": "debugger::StepInto",
+      "shift-f11": "debugger::StepOut",
+      "shift-f5": "debugger::Stop",
+      "ctrl-shift-f5": "debugger::Restart"
+    }
+  },
+  {
+    "context": "Terminal",
+    "bindings": {
+      "f5": "task::Rerun"
+    }
+  }
+]

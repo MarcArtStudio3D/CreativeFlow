@@ -1,19 +1,25 @@
 import os
+import unicodedata
 
 from PySide6 import QtCore
-from PySide6.QtCore import Qt
-from PySide6.QtSql import QSqlQuery, QSqlDatabase
-from PySide6.QtWidgets import QMessageBox, QHeaderView, QLineEdit, QTextEdit, QComboBox, QDateEdit
+from PySide6.QtCore import QSortFilterProxyModel, Qt
+from PySide6.QtSql import QSqlDatabase, QSqlQuery
+from PySide6.QtWidgets import (
+    QComboBox,
+    QDateEdit,
+    QHeaderView,
+    QLineEdit,
+    QMessageBox,
+    QTextEdit,
+)
 
 from colores import COLOR_NARANJA
 from helpers.mapeoCampos import MapeoCampos
 from helpers.messagebox_styles import aplicar_estilo_messagebox
-from modulos.ventas.view.clientes_view import ClientesView
-from modulos.comun.view.DBConsultaView import DBConsultaView
 from helpers.validadores import ValidadorFiscal
+from modulos.comun.view.DBConsultaView import DBConsultaView
+from modulos.ventas.view.clientes_view import ClientesView
 
-import unicodedata
-from PySide6.QtCore import QSortFilterProxyModel
 
 class ClientesController:
     def __init__(self, vista: ClientesView, modelo, session_data: dict):
@@ -23,9 +29,10 @@ class ClientesController:
         self.session_data = session_data
         self.validador = ValidadorFiscal()
         self._validando = False  # Flag para evitar validaciones en cascada
-        self.set_edicion_bloqueada(True)  # Bloquea todos los campos al iniciar para solo lectura
+        self.set_edicion_bloqueada(
+            True
+        )  # Bloquea todos los campos al iniciar para solo lectura
         self.vista.id.setVisible(False)
-
 
         """------------------------------------
                 CONEXIONES DE BOTONES
@@ -39,11 +46,15 @@ class ClientesController:
         self.vista.btnDeshacer.clicked.connect(self.deshacer_cambios)
         self.vista.btnCerrar.clicked.connect(self.vista.close)
         self.vista.btnBorrar.clicked.connect(self.borrar_cliente)
+        self.vista.btnBuscarPais.clicked.connect(self.abrir_selector_paises)
 
-        #conecto señales de campos
+
+        # conecto señales de campos
         self.vista.cp.editingFinished.connect(self.buscar_poblacion_cp_handler)
         self.vista.poblacion.editingFinished.connect(self.buscar_poblacion_handler)
-        self.vista.cif_nif_siren.editingFinished.connect(self.validar_codigo_identificacion)
+        self.vista.cif_nif_siren.editingFinished.connect(
+            self.validar_codigo_identificacion
+        )
         self.vista.siret.editingFinished.connect(self.validar_siret)
 
         self.vista.txtBuscar_cliente.textChanged.connect(self.filtrar_clientes)
@@ -52,7 +63,7 @@ class ClientesController:
         self.vista.tabla_busquedas.doubleClicked.connect(self.preparar_edicion_cliente)
 
         # Desactivo campos que no deben editarse
-        #self.vista.pais.setReadOnly(True)
+        # self.vista.pais.setReadOnly(True)
         self.vista.id_pais.setVisible(False)
         self.vista.id_agente.setVisible(False)
         self.vista.id_transportista.setVisible(False)
@@ -65,7 +76,7 @@ class ClientesController:
         """
         Bloquea o desbloquea todos los campos de entrada de la ficha.
         """
-        from PySide6.QtWidgets import QLineEdit, QTextEdit, QComboBox, QDateEdit
+        from PySide6.QtWidgets import QComboBox, QDateEdit, QLineEdit, QTextEdit
 
         widgets_a_bloquear = [QLineEdit, QTextEdit, QComboBox, QDateEdit]
 
@@ -75,7 +86,7 @@ class ClientesController:
         for tipo in widgets_a_bloquear:
             for widget in pagina_edicion.findChildren(tipo):
                 # QLineEdit, QTextEdit y QDateEdit tienen setReadOnly
-                if hasattr(widget, 'setReadOnly'):
+                if hasattr(widget, "setReadOnly"):
                     widget.setReadOnly(bloquear)
                 # QComboBox no tiene setReadOnly, usamos setEnabled
                 else:
@@ -84,6 +95,7 @@ class ClientesController:
     """------------------------------------
     CARGAMOS LA TABLA PRINCIPAL DE CLIENTES
     ------------------------------------"""
+
     def cargar_tabla_principal(self):
         # Obtenemos el modelo de datos
         tabla_model = self.modelo.get_lista_clientes()
@@ -92,8 +104,10 @@ class ClientesController:
         # Asegúrate de que en el ui el objeto se llama 'tabla_busquedas'
         self.vista.tabla_busquedas.setModel(tabla_model)
 
-        # Ajuste visual rápido: expandir columnas
-        self.vista.tabla_busquedas.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+# Ajuste visual rápido: expandir columnas
+        self.vista.tabla_busquedas.horizontalHeader().setSectionResizeMode(
+            QHeaderView.ResizeMode.Stretch
+        )
 
         # Ajuste visual rápido: expandir columnas
         header = self.vista.tabla_busquedas.horizontalHeader()
@@ -101,12 +115,11 @@ class ClientesController:
         self.vista.tabla_busquedas.setColumnHidden(0, True)
         # Primero ponemos el modo en manual/fijo para esas columnas
         header.setStretchLastSection(False)
-        header.setSectionResizeMode(1, QHeaderView.Stretch)
-        header.setSectionResizeMode(2, QHeaderView.Stretch)
-        header.setSectionResizeMode(3, QHeaderView.Fixed)
-        header.setSectionResizeMode(4, QHeaderView.Fixed)
-        header.setSectionResizeMode(5, QHeaderView.Fixed)
-
+        header.setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
+        header.setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
+        header.setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)
+        header.setSectionResizeMode(4, QHeaderView.ResizeMode.Fixed)
+        header.setSectionResizeMode(5, QHeaderView.ResizeMode.Fixed)
 
         # Luego definimos el ancho en píxeles
 
@@ -121,9 +134,10 @@ class ClientesController:
     """------------------------------------
     ACTIVAMOS CAMPOS SEGUN PAIS DE  LA EMPRESA
     ------------------------------------"""
+
     def activar_campos_segun_pais(self):
         # campos que dependen del pais seleccionado
-        if (self.vista.pais.text() == "España"):
+        if self.vista.pais.text() == "España":
             self.vista.provincia_region.setVisible(True)
             self.vista.lblProvincia.setVisible(True)
             self.vista.label_cif_siren.setText("CIF:")
@@ -148,16 +162,17 @@ class ClientesController:
     """------------------------------------
         CARGAMOS DATOS AUXILIARES EN COMBOS
     ------------------------------------"""
+
     def cargar_datos_auxiliares(self):
         """Carga todos los combos de la ficha de una sola vez."""
 
         # Definimos qué combo va con qué tabla
         configuracion = [
-            (self.vista.id_divisa, "divisas","nombre_divisa"),
-            (self.vista.id_idioma_documentos, "idiomas","idioma"),
+            (self.vista.id_divisa, "divisas", "nombre_divisa"),
+            (self.vista.id_idioma_documentos, "idiomas", "idioma"),
             (self.vista.id_tarifa, "tarifas", "nombre_tarifa"),
-            (self.vista.id_forma_pago, "formpago","forma_pago"),
-            (self.vista.grupo_iva, "tiposiva","nombre_interno")
+            (self.vista.id_forma_pago, "formpago", "forma_pago"),
+            (self.vista.grupo_iva, "tiposiva", "nombre_interno"),
         ]
 
         for combo, tabla, campo_nombre in configuracion:
@@ -175,12 +190,11 @@ class ClientesController:
 
         print("✓ Todos los datos auxiliares cargados.")
 
-
     """--------------------------------------------------
     PREPARAMOS LA EDICIÓN AL HACER DOBLE CLIC EN LA TABLA
     --------------------------------------------------"""
-    def preparar_edicion_cliente(self, index):
 
+    def preparar_edicion_cliente(self, index):
         try:
             # 1. Accedemos directamente al modelo que tiene la tabla ahora mismo
             # self.tabla_model es el QSqlQueryModel que asignamos en refrescar_tabla
@@ -204,6 +218,7 @@ class ClientesController:
     """-------------------------------------------
     VAMOS AL SIGUIENTE CLIENTE SEGÚN NOMBRE FISCAL
     -------------------------------------------"""
+
     def siguiente_nombre(self):
         # 1. Recuperamos el registro (tupla con fila y columnas)
         nombre_fiscal = self.vista.nombre_fiscal.text().strip()
@@ -221,6 +236,7 @@ class ClientesController:
     """----------------------------------------------
         VAMOS AL CLIENTE ANTERIOR SEGÚN NOMBRE FISCAL
     ----------------------------------------------"""
+
     def anterior_nombre(self):
         nombre_fiscal = self.vista.nombre_fiscal.text().strip()
         # 1. Recuperamos el registro (tupla con fila y columnas)
@@ -238,6 +254,7 @@ class ClientesController:
     """-----------------------------------------
     CARGAMOS LOS DATOS DE UN CLIENTE EN PANTALLA
     -----------------------------------------"""
+
     def cargar_datos(self, id_cliente=None):
         # 1. Obtenemos los datos del modelo (el ID viene del __init__)
         # El modelo debe devolver: (la_fila_de_datos, lista_nombres_columnas)
@@ -249,7 +266,9 @@ class ClientesController:
             # Aquí puedes usar tu nuevo sistema de traducción
             ctx = "ClientesController"
             titulo = QtCore.QCoreApplication.translate(ctx, "Error de carga")
-            msg = QtCore.QCoreApplication.translate(ctx, f"No se encontró el cliente con ID: {id_cliente}")
+            msg = QtCore.QCoreApplication.translate(
+                ctx, f"No se encontró el cliente con ID: {id_cliente}"
+            )
 
             msg_box = QMessageBox(self.vista)
             msg_box.setIcon(QMessageBox.Critical)
@@ -266,16 +285,21 @@ class ClientesController:
         # 3. Guardamos las columnas para cuando toque capturar los datos al guardar
         self.columnas_actuales = columnas
 
-
+    """------------------------------------
+                FILTRAR CLIENTES
+    ------------------------------------"""
 
     def filtrar_clientes(self, texto):
         # Filtramos la tabla según el texto y el criterio seleccionado
-        result = self.modelo.get_lista_clientes(self.vista.cboBuscarPor.currentText, texto)
+        result = self.modelo.get_lista_clientes(
+            self.vista.cboBuscarPor.currentText, texto
+        )
         self.vista.tabla_busquedas.setModel(result)
 
     """------------------------------------
     NUEVO CLIENTE
     ------------------------------------"""
+
     def nuevo_cliente(self):
         # Limpiamos el formulario usando MapeoCampos
         MapeoCampos.limpiar_formulario(self.vista, self.modelo.columnas_clientes)
@@ -292,14 +316,19 @@ class ClientesController:
     """------------------------------------
     GUARDAMOS LOS DATOS DEL CLIENTE EDITADO
     ------------------------------------"""
+
     def guardar_datos(self):
         contexto = "ClientesController"
-        id_cliente = int(self.vista.id.text())  # Asumimos que la primera columna es el ID
+        id_cliente = int(
+            self.vista.id.text()
+        )  # Asumimos que la primera columna es el ID
         # 1. Validar
         valido, campos_faltantes = MapeoCampos.validar_campos(self.vista)
 
         if not valido:
-            msg = QtCore.QCoreApplication.translate(contexto, "Los siguientes campos son obligatorios:\n\n- ") + "\n- ".join(campos_faltantes)
+            msg = QtCore.QCoreApplication.translate(
+                contexto, "Los siguientes campos son obligatorios:\n\n- "
+            ) + "\n- ".join(campos_faltantes)
             tit = QtCore.QCoreApplication.translate(contexto, "Faltan datos")
 
             msg_box = QMessageBox(self.vista)
@@ -316,7 +345,9 @@ class ClientesController:
         # 3. Mandar al modelo
         if self.modelo.actualizar_cliente(id_cliente, datos):
             titulo = QtCore.QCoreApplication.translate(contexto, "Éxito")
-            mensaje = QtCore.QCoreApplication.translate(contexto, "Cliente actualizado correctamente")
+            mensaje = QtCore.QCoreApplication.translate(
+                contexto, "Cliente actualizado correctamente"
+            )
 
             msg_box = QMessageBox(self.vista)
             msg_box.setIcon(QMessageBox.Information)
@@ -327,7 +358,9 @@ class ClientesController:
             self.modo_no_edicion()
         else:
             titulo = QtCore.QCoreApplication.translate(contexto, "Error")
-            mensaje = QtCore.QCoreApplication.translate(contexto, "No se pudieron guardar los datos en la base de datos.")
+            mensaje = QtCore.QCoreApplication.translate(
+                contexto, "No se pudieron guardar los datos en la base de datos."
+            )
 
             msg_box = QMessageBox(self.vista)
             msg_box.setIcon(QMessageBox.Critical)
@@ -339,6 +372,7 @@ class ClientesController:
     """------------------------------------
     DESHACEMOS LOS CAMBIOS REALIZADOS
     ------------------------------------"""
+
     def deshacer_cambios(self):
         id_cliente = int(self.vista.id.text())
         self.cargar_datos(id_cliente)
@@ -347,37 +381,48 @@ class ClientesController:
     """------------------------------------
     BORRAMOS EL CLIENTE
     ------------------------------------"""
+
     def borrar_cliente(self):
-        if QMessageBox.question(
-            self.vista,
-            "Confirmar borrado",
-            "¿Está seguro de que desea borrar este cliente?",
-            QMessageBox.Yes | QMessageBox.No
-        ) == QMessageBox.Yes:
+        if (
+            QMessageBox.question(
+                self.vista,
+                "Confirmar borrado",
+                "¿Está seguro de que desea borrar este cliente?",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            )
+            == QMessageBox.StandardButton.Yes
+        ):
             id_cliente = int(self.vista.id.text())
-            if QMessageBox.warning(self.vista,"Confirmar borrado de cliente",
-                                    "¡Esta acción es irreversible!. ¿Desea continuar?",
-                                    QMessageBox.Yes | QMessageBox.No) == QMessageBox.Yes:
+            if (
+                QMessageBox.warning(
+                    self.vista,
+                    "Confirmar borrado de cliente",
+                    "¡Esta acción es irreversible!. ¿Desea continuar?",
+                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                )
+                == QMessageBox.StandardButton.Yes
+            ):
                 if self.modelo.borrar_cliente(id_cliente):
                     QMessageBox.information(
                         self.vista,
                         "Cliente borrado",
-                        "El cliente ha sido borrado correctamente."
+                        "El cliente ha sido borrado correctamente.",
                     )
                     self.anterior_nombre()
 
                 else:
                     QMessageBox.critical(
-                        self.vista,
-                        "Error al borrar",
-                        "No se pudo borrar el cliente."
+                        self.vista, "Error al borrar", "No se pudo borrar el cliente."
                     )
             else:
-                QMessageBox.information(self.vista,"Borrado cancelado", "Operación anulada.")
+                QMessageBox.information(
+                    self.vista, "Borrado cancelado", "Operación anulada."
+                )
 
     """------------------------------------
             PASAMOS A MODO EDICIÓN
     ------------------------------------"""
+
     def editar_cliente(self):
         self.set_edicion_bloqueada(False)
         # Activamos los botones de guardar y deshacer
@@ -418,18 +463,17 @@ class ClientesController:
     """------------------------------------
         ABRIMOS EL SELECTOR DE PAÍSES
     ------------------------------------"""
+
     def abrir_selector_paises(self):
         """
-        Abre el selector de países reutilizando la conexión SQLite existente.
+        Abre el selector de países usando db_maestros.
         """
-        # Reutilizamos la conexión existente del modelo
-        db = self.modelo.sqlite_model.db
+        # Usamos db_maestros para paises
+        db = self.modelo.db_maestros.db
 
-        if not db.isOpen():
+        if not db or not db.isOpen():
             QMessageBox.critical(
-                self.vista,
-                "Error de conexión",
-                "La base de datos no está abierta"
+                self.vista, "Error de conexión", "La base de datos maestros no está abierta"
             )
             return
 
@@ -441,9 +485,9 @@ class ClientesController:
             titulo="Seleccione País",
             sql_base="SELECT id, nombre, iso FROM paises",
             campos_busqueda=["nombre", "iso"],
-            headers=["ID", "País", "Código ISO"]
+            headers=["ID", "País", "Código ISO"],
         )
-        buscador.set_tamano_columnas([0,600,80])
+        buscador.set_tamano_columnas([0, 600, 80])
 
         if buscador.exec():
             # Recuperamos el ID y el nombre
@@ -458,6 +502,7 @@ class ClientesController:
     """--------------------------------------------
     HANDLER PARA BUSCAR POBLACIÓN POR CÓDIGO POSTAL
     --------------------------------------------"""
+
     def buscar_poblacion_cp_handler(self):
         """Handler para editingFinished que obtiene el texto del campo cp"""
         cp = self.vista.cp.text().strip()
@@ -468,6 +513,7 @@ class ClientesController:
     """------------------------------------
     BUSCAMOS POBLACIÓN POR CÓDIGO POSTAL
     ------------------------------------"""
+
     def buscar_poblacion_cp(self, texto_busqueda):
         """
         Busca población por código postal.
@@ -481,39 +527,15 @@ class ClientesController:
         elif pais_text == "Francia":
             id_pais = 2
 
-        # SQL preparado con placeholders
-        sql = """SELECT poblacion, provincia_region, cp, region_code
-                 FROM poblaciones
-                 WHERE id_pais = ? AND (cp = ? OR cp_adicionales LIKE ?)"""
-
-        query = QSqlQuery(self.modelo.sqlite_model.db)
-        query.prepare(sql)
-        query.addBindValue(id_pais)
-        query.addBindValue(texto_busqueda)
-        query.addBindValue(f"%{texto_busqueda}%")
-
-        if not query.exec():
-            print(f"❌ Error SQL: {query.lastError().text()}")
-            return
-
-        # Recolectamos todas las filas (query.size() no funciona bien)
-        filas = []
-        while query.next():
-            filas.append({
-                "poblacion": query.value("poblacion"),
-                "provincia_region": query.value("provincia_region"),
-                "cp": query.value("cp"),
-            })
-
-        print(f"🔍 Búsqueda CP '{texto_busqueda}' en país {id_pais}: {len(filas)} resultados")
+        poblaciones  = self.modelo.obtener_datos_tabla_auxiliar("poblaciones", ["id", "poblacion", "provincia_region", "cp", "cp_adicionales"],"poblacion")
 
         # Sin resultados
-        if len(filas) == 0:
+        if len(poblaciones) == 0:
             return
 
         # 1 resultado: rellenar directamente
-        if len(filas) == 1:
-            fila = filas[0]
+        if len(poblaciones) == 1:
+            fila = poblaciones[0]
             self.vista.poblacion.setText(str(fila["poblacion"] or ""))
             self.vista.cp.setText(str(fila["cp"] or ""))
 
@@ -527,6 +549,7 @@ class ClientesController:
     """-------------------------------------
     HANDLER PARA BUSCAR POBLACIÓN POR NOMBRE
     -------------------------------------"""
+
     def buscar_poblacion_handler(self):
         """Handler para editingFinished que obtiene el texto del campo POBLACION"""
         cp = self.vista.cp.text().strip()
@@ -537,6 +560,7 @@ class ClientesController:
     """------------------------------------
     BUSCAMOS POBLACIÓN POR NOMBRE
     ------------------------------------"""
+
     def buscar_poblacion(self, texto_busqueda):
         """
         Busca población por nombre de población.
@@ -555,7 +579,7 @@ class ClientesController:
                  FROM poblaciones
                  WHERE id_pais = ? AND (poblacion LIKE ?)"""
 
-        query = QSqlQuery(self.modelo.sqlite_model.db)
+        query = QSqlQuery(self.modelo.db_maestros.db)
         query.prepare(sql)
         query.addBindValue(id_pais)
         query.addBindValue(f"%{texto_busqueda}%")
@@ -567,13 +591,17 @@ class ClientesController:
         # Recolectamos todas las filas (query.size() no funciona bien)
         filas = []
         while query.next():
-            filas.append({
-                "poblacion": query.value("poblacion"),
-                "provincia_region": query.value("provincia_region"),
-                "cp": query.value("cp"),
-            })
+            filas.append(
+                {
+                    "poblacion": query.value("poblacion"),
+                    "provincia_region": query.value("provincia_region"),
+                    "cp": query.value("cp"),
+                }
+            )
 
-        print(f"🔍 Búsqueda Población '{texto_busqueda}' en país {id_pais}: {len(filas)} resultados")
+        print(
+            f"🔍 Búsqueda Población '{texto_busqueda}' en país {id_pais}: {len(filas)} resultados"
+        )
 
         # Sin resultados
         if len(filas) == 0:
@@ -595,10 +623,10 @@ class ClientesController:
     """--------------------------------------------------------
     ABRIMOS EL SELECTOR DE LAS POBLACIONES DE UN  CÓDIGO POSTAL
     --------------------------------------------------------"""
-    def abrir_selector_poblaciones_CP(self, sql_filtro=""):
 
-        # Reutilizamos tu clase genérica
-        buscador = DBConsultaView(self.modelo.sqlite_model.db)
+    def abrir_selector_poblaciones_CP(self, sql_filtro=""):
+        # Usamos db_maestros para poblaciones
+        buscador = DBConsultaView(self.modelo.db_maestros.db)
 
         pais_text = self.vista.pais.text()
         if pais_text == "España":
@@ -615,7 +643,7 @@ class ClientesController:
             titulo="Seleccione Localidad",
             sql_base=sql_base,
             campos_busqueda=["cp"],
-            headers=["ID", "C.P.", "Población", "Provincia/Región"]
+            headers=["ID", "C.P.", "Población", "Provincia/Región"],
         )
 
         # Ajustamos tamaños: ID oculto, CP pequeño, Población grande, Código región pequeño
@@ -625,16 +653,17 @@ class ClientesController:
             # Actualizamos la vista de empresas
             self.vista.poblacion.setText(buscador.registro.value("poblacion"))
             if self.vista.pais == "España":
-                self.vista.provincia.setText(buscador.registro.value("provincia_region"))
-
+                self.vista.provincia.setText(
+                    buscador.registro.value("provincia_region")
+                )
 
     """------------------------------------
     ABRIMOS EL SELECTOR DE POBLACIONES
     ------------------------------------"""
-    def abrir_selector_poblaciones(self, sql_filtro=""):
 
-        # Reutilizamos tu clase genérica
-        buscador = DBConsultaView(self.modelo.sqlite_model.db)
+    def abrir_selector_poblaciones(self, sql_filtro=""):
+        # Usamos db_maestros para poblaciones
+        buscador = DBConsultaView(self.modelo.db_maestros.db)
 
         pais_text = self.vista.pais.text()
         if pais_text == "España":
@@ -651,7 +680,7 @@ class ClientesController:
             titulo="Seleccione Localidad",
             sql_base=sql_base,
             campos_busqueda=["poblacion"],
-            headers=["ID", "C.P.", "Población", "Provincia/Región"]
+            headers=["ID", "C.P.", "Población", "Provincia/Región"],
         )
 
         # Ajustamos tamaños: ID oculto, CP pequeño, Población grande, Código región pequeño
@@ -662,11 +691,14 @@ class ClientesController:
             self.vista.cp.setText(buscador.registro.value("cp"))
             self.vista.poblacion.setText(buscador.registro.value("poblacion"))
             if self.vista.pais == "España":
-                self.vista.provincia.setText(buscador.registro.value("provincia_region"))
+                self.vista.provincia.setText(
+                    buscador.registro.value("provincia_region")
+                )
 
     """------------------------------------
     VALIDAMOS CIF/NIF/SIREN SEGÚN PAÍS
     ------------------------------------"""
+
     def validar_codigo_identificacion(self):
         # Evitar validaciones en cascada
         if self._validando:
@@ -674,7 +706,7 @@ class ClientesController:
 
         pais_text = self.vista.pais.text()
 
-        if (pais_text == "España"):
+        if pais_text == "España":
             identificador = self.vista.cif_nif_siren.text().strip()
 
             # No validar si está vacío (evita errores al cargar datos)
@@ -684,8 +716,13 @@ class ClientesController:
             es_valido = self.validador.validar_identidad_espana(identificador)
             if not es_valido:
                 self._validando = True  # Bloquear otras validaciones
-                titulo = QtCore.QCoreApplication.translate("EmpresaController", "Identificador no válido")
-                mensaje = QtCore.QCoreApplication.translate("EmpresaController", "El CIF introducido no es válido según las reglas de España.")
+                titulo = QtCore.QCoreApplication.translate(
+                    "EmpresaController", "Identificador no válido"
+                )
+                mensaje = QtCore.QCoreApplication.translate(
+                    "EmpresaController",
+                    "El CIF introducido no es válido según las reglas de España.",
+                )
 
                 msg_box = QMessageBox(self.vista)
                 msg_box.setIcon(QMessageBox.Warning)
@@ -709,8 +746,13 @@ class ClientesController:
 
             if not es_siren_valido:
                 self._validando = True  # Bloquear otras validaciones
-                titulo = QtCore.QCoreApplication.translate("EmpresaController", "Identificador no válido")
-                mensaje = QtCore.QCoreApplication.translate("EmpresaController", "El SIREN introducido no es válido según las reglas de Francia.")
+                titulo = QtCore.QCoreApplication.translate(
+                    "EmpresaController", "Identificador no válido"
+                )
+                mensaje = QtCore.QCoreApplication.translate(
+                    "EmpresaController",
+                    "El SIREN introducido no es válido según las reglas de Francia.",
+                )
 
                 msg_box = QMessageBox(self.vista)
                 msg_box.setIcon(QMessageBox.Warning)
@@ -727,6 +769,7 @@ class ClientesController:
     """------------------------------------
     VALIDAMOS SIRET si pais es Francia
     ------------------------------------"""
+
     def validar_siret(self):
         # Evitar validaciones en cascada
         if self._validando:
@@ -743,8 +786,13 @@ class ClientesController:
             es_siret_valido = self.validador.validar_siret(siret)
             if not es_siret_valido:
                 self._validando = True  # Bloquear otras validaciones
-                titulo = QtCore.QCoreApplication.translate("EmpresaController", "Identificador no válido")
-                mensaje = QtCore.QCoreApplication.translate("EmpresaController", "El SIRET introducido no es válido según las reglas de Francia.")
+                titulo = QtCore.QCoreApplication.translate(
+                    "EmpresaController", "Identificador no válido"
+                )
+                mensaje = QtCore.QCoreApplication.translate(
+                    "EmpresaController",
+                    "El SIRET introducido no es válido según las reglas de Francia.",
+                )
 
                 msg_box = QMessageBox(self.vista)
                 msg_box.setIcon(QMessageBox.Warning)

@@ -1109,44 +1109,44 @@ class Ui_FrmEmpresas(object):
         self.groupBox_8.setObjectName(u"groupBox_8")
         self.gridLayoutWidget_2 = QWidget(self.groupBox_8)
         self.gridLayoutWidget_2.setObjectName(u"gridLayoutWidget_2")
-        self.gridLayoutWidget_2.setGeometry(QRect(100, 40, 373, 201))
+        self.gridLayoutWidget_2.setGeometry(QRect(100, 40, 373, 228))
         self.gridLayout_19 = QGridLayout(self.gridLayoutWidget_2)
         self.gridLayout_19.setObjectName(u"gridLayout_19")
         self.gridLayout_19.setContentsMargins(0, 0, 0, 0)
-        self.label_82 = QLabel(self.gridLayoutWidget_2)
-        self.label_82.setObjectName(u"label_82")
-
-        self.gridLayout_19.addWidget(self.label_82, 1, 0, 1, 2)
-
-        self.mariadb_user = QLineEdit(self.gridLayoutWidget_2)
-        self.mariadb_user.setObjectName(u"mariadb_user")
-
-        self.gridLayout_19.addWidget(self.mariadb_user, 2, 3, 1, 2)
-
         self.mariadb_port = QLineEdit(self.gridLayoutWidget_2)
         self.mariadb_port.setObjectName(u"mariadb_port")
 
         self.gridLayout_19.addWidget(self.mariadb_port, 0, 4, 1, 1)
-
-        self.mariadb_password = QLineEdit(self.gridLayoutWidget_2)
-        self.mariadb_password.setObjectName(u"mariadb_password")
-
-        self.gridLayout_19.addWidget(self.mariadb_password, 3, 3, 1, 2)
 
         self.label_87 = QLabel(self.gridLayoutWidget_2)
         self.label_87.setObjectName(u"label_87")
 
         self.gridLayout_19.addWidget(self.label_87, 2, 0, 1, 2)
 
+        self.label_83 = QLabel(self.gridLayoutWidget_2)
+        self.label_83.setObjectName(u"label_83")
+
+        self.gridLayout_19.addWidget(self.label_83, 3, 0, 1, 2)
+
         self.mariadb_name = QLineEdit(self.gridLayoutWidget_2)
         self.mariadb_name.setObjectName(u"mariadb_name")
 
         self.gridLayout_19.addWidget(self.mariadb_name, 1, 3, 1, 2)
 
-        self.label_86 = QLabel(self.gridLayoutWidget_2)
-        self.label_86.setObjectName(u"label_86")
+        self.mariadb_password = QLineEdit(self.gridLayoutWidget_2)
+        self.mariadb_password.setObjectName(u"mariadb_password")
 
-        self.gridLayout_19.addWidget(self.label_86, 0, 0, 1, 1)
+        self.gridLayout_19.addWidget(self.mariadb_password, 3, 3, 1, 2)
+
+        self.mariadb_user = QLineEdit(self.gridLayoutWidget_2)
+        self.mariadb_user.setObjectName(u"mariadb_user")
+
+        self.gridLayout_19.addWidget(self.mariadb_user, 2, 3, 1, 2)
+
+        self.label_82 = QLabel(self.gridLayoutWidget_2)
+        self.label_82.setObjectName(u"label_82")
+
+        self.gridLayout_19.addWidget(self.label_82, 1, 0, 1, 2)
 
         self.mariadb_host = QLineEdit(self.gridLayoutWidget_2)
         self.mariadb_host.setObjectName(u"mariadb_host")
@@ -1158,20 +1158,25 @@ class Ui_FrmEmpresas(object):
 
         self.gridLayout_19.addWidget(self.label_84, 0, 3, 1, 1)
 
-        self.label_83 = QLabel(self.gridLayoutWidget_2)
-        self.label_83.setObjectName(u"label_83")
+        self.label_86 = QLabel(self.gridLayoutWidget_2)
+        self.label_86.setObjectName(u"label_86")
 
-        self.gridLayout_19.addWidget(self.label_83, 3, 0, 1, 2)
+        self.gridLayout_19.addWidget(self.label_86, 0, 0, 1, 1)
 
-        self.btnTestBDMariaDB = QPushButton(self.gridLayoutWidget_2)
-        self.btnTestBDMariaDB.setObjectName(u"btnTestBDMariaDB")
+        self.btnCreaMaestrosMariaDB = QPushButton(self.gridLayoutWidget_2)
+        self.btnCreaMaestrosMariaDB.setObjectName(u"btnCreaMaestrosMariaDB")
 
-        self.gridLayout_19.addWidget(self.btnTestBDMariaDB, 5, 3, 1, 2)
+        self.gridLayout_19.addWidget(self.btnCreaMaestrosMariaDB, 6, 0, 1, 2)
 
         self.btnCrearDBMariaDb = QPushButton(self.gridLayoutWidget_2)
         self.btnCrearDBMariaDb.setObjectName(u"btnCrearDBMariaDb")
 
-        self.gridLayout_19.addWidget(self.btnCrearDBMariaDb, 5, 0, 1, 2)
+        self.gridLayout_19.addWidget(self.btnCrearDBMariaDb, 6, 3, 1, 2)
+
+        self.btnTestBDMariaDB = QPushButton(self.gridLayoutWidget_2)
+        self.btnTestBDMariaDB.setObjectName(u"btnTestBDMariaDB")
+
+        self.gridLayout_19.addWidget(self.btnTestBDMariaDB, 5, 0, 1, 5)
 
 
         self.gridLayout_5.addWidget(self.groupBox_8, 2, 0, 4, 1)
@@ -1231,34 +1236,24 @@ class Ui_FrmEmpresas(object):
         self.groupBox_9.setObjectName(u"groupBox_9")
         self.gridLayoutWidget = QWidget(self.groupBox_9)
         self.gridLayoutWidget.setObjectName(u"gridLayoutWidget")
-        self.gridLayoutWidget.setGeometry(QRect(80, 40, 471, 201))
+        self.gridLayoutWidget.setGeometry(QRect(80, 40, 471, 228))
         self.gridLayout_18 = QGridLayout(self.gridLayoutWidget)
         self.gridLayout_18.setObjectName(u"gridLayout_18")
         self.gridLayout_18.setContentsMargins(0, 0, 0, 0)
+        self.postgre_name = QLineEdit(self.gridLayoutWidget)
+        self.postgre_name.setObjectName(u"postgre_name")
+
+        self.gridLayout_18.addWidget(self.postgre_name, 1, 3, 1, 2)
+
         self.postgre_host = QLineEdit(self.gridLayoutWidget)
         self.postgre_host.setObjectName(u"postgre_host")
 
         self.gridLayout_18.addWidget(self.postgre_host, 0, 1, 1, 1)
 
-        self.label_79 = QLabel(self.gridLayoutWidget)
-        self.label_79.setObjectName(u"label_79")
+        self.postgre_user = QLineEdit(self.gridLayoutWidget)
+        self.postgre_user.setObjectName(u"postgre_user")
 
-        self.gridLayout_18.addWidget(self.label_79, 1, 0, 1, 2)
-
-        self.label_78 = QLabel(self.gridLayoutWidget)
-        self.label_78.setObjectName(u"label_78")
-
-        self.gridLayout_18.addWidget(self.label_78, 0, 3, 1, 1)
-
-        self.label_81 = QLabel(self.gridLayoutWidget)
-        self.label_81.setObjectName(u"label_81")
-
-        self.gridLayout_18.addWidget(self.label_81, 3, 0, 1, 2)
-
-        self.postgre_password = QLineEdit(self.gridLayoutWidget)
-        self.postgre_password.setObjectName(u"postgre_password")
-
-        self.gridLayout_18.addWidget(self.postgre_password, 3, 3, 1, 2)
+        self.gridLayout_18.addWidget(self.postgre_user, 2, 3, 1, 2)
 
         self.postgre_port = QLineEdit(self.gridLayoutWidget)
         self.postgre_port.setObjectName(u"postgre_port")
@@ -1270,30 +1265,45 @@ class Ui_FrmEmpresas(object):
 
         self.gridLayout_18.addWidget(self.label_56, 0, 0, 1, 1)
 
-        self.postgre_name = QLineEdit(self.gridLayoutWidget)
-        self.postgre_name.setObjectName(u"postgre_name")
+        self.label_78 = QLabel(self.gridLayoutWidget)
+        self.label_78.setObjectName(u"label_78")
 
-        self.gridLayout_18.addWidget(self.postgre_name, 1, 3, 1, 2)
+        self.gridLayout_18.addWidget(self.label_78, 0, 3, 1, 1)
+
+        self.label_81 = QLabel(self.gridLayoutWidget)
+        self.label_81.setObjectName(u"label_81")
+
+        self.gridLayout_18.addWidget(self.label_81, 3, 0, 1, 2)
 
         self.label_80 = QLabel(self.gridLayoutWidget)
         self.label_80.setObjectName(u"label_80")
 
         self.gridLayout_18.addWidget(self.label_80, 2, 0, 1, 2)
 
-        self.postgre_user = QLineEdit(self.gridLayoutWidget)
-        self.postgre_user.setObjectName(u"postgre_user")
+        self.label_79 = QLabel(self.gridLayoutWidget)
+        self.label_79.setObjectName(u"label_79")
 
-        self.gridLayout_18.addWidget(self.postgre_user, 2, 3, 1, 2)
+        self.gridLayout_18.addWidget(self.label_79, 1, 0, 1, 2)
+
+        self.postgre_password = QLineEdit(self.gridLayoutWidget)
+        self.postgre_password.setObjectName(u"postgre_password")
+
+        self.gridLayout_18.addWidget(self.postgre_password, 3, 3, 1, 2)
+
+        self.btnCreaMaestrosPostgre = QPushButton(self.gridLayoutWidget)
+        self.btnCreaMaestrosPostgre.setObjectName(u"btnCreaMaestrosPostgre")
+
+        self.gridLayout_18.addWidget(self.btnCreaMaestrosPostgre, 5, 0, 1, 2)
 
         self.btnCrearDBPostgreSQL = QPushButton(self.gridLayoutWidget)
         self.btnCrearDBPostgreSQL.setObjectName(u"btnCrearDBPostgreSQL")
 
-        self.gridLayout_18.addWidget(self.btnCrearDBPostgreSQL, 4, 0, 1, 2)
+        self.gridLayout_18.addWidget(self.btnCrearDBPostgreSQL, 5, 3, 1, 2)
 
         self.btnTestDBPostgreSQL = QPushButton(self.gridLayoutWidget)
         self.btnTestDBPostgreSQL.setObjectName(u"btnTestDBPostgreSQL")
 
-        self.gridLayout_18.addWidget(self.btnTestDBPostgreSQL, 4, 3, 1, 2)
+        self.gridLayout_18.addWidget(self.btnTestDBPostgreSQL, 4, 0, 1, 5)
 
 
         self.gridLayout_5.addWidget(self.groupBox_9, 2, 1, 4, 4)
@@ -1413,20 +1423,22 @@ class Ui_FrmEmpresas(object):
         QWidget.setTabOrder(self.mariadb_port, self.mariadb_name)
         QWidget.setTabOrder(self.mariadb_name, self.mariadb_user)
         QWidget.setTabOrder(self.mariadb_user, self.mariadb_password)
-        QWidget.setTabOrder(self.mariadb_password, self.btnCrearDBMariaDb)
-        QWidget.setTabOrder(self.btnCrearDBMariaDb, self.btnTestBDMariaDB)
-        QWidget.setTabOrder(self.btnTestBDMariaDB, self.postgre_host)
+        QWidget.setTabOrder(self.mariadb_password, self.btnTestBDMariaDB)
+        QWidget.setTabOrder(self.btnTestBDMariaDB, self.btnCreaMaestrosMariaDB)
+        QWidget.setTabOrder(self.btnCreaMaestrosMariaDB, self.btnCrearDBMariaDb)
+        QWidget.setTabOrder(self.btnCrearDBMariaDb, self.postgre_host)
         QWidget.setTabOrder(self.postgre_host, self.postgre_port)
         QWidget.setTabOrder(self.postgre_port, self.postgre_name)
         QWidget.setTabOrder(self.postgre_name, self.postgre_user)
         QWidget.setTabOrder(self.postgre_user, self.postgre_password)
-        QWidget.setTabOrder(self.postgre_password, self.btnCrearDBPostgreSQL)
-        QWidget.setTabOrder(self.btnCrearDBPostgreSQL, self.btnTestDBPostgreSQL)
-        QWidget.setTabOrder(self.btnTestDBPostgreSQL, self.tableView)
-        QWidget.setTabOrder(self.tableView, self.btn_salir)
-        QWidget.setTabOrder(self.btn_salir, self.tabWidget)
-        QWidget.setTabOrder(self.tabWidget, self.btn_guardar_nuevo)
-        QWidget.setTabOrder(self.btn_guardar_nuevo, self.btn_deshacer)
+        QWidget.setTabOrder(self.postgre_password, self.btnTestDBPostgreSQL)
+        QWidget.setTabOrder(self.btnTestDBPostgreSQL, self.btnCreaMaestrosPostgre)
+        QWidget.setTabOrder(self.btnCreaMaestrosPostgre, self.btnCrearDBPostgreSQL)
+        QWidget.setTabOrder(self.btnCrearDBPostgreSQL, self.btn_deshacer)
+        QWidget.setTabOrder(self.btn_deshacer, self.btn_salir)
+        QWidget.setTabOrder(self.btn_salir, self.btn_guardar_nuevo)
+        QWidget.setTabOrder(self.btn_guardar_nuevo, self.tableView)
+        QWidget.setTabOrder(self.tableView, self.tabWidget)
 
         self.retranslateUi(FrmEmpresas)
         try:
@@ -1438,7 +1450,7 @@ class Ui_FrmEmpresas(object):
                 pass
 
         self.stackedWidget.setCurrentIndex(0)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(2)
         self.tabWidget_2.setCurrentIndex(0)
 
 
@@ -1587,13 +1599,14 @@ class Ui_FrmEmpresas(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("FrmEmpresas", u"Otros datos", None))
         self.label_2.setText(QCoreApplication.translate("FrmEmpresas", u"Motor Activo de Base de Datos", None))
         self.groupBox_8.setTitle(QCoreApplication.translate("FrmEmpresas", u"Datos Acceso MariaDB / MySQL ( Recomendado para empresas entre 2 y 10 ordenadores)", None))
-        self.label_82.setText(QCoreApplication.translate("FrmEmpresas", u"Nombre Base de Datos:", None))
         self.label_87.setText(QCoreApplication.translate("FrmEmpresas", u"Usuario:", None))
-        self.label_86.setText(QCoreApplication.translate("FrmEmpresas", u"Host:", None))
-        self.label_84.setText(QCoreApplication.translate("FrmEmpresas", u"Puerto:", None))
         self.label_83.setText(QCoreApplication.translate("FrmEmpresas", u"Password:", None))
-        self.btnTestBDMariaDB.setText(QCoreApplication.translate("FrmEmpresas", u"Test Database conexion", None))
+        self.label_82.setText(QCoreApplication.translate("FrmEmpresas", u"Nombre Base de Datos:", None))
+        self.label_84.setText(QCoreApplication.translate("FrmEmpresas", u"Puerto:", None))
+        self.label_86.setText(QCoreApplication.translate("FrmEmpresas", u"Host:", None))
+        self.btnCreaMaestrosMariaDB.setText(QCoreApplication.translate("FrmEmpresas", u"Crea DB Maestros", None))
         self.btnCrearDBMariaDb.setText(QCoreApplication.translate("FrmEmpresas", u"Crear DB", None))
+        self.btnTestBDMariaDB.setText(QCoreApplication.translate("FrmEmpresas", u"Test Database conexion", None))
         self.motordb.setItemText(0, QCoreApplication.translate("FrmEmpresas", u"SQLite", None))
         self.motordb.setItemText(1, QCoreApplication.translate("FrmEmpresas", u"MariaDB", None))
         self.motordb.setItemText(2, QCoreApplication.translate("FrmEmpresas", u"PostgreSQL", None))
@@ -1604,11 +1617,12 @@ class Ui_FrmEmpresas(object):
         self.label_3.setText(QCoreApplication.translate("FrmEmpresas", u"Ruta SQLite Empresa", None))
         self.btn_migrar.setText(QCoreApplication.translate("FrmEmpresas", u"Migrar a BD Multipuesto", None))
         self.groupBox_9.setTitle(QCoreApplication.translate("FrmEmpresas", u"Datos Acceso Postgre SQL(Recomendado para empresas con m\u00e1s de 10 ordenadores)", None))
-        self.label_79.setText(QCoreApplication.translate("FrmEmpresas", u"Nombre Base de Datos:", None))
+        self.label_56.setText(QCoreApplication.translate("FrmEmpresas", u"Host:", None))
         self.label_78.setText(QCoreApplication.translate("FrmEmpresas", u"Puerto:", None))
         self.label_81.setText(QCoreApplication.translate("FrmEmpresas", u"Password:", None))
-        self.label_56.setText(QCoreApplication.translate("FrmEmpresas", u"Host:", None))
         self.label_80.setText(QCoreApplication.translate("FrmEmpresas", u"Usuario:", None))
+        self.label_79.setText(QCoreApplication.translate("FrmEmpresas", u"Nombre Base de Datos:", None))
+        self.btnCreaMaestrosPostgre.setText(QCoreApplication.translate("FrmEmpresas", u"Crea DB Maestros", None))
         self.btnCrearDBPostgreSQL.setText(QCoreApplication.translate("FrmEmpresas", u"Crear BD", None))
         self.btnTestDBPostgreSQL.setText(QCoreApplication.translate("FrmEmpresas", u"Test Database conexion", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabWidgetPage2), QCoreApplication.translate("FrmEmpresas", u"Datos conexi\u00f3n Base de datos", None))

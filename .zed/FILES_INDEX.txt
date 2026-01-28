@@ -1,0 +1,97 @@
+╔══════════════════════════════════════════════════════════════════╗
+║           ÍNDICE DE ARCHIVOS DE CONFIGURACIÓN DE DEBUG          ║
+╚══════════════════════════════════════════════════════════════════╝
+
+📁 .zed/
+├── INICIO_RAPIDO.md       ⭐ EMPIEZA AQUÍ - Guía en 3 pasos
+├── README.md              📋 Resumen general de configuración
+├── DEBUG_GUIDE.md         📖 Guía completa y detallada
+├── DEBUG_EXAMPLES.md      💡 Ejemplos prácticos específicos
+├── test_debug.py          🧪 Script de prueba de configuración
+├── debug.json             ⚙️  Configuración principal del debugger
+├── settings.json          🔧 Settings de Zed (LSP, atajos, etc.)
+├── launch.json            🚀 Config alternativa (VSCode-compatible)
+└── FILES_INDEX.txt        📑 Este archivo
+
+════════════════════════════════════════════════════════════════════
+
+🎯 RUTAS RÁPIDAS:
+
+1. ¿Primera vez?
+   → Lee: INICIO_RAPIDO.md
+   → Ejecuta: .venv/bin/python .zed/test_debug.py
+
+2. ¿Necesitas ayuda general?
+   → Lee: README.md
+
+3. ¿Quieres aprender todo sobre debugging?
+   → Lee: DEBUG_GUIDE.md
+
+4. ¿Buscas ejemplos específicos?
+   → Lee: DEBUG_EXAMPLES.md
+
+5. ¿Quieres probar la configuración?
+   → Ejecuta: test_debug.py
+
+6. ¿Necesitas modificar la config?
+   → Edita: debug.json o settings.json
+
+════════════════════════════════════════════════════════════════════
+
+⌨️  ATAJOS CONFIGURADOS:
+
+    F5        → Iniciar/Continuar Debug
+    F9        → Toggle Breakpoint
+    F10       → Step Over (siguiente línea)
+    F11       → Step Into (entrar en función)
+    Shift+F11 → Step Out (salir de función)
+    Shift+F5  → Stop Debug
+
+════════════════════════════════════════════════════════════════════
+
+🔧 CONFIGURACIÓN ACTUAL:
+
+    Debugger:    debugpy v1.8.19
+    Python:      /home/marc/Artstudio3D/CreativeFlow/.venv/bin/python
+    Archivo:     main.py
+    LSP:         Pyright
+    Formatter:   Black
+
+    Variables de Entorno:
+    ├── QT_LOGGING_RULES="qt.sql.qsqldatabase.warning=false"
+    ├── PYTHONPATH="${workspaceFolder}"
+    └── QT_QPA_PLATFORM="xcb"
+
+════════════════════════════════════════════════════════════════════
+
+📊 ESTADÍSTICAS:
+
+    Total archivos:     8
+    Total líneas:       ~1,374
+    Documentación:      ~1,090 líneas
+    Código Python:      157 líneas
+    Configuración JSON: ~99 líneas
+    
+    Idioma:             Español 🇪🇸
+    Última revisión:    27/01/2025
+
+════════════════════════════════════════════════════════════════════
+
+💬 AYUDA RÁPIDA:
+
+    ¿El debugger no inicia?
+    → Verifica: .venv/bin/pip list | grep debugpy
+    
+    ¿Los breakpoints no funcionan?
+    → Guarda el archivo y prueba en líneas con código
+    
+    ¿La app Qt no aparece?
+    → Prueba cambiar QT_QPA_PLATFORM a "wayland"
+    
+    ¿Necesitas más ayuda?
+    → Consulta DEBUG_GUIDE.md sección "Solución de Problemas"
+
+════════════════════════════════════════════════════════════════════
+
+✨ ¡TODO LISTO PARA DEBUGGEAR TU APLICACIÓN QT6! ✨
+

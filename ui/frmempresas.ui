@@ -65,7 +65,7 @@
           </size>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>2</number>
          </property>
          <widget class="QWidget" name="tabWidgetPage1">
           <attribute name="title">
@@ -1835,25 +1835,12 @@
                 <x>100</x>
                 <y>40</y>
                 <width>373</width>
-                <height>201</height>
+                <height>228</height>
                </rect>
               </property>
               <layout class="QGridLayout" name="gridLayout_19">
-               <item row="1" column="0" colspan="2">
-                <widget class="QLabel" name="label_82">
-                 <property name="text">
-                  <string>Nombre Base de Datos:</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="3" colspan="2">
-                <widget class="QLineEdit" name="mariadb_user"/>
-               </item>
                <item row="0" column="4">
                 <widget class="QLineEdit" name="mariadb_port"/>
-               </item>
-               <item row="3" column="3" colspan="2">
-                <widget class="QLineEdit" name="mariadb_password"/>
                </item>
                <item row="2" column="0" colspan="2">
                 <widget class="QLabel" name="label_87">
@@ -1862,13 +1849,26 @@
                  </property>
                 </widget>
                </item>
+               <item row="3" column="0" colspan="2">
+                <widget class="QLabel" name="label_83">
+                 <property name="text">
+                  <string>Password:</string>
+                 </property>
+                </widget>
+               </item>
                <item row="1" column="3" colspan="2">
                 <widget class="QLineEdit" name="mariadb_name"/>
                </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="label_86">
+               <item row="3" column="3" colspan="2">
+                <widget class="QLineEdit" name="mariadb_password"/>
+               </item>
+               <item row="2" column="3" colspan="2">
+                <widget class="QLineEdit" name="mariadb_user"/>
+               </item>
+               <item row="1" column="0" colspan="2">
+                <widget class="QLabel" name="label_82">
                  <property name="text">
-                  <string>Host:</string>
+                  <string>Nombre Base de Datos:</string>
                  </property>
                 </widget>
                </item>
@@ -1882,24 +1882,31 @@
                  </property>
                 </widget>
                </item>
-               <item row="3" column="0" colspan="2">
-                <widget class="QLabel" name="label_83">
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_86">
                  <property name="text">
-                  <string>Password:</string>
+                  <string>Host:</string>
                  </property>
                 </widget>
                </item>
-               <item row="5" column="3" colspan="2">
-                <widget class="QPushButton" name="btnTestBDMariaDB">
+               <item row="6" column="0" colspan="2">
+                <widget class="QPushButton" name="btnCreaMaestrosMariaDB">
                  <property name="text">
-                  <string>Test Database conexion</string>
+                  <string>Crea DB Maestros</string>
                  </property>
                 </widget>
                </item>
-               <item row="5" column="0" colspan="2">
+               <item row="6" column="3" colspan="2">
                 <widget class="QPushButton" name="btnCrearDBMariaDb">
                  <property name="text">
                   <string>Crear DB</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="0" colspan="5">
+                <widget class="QPushButton" name="btnTestBDMariaDB">
+                 <property name="text">
+                  <string>Test Database conexion</string>
                  </property>
                 </widget>
                </item>
@@ -2020,17 +2027,26 @@
                 <x>80</x>
                 <y>40</y>
                 <width>471</width>
-                <height>201</height>
+                <height>228</height>
                </rect>
               </property>
               <layout class="QGridLayout" name="gridLayout_18">
+               <item row="1" column="3" colspan="2">
+                <widget class="QLineEdit" name="postgre_name"/>
+               </item>
                <item row="0" column="1">
                 <widget class="QLineEdit" name="postgre_host"/>
                </item>
-               <item row="1" column="0" colspan="2">
-                <widget class="QLabel" name="label_79">
+               <item row="2" column="3" colspan="2">
+                <widget class="QLineEdit" name="postgre_user"/>
+               </item>
+               <item row="0" column="4">
+                <widget class="QLineEdit" name="postgre_port"/>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_56">
                  <property name="text">
-                  <string>Nombre Base de Datos:</string>
+                  <string>Host:</string>
                  </property>
                 </widget>
                </item>
@@ -2048,22 +2064,6 @@
                  </property>
                 </widget>
                </item>
-               <item row="3" column="3" colspan="2">
-                <widget class="QLineEdit" name="postgre_password"/>
-               </item>
-               <item row="0" column="4">
-                <widget class="QLineEdit" name="postgre_port"/>
-               </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="label_56">
-                 <property name="text">
-                  <string>Host:</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="3" colspan="2">
-                <widget class="QLineEdit" name="postgre_name"/>
-               </item>
                <item row="2" column="0" colspan="2">
                 <widget class="QLabel" name="label_80">
                  <property name="text">
@@ -2071,17 +2071,31 @@
                  </property>
                 </widget>
                </item>
-               <item row="2" column="3" colspan="2">
-                <widget class="QLineEdit" name="postgre_user"/>
+               <item row="1" column="0" colspan="2">
+                <widget class="QLabel" name="label_79">
+                 <property name="text">
+                  <string>Nombre Base de Datos:</string>
+                 </property>
+                </widget>
                </item>
-               <item row="4" column="0" colspan="2">
+               <item row="3" column="3" colspan="2">
+                <widget class="QLineEdit" name="postgre_password"/>
+               </item>
+               <item row="5" column="0" colspan="2">
+                <widget class="QPushButton" name="btnCreaMaestrosPostgre">
+                 <property name="text">
+                  <string>Crea DB Maestros</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="3" colspan="2">
                 <widget class="QPushButton" name="btnCrearDBPostgreSQL">
                  <property name="text">
                   <string>Crear BD</string>
                  </property>
                 </widget>
                </item>
-               <item row="4" column="3" colspan="2">
+               <item row="4" column="0" colspan="5">
                 <widget class="QPushButton" name="btnTestDBPostgreSQL">
                  <property name="text">
                   <string>Test Database conexion</string>
@@ -2230,20 +2244,22 @@
   <tabstop>mariadb_name</tabstop>
   <tabstop>mariadb_user</tabstop>
   <tabstop>mariadb_password</tabstop>
-  <tabstop>btnCrearDBMariaDb</tabstop>
   <tabstop>btnTestBDMariaDB</tabstop>
+  <tabstop>btnCreaMaestrosMariaDB</tabstop>
+  <tabstop>btnCrearDBMariaDb</tabstop>
   <tabstop>postgre_host</tabstop>
   <tabstop>postgre_port</tabstop>
   <tabstop>postgre_name</tabstop>
   <tabstop>postgre_user</tabstop>
   <tabstop>postgre_password</tabstop>
-  <tabstop>btnCrearDBPostgreSQL</tabstop>
   <tabstop>btnTestDBPostgreSQL</tabstop>
-  <tabstop>tableView</tabstop>
-  <tabstop>btn_salir</tabstop>
-  <tabstop>tabWidget</tabstop>
-  <tabstop>btn_guardar_nuevo</tabstop>
+  <tabstop>btnCreaMaestrosPostgre</tabstop>
+  <tabstop>btnCrearDBPostgreSQL</tabstop>
   <tabstop>btn_deshacer</tabstop>
+  <tabstop>btn_salir</tabstop>
+  <tabstop>btn_guardar_nuevo</tabstop>
+  <tabstop>tableView</tabstop>
+  <tabstop>tabWidget</tabstop>
  </tabstops>
  <resources>
   <include location="designer.qrc"/>

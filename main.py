@@ -25,7 +25,8 @@ def main():
 
     # 2. Inicializar DataManager Global (SIN conectar aún)
     # Este objeto vivirá durante toda la sesión
-    data_manager = DataManager()
+    db_maestros = DataManager(connection_name="conn_maestros")
+    db_empresa = DataManager(connection_name="conn_empresa")
 
     # 3. Traducciones y Estilos
     translator = QTranslator()
@@ -40,12 +41,11 @@ def main():
     messagebox_styler = MessageBoxStyler()
     app.installEventFilter(messagebox_styler)
 
-    # 5. Iniciar Login pasándole el DataManager
+    # 5. Iniciar Login pasándole los DataManager
     from login.controller import LoginController
 
-    # IMPORTANTE: Pasamos el data_manager al controlador para que
-    # este pueda realizar la conexión inicial a SQLite
-    login_ctrl = LoginController(data_manager)
+    # IMPORTANTE: Pasamos db_maestros y db_empresa al controlador
+    login_ctrl = LoginController(data_maestros=db_maestros, data_empresa=db_empresa)
 
     login_ctrl.view.show()
     sys.exit(app.exec())

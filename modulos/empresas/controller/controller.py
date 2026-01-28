@@ -12,7 +12,7 @@ from helpers.validadores import ValidadorFiscal
 
 
 class EmpresaController:
-    def __init__(self, vista: EmpresaConfigView, modelo, session_data: dict):
+    def __init__(self, vista: EmpresaConfigView, modelo, session_data: dict, db_maestros=None, db_empresa=None):
         self.vista = vista
         self.modelo = modelo
         self.id_empresa = session_data.get("id_empresa", 0)
@@ -20,6 +20,8 @@ class EmpresaController:
         self.session_data = session_data
         self.validador = ValidadorFiscal()
         self._validando = False  # Flag para evitar validaciones en cascada
+        self.db_maestros = db_maestros
+        self.db_empresa = db_empresa
 
 
         #conecto botones
@@ -31,6 +33,7 @@ class EmpresaController:
         self.vista.btnTestBDMariaDB.clicked.connect(self.probar_conexion_mariadb)
         self.vista.btnCrearDBPostgreSQL.clicked.connect(self.preparar_base_datos_postgresql)
         self.vista.btnTestDBPostgreSQL.clicked.connect(self.probar_conexion_postgresql)
+        self.vista.btnCreaMaestrosPostgre.clicked.connect(self.crear_base_datos_maestros_postgresql)
         #conecto señales de campos
         self.vista.cp.editingFinished.connect(self.buscar_poblacion_cp_handler)
         self.vista.poblacion.editingFinished.connect(self.buscar_poblacion_handler)
@@ -156,16 +159,24 @@ class EmpresaController:
 
     def abrir_selector_paises(self):
         """
-        Abre el selector de países reutilizando la conexión SQLite existente.
+        Abre el selector de países usando db_maestros.
         """
-        # Reutilizamos la conexión existente del modelo
-        db = self.modelo.sqlite_model.db
+        # Usamos db_maestros para paises
+        if not self.db_maestros or not self.db_maestros.db:
+            QMessageBox.critical(
+                self.vista,
+                "Error de conexión",
+                "La base de datos maestros no está disponible"
+            )
+            return
+            
+        db = self.db_maestros.db
 
         if not db.isOpen():
             QMessageBox.critical(
                 self.vista,
                 "Error de conexión",
-                "La base de datos no está abierta"
+                "La base de datos maestros no está abierta"
             )
             return
 
@@ -216,7 +227,11 @@ class EmpresaController:
                  FROM poblaciones
                  WHERE id_pais = ? AND (cp = ? OR cp_adicionales LIKE ?)"""
 
-        query = QSqlQuery(self.modelo.sqlite_model.db)
+        if not self.db_maestros or not self.db_maestros.db:
+            print("❌ Error: db_maestros no está disponible")
+            return
+            
+        query = QSqlQuery(self.db_maestros.db)
         query.prepare(sql)
         query.addBindValue(id_pais)
         query.addBindValue(texto_busqueda)
@@ -280,7 +295,11 @@ class EmpresaController:
                  FROM poblaciones
                  WHERE id_pais = ? AND (poblacion LIKE ?)"""
 
-        query = QSqlQuery(self.modelo.sqlite_model.db)
+        if not self.db_maestros or not self.db_maestros.db:
+            print("❌ Error: db_maestros no está disponible")
+            return
+            
+        query = QSqlQuery(self.db_maestros.db)
         query.prepare(sql)
         query.addBindValue(id_pais)
         query.addBindValue(f"%{texto_busqueda}%")
@@ -318,9 +337,16 @@ class EmpresaController:
         self.abrir_selector_poblaciones(texto_busqueda)
 
     def abrir_selector_poblaciones_CP(self, sql_filtro=""):
-
-        # Reutilizamos tu clase genérica
-        buscador = DBConsultaView(self.modelo.sqlite_model.db)
+        # Usamos db_maestros para poblaciones
+        if not self.db_maestros or not self.db_maestros.db:
+            QMessageBox.critical(
+                self.vista,
+                "Error de conexión",
+                "La base de datos maestros no está disponible"
+            )
+            return
+            
+        buscador = DBConsultaView(self.db_maestros.db)
 
         pais_text = self.vista.pais.text()
         if pais_text == "España":
@@ -350,9 +376,16 @@ class EmpresaController:
                 self.vista.provincia.setText(buscador.registro.value("provincia_region"))
 
     def abrir_selector_poblaciones(self, sql_filtro=""):
-
-        # Reutilizamos tu clase genérica
-        buscador = DBConsultaView(self.modelo.sqlite_model.db)
+        # Usamos db_maestros para poblaciones
+        if not self.db_maestros or not self.db_maestros.db:
+            QMessageBox.critical(
+                self.vista,
+                "Error de conexión",
+                "La base de datos maestros no está disponible"
+            )
+            return
+            
+        buscador = DBConsultaView(self.db_maestros.db)
 
         pais_text = self.vista.pais.text()
         if pais_text == "España":
@@ -911,3 +944,70 @@ class EmpresaController:
         except Exception as e:
             print(f"❌ Error leyendo o procesando el archivo SQL: {e}")
             return False
+
+    """--------------------------------------------------------"""
+    """
+    Crea la base de datos 'maestros_global' y sus tablas.
+    Se invoca desde un botón independiente.
+    """
+    """--------------------------------------------------------"""
+    def crear_base_datos_maestros_postgresql(self):
+
+        db_name = "maestros_global"
+        driver_qt = "QPSQL" # O detectar según el motor elegido
+        
+        # 1. Recogemos los datos del servidor de los campos que ya tienes
+        host = self.vista.postgre_host.text().strip()
+        user = self.vista.postgre_user.text().strip()
+        pasw = self.vista.postgre_password.text().strip()
+        try:
+            puerto = int(self.vista.postgre_port.text().strip() or 5432)
+        except:
+            puerto = 5432
+
+        # 2. Ruta al script de maestros
+        project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+        ruta_sql = os.path.join(project_root, "database", "init_maestros_postgresql.sql")
+
+        # 3. Conexión al servidor
+        temp_db = QSqlDatabase.addDatabase(driver_qt, "maestros_init_conn")
+        temp_db.setHostName(host)
+        temp_db.setUserName(user)
+        temp_db.setPassword(pasw)
+        temp_db.setPort(puerto)
+        temp_db.setDatabaseName("postgres")
+
+        if not temp_db.open():
+            QMessageBox.critical(self.vista, "Error", f"No se pudo conectar al servidor:\n{temp_db.lastError().text()}")
+            return
+
+        query = QSqlQuery(temp_db)
+        
+        # 4. Crear la DB si no existe
+        query.exec(f"SELECT 1 FROM pg_database WHERE datname = '{db_name}'")
+        if not query.next():
+            if not query.exec(f"CREATE DATABASE {db_name}"):
+                QMessageBox.critical(self.vista, "Error", f"No se pudo crear {db_name}:\n{query.lastError().text()}")
+                temp_db.close()
+                return
+        
+        temp_db.close()
+        QSqlDatabase.removeDatabase("maestros_init_conn")
+
+        # 5. Reconectar a la nueva DB para crear las tablas
+        db_maestros = QSqlDatabase.addDatabase(driver_qt, "maestros_final_conn")
+        db_maestros.setHostName(host)
+        db_maestros.setUserName(user)
+        db_maestros.setPassword(pasw)
+        db_maestros.setPort(puerto)
+        db_maestros.setDatabaseName(db_name)
+
+        if db_maestros.open():
+            query_m = QSqlQuery(db_maestros)
+            if self.ejecutar_script_sql(query_m, ruta_sql):
+                QMessageBox.information(self.vista, "Éxito", "Base de datos de Maestros configurada correctamente.")
+            else:
+                QMessageBox.warning(self.vista, "Atención", "La DB se creó pero falló el script de tablas.")
+            
+            db_maestros.close()
+            QSqlDatabase.removeDatabase("maestros_final_conn")

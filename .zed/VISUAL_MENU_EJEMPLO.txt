@@ -1,0 +1,136 @@
+╔══════════════════════════════════════════════════════════════════╗
+║            LO QUE VERÁS AL PRESIONAR F5 EN ZED                   ║
+╚══════════════════════════════════════════════════════════════════╝
+
+
+    ┌─────────────────────────────────────────────────┐
+    │  Debug                                          │
+    │                                                 │
+    │  Find a debug task, or debug a command         │
+    │  ┌────────────────────────────────────────┐    │
+    │  │                                        │    │
+    │  └────────────────────────────────────────┘    │
+    │                                                 │
+    │  🚀 Debug Creative Flow - MAIN APPLICATION ◀── ⭐ SELECCIONA ESTA
+    │     Language: Python                           │
+    │                                                 │
+    │  ▶️ Run Creative Flow (No Debug)                │
+    │     Language: Python                           │
+    │                                                 │
+    │  🔍 Debug Current File                          │
+    │     Language: Python                           │
+    │                                                 │
+    │  🧪 Debug with Pytest                           │
+    │     Language: Python                           │
+    │                                                 │
+    │  ─────────────────────────────────────         │
+    │                                                 │
+    │  run module '...'  ◀── ❌ NO USES ESTAS         │
+    │  pytest '...'                                   │
+    │  etc...                                         │
+    │                                                 │
+    └─────────────────────────────────────────────────┘
+
+
+🎯 EXPLICACIÓN:
+
+Las 4 primeras opciones (con emojis) son TUS configuraciones:
+
+┌─────────────────────────────────────────────────────────────────┐
+│ 🚀 Debug Creative Flow - MAIN APPLICATION                       │
+│                                                                 │
+│ ✓ SIEMPRE inicia desde main.py                                 │
+│ ✓ Funciona desde cualquier archivo que tengas abierto          │
+│ ✓ Tus breakpoints en cualquier parte del proyecto funcionan    │
+│ ✓ Todo el contexto (QApp, DataManager, etc.) está disponible   │
+│                                                                 │
+│ 👉 USA ESTA para debug normal de tu app Qt6                     │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ ▶️ Run Creative Flow (No Debug)                                 │
+│                                                                 │
+│ ✓ Ejecuta la app sin debugger (más rápido)                     │
+│ ✓ Útil para pruebas rápidas sin inspeccionar variables         │
+│                                                                 │
+│ 👉 Usa esta cuando solo quieras probar la app                   │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ 🔍 Debug Current File                                           │
+│                                                                 │
+│ ✗ Intenta ejecutar el archivo actual directamente              │
+│ ✗ NO funciona para archivos que dependen de main.py            │
+│                                                                 │
+│ 👉 Solo para scripts independientes (test_debug.py, etc.)       │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ 🧪 Debug with Pytest                                            │
+│                                                                 │
+│ ✓ Ejecuta pytest en el archivo actual                          │
+│ ✓ Útil para archivos de tests unitarios                        │
+│                                                                 │
+│ 👉 Solo cuando estés en archivos de tests                       │
+└─────────────────────────────────────────────────────────────────┘
+
+
+Las opciones de abajo (sin emojis) son generadas automáticamente
+por Zed y generalmente NO SON ÚTILES para tu app Qt6.
+
+
+═══════════════════════════════════════════════════════════════════
+
+FLUJO TÍPICO DE USO:
+
+    Estás editando: login/controller.py
+           ↓
+    Colocas breakpoint en handle_login()
+           ↓
+    Presionas F5
+           ↓
+    Aparece el menú de arriba
+           ↓
+    Seleccionas: 🚀 Debug Creative Flow - MAIN APPLICATION
+           ↓
+    Zed ejecuta: main.py (desde el principio)
+           ↓
+    Se abre la ventana de login
+           ↓
+    Ingresas usuario y contraseña
+           ↓
+    Haces clic en "Login"
+           ↓
+    Se ejecuta handle_login()
+           ↓
+    💥 Se detiene en tu breakpoint!
+           ↓
+    Puedes inspeccionar variables con el panel de Zed
+           ↓
+    Navegas con F10 (Step Over) / F11 (Step Into)
+           ↓
+    F5 para continuar o Shift+F5 para detener
+
+
+═══════════════════════════════════════════════════════════════════
+
+⌨️  RECORDATORIO DE ATAJOS:
+
+    F5        → Abrir menú / Continuar ejecución
+    F9        → Agregar/Quitar breakpoint
+    F10       → Step Over (siguiente línea)
+    F11       → Step Into (entrar en función)
+    Shift+F11 → Step Out (salir de función)
+    Shift+F5  → Detener debug
+
+═══════════════════════════════════════════════════════════════════
+
+💡 TIP PRO:
+
+Si siempre vas a usar la misma configuración, puedes crear un
+alias o shortcut específico. Por ahora, solo recuerda:
+
+    F5 → Primera opción con 🚀 → Enter
+
+¡3 teclas y estás debuggeando! 🎉
+

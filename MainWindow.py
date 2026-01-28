@@ -18,9 +18,10 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 IMAGES_DIR = os.path.join(CURRENT_DIR, "images", "modules")
 
 class MainWindow(QMainWindow):
-    def __init__(self, data_manager, session_data, sqlite_model=None, modo_rescate=False):
+    def __init__(self, db_maestros, db_empresa, session_data, sqlite_model=None, modo_rescate=False):
         super().__init__()
-        self.data_manager = data_manager  # Para MariaDB (datos operativos)
+        self.db_maestros = db_maestros  # Para MariaDB/PostgreSQL (datos maestros)
+        self.db_empresa = db_empresa  # Para MariaDB/PostgreSQL (datos empresa)
         self.sqlite_model = sqlite_model  # Para SQLite (configuración de empresas)
         self.session_data = session_data
 
@@ -191,87 +192,7 @@ class MainWindow(QMainWindow):
         lbl = QLabel(texto)
         lbl.setStyleSheet(f"color: {COLOR_GRIS_TECNICO}; font-size: 11px; font-weight: bold; border: none;")
         return lbl
-
-    """def cambiar_modulo(self, nombre_modulo):
-        print(f"DEBUG: Cargando {nombre_modulo}")
-
-        # Limpiar completamente el área de contenido - ELIMINAR widgets de memoria
-        while self.content_layout.count():
-            item = self.content_layout.takeAt(0)
-            widget = item.widget()
-            if widget:
-                widget.deleteLater()  # Eliminar completamente de memoria
-
-        if nombre_modulo == "EMPRESAS":
-            # Siempre recrear el módulo desde cero
-            self.vista_empresas = EmpresaConfigView()
-
-
-            modelo_empresas = EmpresaModel(self.sqlite_model)
-            self.controlador_empresas = EmpresaController(
-                self.vista_empresas,
-                modelo_empresas,
-                self.session_data      )
-
-            self.content_layout.addWidget(self.vista_empresas)
-            self.vista_empresas.show()
-
-        # Aquí se pueden agregar más módulos cuando estén implementados
-        # elif nombre_modulo == "USUARIOS":
-        #     vista_usuarios = UsuariosView()
-        #     modelo_usuarios = UsuariosModel(self.sqlite_model)
-        #     controlador_usuarios = UsuariosController(vista_usuarios, modelo_usuarios)
-        #     self.content_layout.addWidget(vista_usuarios)
-        #
-        elif nombre_modulo == "VENTAS":
-            # Creamos un contenedor sencillo para los botones de ventas
-            self.vista_ventas = QWidget()
-            layout_ventas = QVBoxLayout(self.vista_ventas)
-            layout_ventas.setSpacing(10)
-            layout_ventas.setContentsMargins(20, 20, 20, 20)
-
-            # Añadimos un encabezado (usando tu función existente)
-            layout_ventas.addWidget(self.crear_label_header("GESTIÓN DE VENTAS"))
-
-            # Lista de botones que querías
-            botones_ventas = [
-                ("CLIENTES", self.abrir_gestion_clientes),
-                ("PRESUPUESTOS", None),  # Iremos añadiendo funciones luego
-                ("ALBARANES", None),
-                ("FACTURAS", None),
-                ("ARTÍCULOS", None)
-            ]
-
-            for texto, funcion in botones_ventas:
-                btn = QPushButton(texto)
-                btn.setFixedHeight(50)
-                btn.setStyleSheet(f""
-                        QPushButton {{
-                            background-color: {COLOR_FONDO_COMBOS};
-                            color: white;
-                            border-radius: 8px;
-                            text-align: left;
-                            padding-left: 20px;
-                            font-weight: bold;
-                        }}
-                        QPushButton:hover {{ background-color: {COLOR_NARANJA}; }}
-                    "")
-                if funcion:
-                    btn.clicked.connect(funcion)
-                layout_ventas.addWidget(btn)
-
-            layout_ventas.addStretch()  # Empuja todo hacia arriba
-            self.content_layout.addWidget(self.vista_ventas)
-
-        else:
-            # Mensaje para módulos no implementados
-            lbl_placeholder = QLabel(f"Módulo '{nombre_modulo}' en desarrollo")
-            lbl_placeholder.setStyleSheet("color: #999; font-size: 16px;")
-            lbl_placeholder.setAlignment(Qt.AlignmentFlag.AlignCenter)
-            self.content_layout.addWidget(lbl_placeholder)
-            self.content_layout.addStretch()
-    """
-
+ 
     def cambiar_modulo(self, nombre_modulo, view_class=None):
         print(f"DEBUG: Cargando {nombre_modulo}")
 
@@ -287,7 +208,7 @@ class MainWindow(QMainWindow):
         if view_class:
             instancia = view_class()
             if hasattr(instancia, 'set_db'):
-                instancia.set_db(self.data_manager, self.session_data)
+                instancia.set_db(self.db_empresa, self.db_maestros, self.session_data)
 
             self.content_layout.addWidget(instancia)
             self.content_layout.setContentsMargins(0, 0, 0, 0)
@@ -298,7 +219,10 @@ class MainWindow(QMainWindow):
             self.vista_empresas = EmpresaConfigView()
             modelo_empresas = EmpresaModel(self.sqlite_model)
             self.controlador_empresas = EmpresaController(
-                self.vista_empresas, modelo_empresas, self.session_data)
+                self.vista_empresas, modelo_empresas, self.session_data,
+                db_maestros=self.db_maestros,
+                db_empresa=self.db_empresa
+            )
             self.content_layout.addWidget(self.vista_empresas)
 
 

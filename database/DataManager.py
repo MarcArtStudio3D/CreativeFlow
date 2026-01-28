@@ -6,21 +6,16 @@ class DataManager:
     def __init__(self, connection_name="main_worker"):
         self.connection_name = connection_name
         self.db = None
-        self.engine = None
 
     def conectar(self, motor, config):
-        """
-        motor: 'QPSQL' (Postgres), 'QMARIADB' o 'QMYSQL', 'QSQLITE'
-        config: diccionario con host, database, user, password, port
-        """
-        # Evitar duplicar conexiones con el mismo nombre
+        # Si la conexión ya existe, la recuperamos en lugar de borrarla
         if QSqlDatabase.contains(self.connection_name):
-            QSqlDatabase.removeDatabase(self.connection_name)
-
-        self.db = QSqlDatabase.addDatabase(motor, self.connection_name)
+            self.db = QSqlDatabase.database(self.connection_name)
+        else:
+            self.db = QSqlDatabase.addDatabase(motor, self.connection_name)
 
         if motor == 'QSQLITE':
-            self.db.setDatabaseName(config['database'])  # Aquí va la ruta al .db
+            self.db.setDatabaseName(config['database'])
         else:
             self.db.setHostName(config.get('host', 'localhost'))
             self.db.setDatabaseName(config.get('database'))
@@ -28,13 +23,11 @@ class DataManager:
             self.db.setPassword(config.get('password'))
             self.db.setPort(int(config.get('port', 5432)))
 
-        if self.db.open():
-            self.engine = motor
-            print(f"✅ Conectado a {motor} con éxito")
-            return True
-        else:
-            print(f"❌ Error: {self.db.lastError().text()}")
-            return False
+        if not self.db.isOpen():
+            if not self.db.open():
+                print(f"❌ Error en {self.connection_name}: {self.db.lastError().text()}")
+                return False
+        return True
 
     def consultar(self, sql, params=None):
         """Equivalente a tu método actual, devuelve lista de diccionarios"""
