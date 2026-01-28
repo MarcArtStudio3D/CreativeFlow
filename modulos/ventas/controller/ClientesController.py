@@ -27,7 +27,9 @@ class ClientesController:
         self.vista.id.setVisible(False)
 
 
-        #conecto botones
+        """------------------------------------
+                CONEXIONES DE BOTONES
+        -------------------------------------"""
         self.vista.btnCerrar.clicked.connect(self.vista.close)
         self.vista.btnSiguiente.clicked.connect(self.siguiente_nombre)
         self.vista.btnAnterior.clicked.connect(self.anterior_nombre)
@@ -52,29 +54,10 @@ class ClientesController:
         # Desactivo campos que no deben editarse
         #self.vista.pais.setReadOnly(True)
         self.vista.id_pais.setVisible(False)
-
-        """ #campos que dependen del pais seleccionado
-        if (self.session_data.get("pais", "") == "España"):
-            self.vista.provincia_region.setVisible(True)
-            self.vista.lblProvincia.setVisible(True)
-            self.vista.label_cif_siren.setText("CIF:")
-            self.vista.label_siret.setVisible(False)
-            self.vista.siret.setVisible(False)
-            self.vista.irpf.setVisible(True)
-            self.vista.lblSegundoApellido.setVisible(True)
-            self.vista.apellido2.setVisible(True)
-
-
-        else:
-            self.vista.provincia_region.setVisible(False)
-            self.vista.lblProvincia.setVisible(False)
-            self.vista.label_cif_siren.setText("SIREN:")
-            self.vista.label_siret.setVisible(True)
-            self.vista.siret.setVisible(True)
-            self.vista.irpf.setVisible(False)
-            self.vista.lblSegundoApellido.setVisible(False)
-            self.vista.apellido2.setVisible(False)
-        """
+        self.vista.id_agente.setVisible(False)
+        self.vista.id_transportista.setVisible(False)
+        self.vista.id_forma_pago.setVisible(False)
+        self.vista.id_idioma_documentos.setVisible(False)
         self.cargar_tabla_principal()
         self.vista.stackedWidget.setCurrentIndex(1)
 
@@ -362,7 +345,7 @@ class ClientesController:
         self.modo_no_edicion()
 
     """------------------------------------
-    BORRAMOS EL CLIENTE  
+    BORRAMOS EL CLIENTE
     ------------------------------------"""
     def borrar_cliente(self):
         if QMessageBox.question(
