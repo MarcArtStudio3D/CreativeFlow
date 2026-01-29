@@ -1450,7 +1450,7 @@ class Ui_FrmEmpresas(object):
                 pass
 
         self.stackedWidget.setCurrentIndex(0)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(0)
         self.tabWidget_2.setCurrentIndex(0)
 
 

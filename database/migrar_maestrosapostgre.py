@@ -8,8 +8,15 @@ def migrar_desde_sqlite(self, db_maestros_pg):
     import sqlite3
     
     # 1. Ruta al SQLite (ajusta a tu ruta real en Arch)
-    path_sqlite = os.path.join(os.path.dirname(__file__), "..", "database", "maestros_local.db")
-    
+ # 1. Obtenemos la ruta absoluta de donde está este archivo (model.py)
+    dir_actual = os.path.dirname(os.path.abspath(__file__))
+
+    # 2. Subimos un nivel para llegar a la raíz del proyecto (CreativeFlow/)
+    dir_raiz = os.path.dirname(dir_actual)
+
+    # 3. Construimos la ruta completa al archivo .db
+    path_sqlite = os.path.join(dir_raiz, "creativeflow.db")
+
     if not os.path.exists(path_sqlite):
         print("⚠️ No se encontró el SQLite local para migrar.")
         return

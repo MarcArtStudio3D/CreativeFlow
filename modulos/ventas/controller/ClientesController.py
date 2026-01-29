@@ -3,7 +3,7 @@ import unicodedata
 
 from PySide6 import QtCore
 from PySide6.QtCore import QSortFilterProxyModel, Qt
-from PySide6.QtSql import QSqlDatabase, QSqlQuery
+from PySide6.QtSql import QSqlDatabase
 from PySide6.QtWidgets import (
     QComboBox,
     QDateEdit,
@@ -516,8 +516,7 @@ class ClientesController:
 
     def buscar_poblacion_cp(self, texto_busqueda):
         """
-        Busca población por código postal.
-        No usa query.size() porque devuelve -1 en muchos drivers.
+        Busca población por código postal usando el modelo.
         """
         # Obtenemos el texto del widget pais correctamente
         pais_text = self.vista.pais.text()
@@ -526,8 +525,14 @@ class ClientesController:
             id_pais = 1
         elif pais_text == "Francia":
             id_pais = 2
+        else:
+            print("⚠️ País no reconocido, no se puede buscar población")
+            return
 
-        poblaciones  = self.modelo.obtener_datos_tabla_auxiliar("poblaciones", ["id", "poblacion", "provincia_region", "cp", "cp_adicionales"],"poblacion")
+        # Llamamos al método del modelo (respetando MVC)
+        poblaciones = self.modelo.buscar_poblaciones_por_cp(id_pais, texto_busqueda)
+
+        print(f"🔍 Búsqueda CP '{texto_busqueda}' en país {id_pais}: {len(poblaciones)} resultados")
 
         # Sin resultados
         if len(poblaciones) == 0:
@@ -540,7 +545,7 @@ class ClientesController:
             self.vista.cp.setText(str(fila["cp"] or ""))
 
             if pais_text == "España":
-                self.vista.provincia.setText(str(fila["provincia_region"] or ""))
+                self.vista.provincia_region.setText(str(fila["provincia_region"] or ""))
             return
 
         # Múltiples resultados: abrir selector
@@ -563,8 +568,7 @@ class ClientesController:
 
     def buscar_poblacion(self, texto_busqueda):
         """
-        Busca población por nombre de población.
-        No usa query.size() porque devuelve -1 en muchos drivers.
+        Busca población por nombre de población usando el modelo.
         """
         # Obtenemos el texto del widget pais correctamente
         pais_text = self.vista.pais.text()
@@ -574,34 +578,10 @@ class ClientesController:
         else:
             id_pais = 2
 
-        # SQL preparado con placeholders
-        sql = """SELECT poblacion, provincia_region, cp, region_code
-                 FROM poblaciones
-                 WHERE id_pais = ? AND (poblacion LIKE ?)"""
+        # Llamamos al método del modelo (respetando MVC)
+        filas = self.modelo.buscar_poblaciones_por_nombre(id_pais, texto_busqueda)
 
-        query = QSqlQuery(self.modelo.db_maestros.db)
-        query.prepare(sql)
-        query.addBindValue(id_pais)
-        query.addBindValue(f"%{texto_busqueda}%")
-
-        if not query.exec():
-            print(f"❌ Error SQL: {query.lastError().text()}")
-            return
-
-        # Recolectamos todas las filas (query.size() no funciona bien)
-        filas = []
-        while query.next():
-            filas.append(
-                {
-                    "poblacion": query.value("poblacion"),
-                    "provincia_region": query.value("provincia_region"),
-                    "cp": query.value("cp"),
-                }
-            )
-
-        print(
-            f"🔍 Búsqueda Población '{texto_busqueda}' en país {id_pais}: {len(filas)} resultados"
-        )
+        print(f"🔍 Búsqueda Población '{texto_busqueda}' en país {id_pais}: {len(filas)} resultados")
 
         # Sin resultados
         if len(filas) == 0:
@@ -614,7 +594,7 @@ class ClientesController:
             self.vista.cp.setText(str(fila["cp"] or ""))
 
             if pais_text == "España":
-                self.vista.provincia.setText(str(fila["provincia_region"] or ""))
+                self.vista.provincia_region.setText(str(fila["provincia_region"] or ""))
             return
 
         # Múltiples resultados: abrir selector
@@ -652,8 +632,8 @@ class ClientesController:
         if buscador.exec():
             # Actualizamos la vista de empresas
             self.vista.poblacion.setText(buscador.registro.value("poblacion"))
-            if self.vista.pais == "España":
-                self.vista.provincia.setText(
+            if self.vista.pais.text() == "España":
+                self.vista.provincia_region.setText(
                     buscador.registro.value("provincia_region")
                 )
 
@@ -690,8 +670,8 @@ class ClientesController:
             # Actualizamos la vista de empresas
             self.vista.cp.setText(buscador.registro.value("cp"))
             self.vista.poblacion.setText(buscador.registro.value("poblacion"))
-            if self.vista.pais == "España":
-                self.vista.provincia.setText(
+            if self.vista.pais.text() == "España":
+                self.vista.provincia_region.setText(
                     buscador.registro.value("provincia_region")
                 )
 

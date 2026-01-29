@@ -119,14 +119,15 @@ class ClienteModel:
             return None, []
 
         query = QSqlQuery(self.db_empresa.db)
-        if direccion==0:
-            query.prepare("SELECT * FROM clientes WHERE nombre_fiscal = ?")
-        elif direccion==1: # siguiente
-            query.prepare("SELECT * FROM clientes WHERE nombre_fiscal > ?  ORDER BY nombre_fiscal LIMIT 1")
-        elif direccion==2: #
-            query.prepare("SELECT * FROM clientes WHERE nombre_fiscal < ?  ORDER BY nombre_fiscal DESC LIMIT 1")
 
-        query.addBindValue(nombre)
+        if direccion==0:
+            query.prepare("SELECT * FROM clientes WHERE nombre_fiscal = :nombre")
+        elif direccion==1: # siguiente
+            query.prepare("SELECT * FROM clientes WHERE nombre_fiscal > :nombre ORDER BY nombre_fiscal LIMIT 1")
+        elif direccion==2: # anterior
+            query.prepare("SELECT * FROM clientes WHERE nombre_fiscal < :nombre ORDER BY nombre_fiscal DESC LIMIT 1")
+
+        query.bindValue(":nombre", nombre)
 
         if query.exec() and query.next():
             record = query.record()
@@ -176,21 +177,21 @@ class ClienteModel:
                     datos_limpios[col] = valor
 
             # --- DEBUG FINAL ---
-            print(f"VALORES LIMPIOS: {datos_limpios['fecha_alta']}")  # Debería imprimir: 2025-03-25
-            # Construcción de la query
-            campos = ", ".join([f"{col} = ?" for col in datos_limpios.keys()])
-            valores = list(datos_limpios.values())
+            print(f"VALORES LIMPIOS: {datos_limpios.get('fecha_alta', 'N/A')}")
 
-            sql = f"UPDATE clientes SET {campos} WHERE id = ?"
+            # Construcción de la query con placeholders nombrados
+            campos = ", ".join([f"{col} = :{col}" for col in datos_limpios.keys()])
+
+            sql = f"UPDATE clientes SET {campos} WHERE id = :id_cliente"
             query = QSqlQuery(self.db_empresa.db)
             query.prepare(sql)
 
-            # Agregamos los valores convertidos
-            for v in valores:
-                query.addBindValue(v)
+            # Agregamos los valores con bindValue
+            for col, valor in datos_limpios.items():
+                query.bindValue(f":{col}", valor)
 
-            # El ID del WHERE siempre como entero
-            query.addBindValue(int(id_cliente))
+            # El ID del WHERE
+            query.bindValue(":id_cliente", int(id_cliente))
 
             if query.exec():
                 return True
@@ -232,12 +233,15 @@ class ClienteModel:
         """
         # Determinar qué base de datos usar según la tabla
         if tabla.lower() in ["paises", "poblaciones"]:
-            db_conexion = self.db_maestros.db
+            connection_name = self.db_maestros.connection_name
         else:
-            db_conexion = self.db_empresa.db
-        
+            connection_name = self.db_empresa.connection_name
+
+        # Obtener la conexión por nombre (esto garantiza que siempre es la correcta)
+        db_conexion = QSqlDatabase.database(connection_name)
+
         if not db_conexion or not db_conexion.isOpen():
-            print(f"❌ Error: La conexión no está abierta para la tabla '{tabla}'.")
+            print(f"❌ Error: La conexión '{connection_name}' no está abierta para la tabla '{tabla}'.")
             return []
 
         string_campos = ", ".join(campos) if isinstance(campos, list) else campos
@@ -247,7 +251,7 @@ class ClienteModel:
         if campo_orden and campo_orden != "*":
             sql += f" ORDER BY {campo_orden} ASC"
 
-        # 2. Pasamos la conexión específica a la query
+        # Pasamos la conexión específica a la query usando el nombre de conexión
         query = QSqlQuery(db_conexion)
 
         if not query.exec(sql):
@@ -267,6 +271,91 @@ class ClienteModel:
                 resultados.append(fila)
 
         return resultados
+
+    """--------------------------------------
+    Buscar Poblaciones por Código Postal
+    --------------------------------------"""
+    def buscar_poblaciones_por_cp(self, id_pais, cp):
+        """
+        Busca poblaciones por código postal.
+
+        Args:
+            id_pais: ID del país (1=España, 2=Francia, etc.)
+            cp: Código postal a buscar
+
+        Returns:
+            Lista de diccionarios con los datos de las poblaciones encontradas
+        """
+        # DEBUG: Mostrar valores de entrada
+        print(f"🔍 DEBUG buscar_poblaciones_por_cp:")
+        print(f"   - id_pais: {id_pais} (tipo: {type(id_pais)})")
+        print(f"   - cp: {cp} (tipo: {type(cp)})")
+        print(f"   - Conexión: {self.db_maestros.connection_name}")
+        print(f"   - Base de datos: {self.db_maestros.db.databaseName()}")
+        print(f"   - Conexión abierta: {self.db_maestros.db.isOpen()}")
+
+        # Ejecutamos directamente sin prepare para evitar problemas con PostgreSQL
+        query = QSqlQuery(self.db_maestros.db)
+
+        # Escapamos el CP de forma segura
+        cp_safe = str(cp).replace("'", "''")
+
+        sql = f"""SELECT id, poblacion, provincia_region, cp, cp_adicionales
+                 FROM poblaciones
+                 WHERE id_pais = {int(id_pais)} AND (cp = '{cp_safe}' OR cp_adicionales LIKE '%{cp_safe}%')"""
+
+        print(f"🔍 DEBUG SQL ejecutando:")
+        print(f"   {sql}")
+
+        if not query.exec(sql):
+            error_msg = query.lastError().text()
+            print(f"❌ Error SQL: {error_msg}")
+            return []
+
+        poblaciones = []
+        while query.next():
+            poblaciones.append({
+                "id": query.value("id"),
+                "poblacion": query.value("poblacion"),
+                "provincia_region": query.value("provincia_region"),
+                "cp": query.value("cp"),
+                "cp_adicionales": query.value("cp_adicionales")
+            })
+
+        print(f"🔍 DEBUG: Encontrados {len(poblaciones)} resultados")
+        if len(poblaciones) > 0:
+            print(f"   Primer resultado: {poblaciones[0]}")
+
+        return poblaciones
+
+
+    """--------------------------------------
+    Buscar Poblaciones por Nombre
+    --------------------------------------"""
+    def buscar_poblaciones_por_nombre(self, id_pais, nombre):
+        """
+        Busca poblaciones por nombre de población.
+
+        Args:
+            id_pais: ID del país (1=España, 2=Francia, etc.)
+            nombre: Nombre de la población a buscar
+
+        Returns:
+            Lista de diccionarios con los datos de las poblaciones encontradas
+        """
+        # Uso el método consultar del DataManager que ya funciona
+        sql = """SELECT poblacion, provincia_region, cp, region_code
+                 FROM poblaciones
+                 WHERE id_pais = ? AND (poblacion LIKE ?)"""
+        
+        params = [id_pais, f"%{nombre}%"]
+        
+        try:
+            resultados = self.db_maestros.consultar(sql, params)
+            return resultados if resultados else []
+        except Exception as e:
+            print(f"❌ Error SQL buscando poblaciones por nombre: {e}")
+            return []
 
     """--------------------------------------
                 Buscar Países

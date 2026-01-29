@@ -1776,7 +1776,7 @@ class Ui_frmClientes(object):
         self.retranslateUi(frmClientes)
 
         self.stackedWidget.setCurrentIndex(0)
-        self.tabwidget.setCurrentIndex(5)
+        self.tabwidget.setCurrentIndex(0)
         self.blink_stack.setCurrentIndex(0)
         self.tabWidget_2.setCurrentIndex(4)
 

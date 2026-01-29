@@ -97,7 +97,7 @@ Cuando se instalan bibliotecas manualmente en Linux:
 
 **Estado:** ✅ RESUELTO  
 **Fecha:** 2026-01-16  
-**DBeaver:** ✅ Funcionando  
+**DBeaver:** ✅ Funcionando
 **PySide6 Qt SQL:** ✅ Funcionando  
 **Conflictos:** ❌ Ninguno
 

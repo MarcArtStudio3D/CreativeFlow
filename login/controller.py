@@ -113,8 +113,13 @@ class LoginController:
         motor_str = db_config.get('motor', 'mariadb').lower()
         motor_qt = "QPSQL" if motor_str == 'postgresql' else "QMARIADB"
 
+        # Conectamos db_empresa a la base de datos de la empresa
         self.db_empresa.conectar(motor_qt, db_config)
-        self.db_maestros.conectar(motor_qt, db_config)
+
+        # Conectamos db_maestros a maestros_global (usa el mismo servidor pero diferente BD)
+        db_config_maestros = db_config.copy()
+        db_config_maestros['database'] = 'maestros_global'
+        self.db_maestros.conectar(motor_qt, db_config_maestros)
 
         self.main_window = MainWindow(
             db_maestros=self.db_maestros,
@@ -153,10 +158,16 @@ class LoginController:
                 if db_config:
                     motor_str = db_config.get('motor', 'mariadb').lower()
                     motor_qt = "QPSQL" if motor_str == 'postgresql' else "QMARIADB"
+
+                    # Conectamos db_empresa a la base de datos de la empresa
                     if self.db_empresa:
                         self.db_empresa.conectar(motor_qt, db_config)
+
+                    # Conectamos db_maestros a maestros_global
                     if self.db_maestros:
-                        self.db_maestros.conectar(motor_qt, db_config)
+                        db_config_maestros = db_config.copy()
+                        db_config_maestros['database'] = 'maestros_global'
+                        self.db_maestros.conectar(motor_qt, db_config_maestros)
 
         except Exception as e:
             print(f"Error obteniendo configuración en modo admin: {e}")
