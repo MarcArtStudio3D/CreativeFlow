@@ -72,6 +72,10 @@ class ClientesController:
         self.cargar_tabla_principal()
         self.vista.stackedWidget.setCurrentIndex(1)
 
+
+    """--------------------------------------------
+    BLOQUEAMOS O DESBLOQUEAMOS CAMPOS DE EDICIÓN
+    --------------------------------------------"""
     def set_edicion_bloqueada(self, bloquear=True):
         """
         Bloquea o desbloquea todos los campos de entrada de la ficha.
@@ -168,22 +172,32 @@ class ClientesController:
 
         # Definimos qué combo va con qué tabla
         configuracion = [
-            (self.vista.id_divisa, "divisas", "nombre_divisa"),
-            (self.vista.id_idioma_documentos, "idiomas", "idioma"),
-            (self.vista.id_tarifa, "tarifas", "nombre_tarifa"),
-            (self.vista.id_forma_pago, "formpago", "forma_pago"),
-            (self.vista.grupo_iva, "tiposiva", "nombre_interno"),
+            (self.vista.id_divisa, "divisas", "id,nombre_divisa"),
+            (self.vista.id_idioma_documentos, "idiomas", "id,idioma"),
+            (self.vista.id_tarifa, "codigotarifa", "id,descripcion"),
+            (self.vista.id_forma_pago, "formpago", "id,forma_pago"),
+            (self.vista.grupo_iva, "tiposiva", "id,descripcion_tipo_iva"),
         ]
 
         for combo, tabla, campo_nombre in configuracion:
             try:
                 combo.clear()
-                # Añadimos opción neutra para evitar el NOT NULL si el usuario no elige
                 combo.addItem("--- Seleccione ---", None)
 
                 datos = self.modelo.obtener_datos_tabla_auxiliar(tabla, campo_nombre)
-                for id_reg, nombre in datos:
-                    combo.addItem(str(nombre), id_reg)
+                
+                # 'campos' es algo como "id,nombre_divisa"
+                # Separamos para saber los nombres de las llaves del diccionario
+                lista_campos = campo_nombre.split(",") 
+                id_key = lista_campos[0].strip()   # "id"
+                nombre_key = lista_campos[1].strip() # "nombre_divisa"
+
+                for fila in datos:
+                    # Ahora accedemos al diccionario por sus llaves
+                    nombre_valor = fila.get(nombre_key)
+                    id_valor = fila.get(id_key)
+                    
+                    combo.addItem(str(nombre_valor), id_valor)
 
             except Exception as e:
                 print(f"Error cargando combo de {tabla}: {e}")
@@ -207,8 +221,8 @@ class ClientesController:
                 print(f"Editando cliente con ID: {id_cliente}")
 
                 # 3. Cargamos los datos y cambiamos de pestaña
-                self.cargar_datos(id_cliente)
                 self.cargar_datos_auxiliares()
+                self.cargar_datos(id_cliente)
                 self.activar_campos_segun_pais()
                 self.vista.stackedWidget.setCurrentIndex(0)
 
@@ -281,6 +295,7 @@ class ClientesController:
         # 2. La magia: MapeoCampos rellena TODO el formulario de golpe
         # Buscando widgets que se llamen como las columnas
         MapeoCampos.mapear_datos_a_vista(self.vista, columnas, fila)
+        self.vista.lbl_nombre_fiscal.setText(self.vista.nombre_fiscal.text().upper())
 
         # 3. Guardamos las columnas para cuando toque capturar los datos al guardar
         self.columnas_actuales = columnas
