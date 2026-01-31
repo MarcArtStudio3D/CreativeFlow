@@ -18,10 +18,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCheckBox, QComboBox,
     QDialog, QFormLayout, QFrame, QGridLayout,
     QHBoxLayout, QHeaderView, QLabel, QLineEdit,
-    QListView, QPushButton, QRadioButton, QSizePolicy,
-    QSpacerItem, QSpinBox, QStackedWidget, QTabWidget,
-    QTableView, QTextEdit, QTreeWidget, QTreeWidgetItem,
-    QVBoxLayout, QWidget)
+    QPushButton, QRadioButton, QSizePolicy, QSpacerItem,
+    QSpinBox, QStackedWidget, QTabWidget, QTableView,
+    QTextEdit, QTreeWidget, QTreeWidgetItem, QVBoxLayout,
+    QWidget)
 from modulos import designer_rc
 
 class Ui_frmClientes(object):
@@ -570,24 +570,10 @@ class Ui_frmClientes(object):
         self.tab_direcciones.setStyleSheet(u"")
         self.gridLayout = QGridLayout(self.tab_direcciones)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.label_27 = QLabel(self.tab_direcciones)
-        self.label_27.setObjectName(u"label_27")
+        self.provincia_alternativa = QLineEdit(self.tab_direcciones)
+        self.provincia_alternativa.setObjectName(u"provincia_alternativa")
 
-        self.gridLayout.addWidget(self.label_27, 3, 1, 1, 1)
-
-        self.label_6 = QLabel(self.tab_direcciones)
-        self.label_6.setObjectName(u"label_6")
-
-        self.gridLayout.addWidget(self.label_6, 0, 1, 1, 1)
-
-        self.label_7 = QLabel(self.tab_direcciones)
-        self.label_7.setObjectName(u"label_7")
-        self.label_7.setMaximumSize(QSize(16777215, 27))
-        self.label_7.setStyleSheet(u"background: #304163;\n"
-"color: rgb(255,255,255);")
-        self.label_7.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.gridLayout.addWidget(self.label_7, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.provincia_alternativa, 5, 2, 1, 3)
 
         self.lblProvinciaAlternativa = QLabel(self.tab_direcciones)
         self.lblProvinciaAlternativa.setObjectName(u"lblProvinciaAlternativa")
@@ -599,50 +585,15 @@ class Ui_frmClientes(object):
 
         self.gridLayout.addWidget(self.label_29, 2, 1, 1, 1)
 
+        self.label_6 = QLabel(self.tab_direcciones)
+        self.label_6.setObjectName(u"label_6")
+
+        self.gridLayout.addWidget(self.label_6, 0, 1, 1, 1)
+
         self.label_28 = QLabel(self.tab_direcciones)
         self.label_28.setObjectName(u"label_28")
 
         self.gridLayout.addWidget(self.label_28, 4, 1, 1, 1)
-
-        self.lista_direccionesAlternativas = QListView(self.tab_direcciones)
-        self.lista_direccionesAlternativas.setObjectName(u"lista_direccionesAlternativas")
-        self.lista_direccionesAlternativas.setMaximumSize(QSize(200, 16777215))
-        self.lista_direccionesAlternativas.setAlternatingRowColors(True)
-        self.lista_direccionesAlternativas.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
-        self.lista_direccionesAlternativas.setViewMode(QListView.ViewMode.ListMode)
-        self.lista_direccionesAlternativas.setModelColumn(0)
-
-        self.gridLayout.addWidget(self.lista_direccionesAlternativas, 2, 0, 8, 1)
-
-        self.label_86 = QLabel(self.tab_direcciones)
-        self.label_86.setObjectName(u"label_86")
-
-        self.gridLayout.addWidget(self.label_86, 7, 1, 1, 1)
-
-        self.label_64 = QLabel(self.tab_direcciones)
-        self.label_64.setObjectName(u"label_64")
-
-        self.gridLayout.addWidget(self.label_64, 6, 1, 1, 1)
-
-        self.direccion_alternativa1 = QLineEdit(self.tab_direcciones)
-        self.direccion_alternativa1.setObjectName(u"direccion_alternativa1")
-
-        self.gridLayout.addWidget(self.direccion_alternativa1, 3, 2, 1, 2)
-
-        self.direccion_alternativa2 = QLineEdit(self.tab_direcciones)
-        self.direccion_alternativa2.setObjectName(u"direccion_alternativa2")
-
-        self.gridLayout.addWidget(self.direccion_alternativa2, 4, 2, 1, 2)
-
-        self.label_31 = QLabel(self.tab_direcciones)
-        self.label_31.setObjectName(u"label_31")
-
-        self.gridLayout.addWidget(self.label_31, 1, 1, 1, 1)
-
-        self.descripcion_direccion_alternativa = QLineEdit(self.tab_direcciones)
-        self.descripcion_direccion_alternativa.setObjectName(u"descripcion_direccion_alternativa")
-
-        self.gridLayout.addWidget(self.descripcion_direccion_alternativa, 0, 2, 1, 2)
 
         self.horizontalLayout_13 = QHBoxLayout()
         self.horizontalLayout_13.setObjectName(u"horizontalLayout_13")
@@ -667,35 +618,46 @@ class Ui_frmClientes(object):
         self.horizontalLayout_13.addWidget(self.poblacion_alternativa)
 
 
-        self.gridLayout.addLayout(self.horizontalLayout_13, 2, 2, 1, 2)
+        self.gridLayout.addLayout(self.horizontalLayout_13, 2, 2, 1, 3)
+
+        self.direccion_alternativa1 = QLineEdit(self.tab_direcciones)
+        self.direccion_alternativa1.setObjectName(u"direccion_alternativa1")
+
+        self.gridLayout.addWidget(self.direccion_alternativa1, 3, 2, 1, 3)
+
+        self.label_86 = QLabel(self.tab_direcciones)
+        self.label_86.setObjectName(u"label_86")
+
+        self.gridLayout.addWidget(self.label_86, 7, 1, 1, 1)
+
+        self.label_64 = QLabel(self.tab_direcciones)
+        self.label_64.setObjectName(u"label_64")
+
+        self.gridLayout.addWidget(self.label_64, 6, 1, 1, 1)
+
+        self.label_27 = QLabel(self.tab_direcciones)
+        self.label_27.setObjectName(u"label_27")
+
+        self.gridLayout.addWidget(self.label_27, 3, 1, 1, 1)
+
+        self.label_7 = QLabel(self.tab_direcciones)
+        self.label_7.setObjectName(u"label_7")
+        self.label_7.setMaximumSize(QSize(16777215, 27))
+        self.label_7.setStyleSheet(u"background: #304163;\n"
+"color: rgb(255,255,255);")
+        self.label_7.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.gridLayout.addWidget(self.label_7, 0, 0, 1, 1)
+
+        self.label_31 = QLabel(self.tab_direcciones)
+        self.label_31.setObjectName(u"label_31")
+
+        self.gridLayout.addWidget(self.label_31, 1, 1, 1, 1)
 
         self.pais_alternativo = QLineEdit(self.tab_direcciones)
         self.pais_alternativo.setObjectName(u"pais_alternativo")
 
-        self.gridLayout.addWidget(self.pais_alternativo, 1, 3, 1, 1)
-
-        self.btnBuscarPaisAlternativo = QPushButton(self.tab_direcciones)
-        self.btnBuscarPaisAlternativo.setObjectName(u"btnBuscarPaisAlternativo")
-        self.btnBuscarPaisAlternativo.setMaximumSize(QSize(40, 40))
-        self.btnBuscarPaisAlternativo.setIcon(icon10)
-        self.btnBuscarPaisAlternativo.setIconSize(QSize(32, 32))
-
-        self.gridLayout.addWidget(self.btnBuscarPaisAlternativo, 1, 2, 1, 1)
-
-        self.provincia_alternativa = QLineEdit(self.tab_direcciones)
-        self.provincia_alternativa.setObjectName(u"provincia_alternativa")
-
-        self.gridLayout.addWidget(self.provincia_alternativa, 5, 2, 1, 2)
-
-        self.email_alternativa = QLineEdit(self.tab_direcciones)
-        self.email_alternativa.setObjectName(u"email_alternativa")
-
-        self.gridLayout.addWidget(self.email_alternativa, 6, 2, 1, 2)
-
-        self.comentarios_alternativa = QTextEdit(self.tab_direcciones)
-        self.comentarios_alternativa.setObjectName(u"comentarios_alternativa")
-
-        self.gridLayout.addWidget(self.comentarios_alternativa, 7, 2, 1, 2)
+        self.gridLayout.addWidget(self.pais_alternativo, 1, 4, 1, 1)
 
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
@@ -729,7 +691,30 @@ class Ui_frmClientes(object):
         self.horizontalLayout_2.addWidget(self.btnBorrardireccion)
 
 
-        self.gridLayout.addLayout(self.horizontalLayout_2, 8, 2, 1, 2)
+        self.gridLayout.addLayout(self.horizontalLayout_2, 8, 2, 1, 3)
+
+        self.comentarios_alternativa = QTextEdit(self.tab_direcciones)
+        self.comentarios_alternativa.setObjectName(u"comentarios_alternativa")
+
+        self.gridLayout.addWidget(self.comentarios_alternativa, 7, 2, 1, 3)
+
+        self.descripcion_direccion_alternativa = QLineEdit(self.tab_direcciones)
+        self.descripcion_direccion_alternativa.setObjectName(u"descripcion_direccion_alternativa")
+
+        self.gridLayout.addWidget(self.descripcion_direccion_alternativa, 0, 2, 1, 3)
+
+        self.email_alternativa = QLineEdit(self.tab_direcciones)
+        self.email_alternativa.setObjectName(u"email_alternativa")
+
+        self.gridLayout.addWidget(self.email_alternativa, 6, 2, 1, 3)
+
+        self.btnBuscarPaisAlternativo = QPushButton(self.tab_direcciones)
+        self.btnBuscarPaisAlternativo.setObjectName(u"btnBuscarPaisAlternativo")
+        self.btnBuscarPaisAlternativo.setMaximumSize(QSize(40, 40))
+        self.btnBuscarPaisAlternativo.setIcon(icon10)
+        self.btnBuscarPaisAlternativo.setIconSize(QSize(32, 32))
+
+        self.gridLayout.addWidget(self.btnBuscarPaisAlternativo, 1, 2, 1, 1)
 
         self.horizontalLayout_4 = QHBoxLayout()
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
@@ -758,7 +743,25 @@ class Ui_frmClientes(object):
         self.horizontalLayout_4.addItem(self.horizontalSpacer)
 
 
-        self.gridLayout.addLayout(self.horizontalLayout_4, 9, 2, 1, 2)
+        self.gridLayout.addLayout(self.horizontalLayout_4, 9, 2, 1, 3)
+
+        self.direccion_alternativa2 = QLineEdit(self.tab_direcciones)
+        self.direccion_alternativa2.setObjectName(u"direccion_alternativa2")
+
+        self.gridLayout.addWidget(self.direccion_alternativa2, 4, 2, 1, 3)
+
+        self.id_pais_alternativo = QLineEdit(self.tab_direcciones)
+        self.id_pais_alternativo.setObjectName(u"id_pais_alternativo")
+        self.id_pais_alternativo.setEnabled(False)
+        self.id_pais_alternativo.setMaximumSize(QSize(20, 16777215))
+
+        self.gridLayout.addWidget(self.id_pais_alternativo, 1, 3, 1, 1)
+
+        self.tbDirecciones_alternativas = QTableView(self.tab_direcciones)
+        self.tbDirecciones_alternativas.setObjectName(u"tbDirecciones_alternativas")
+        self.tbDirecciones_alternativas.setMaximumSize(QSize(250, 16777215))
+
+        self.gridLayout.addWidget(self.tbDirecciones_alternativas, 1, 0, 9, 1)
 
         self.tabwidget.addTab(self.tab_direcciones, "")
         self.tab_Datos_bancarios_financieros = QWidget()
@@ -1770,8 +1773,7 @@ class Ui_frmClientes(object):
         QWidget.setTabOrder(self.tablaPedidos, self.pais)
         QWidget.setTabOrder(self.pais, self.tabla_busquedas)
         QWidget.setTabOrder(self.tabla_busquedas, self.id_pais)
-        QWidget.setTabOrder(self.id_pais, self.lista_direccionesAlternativas)
-        QWidget.setTabOrder(self.lista_direccionesAlternativas, self.TablaAlbaranes)
+        QWidget.setTabOrder(self.id_pais, self.TablaAlbaranes)
 
         self.retranslateUi(frmClientes)
 
@@ -1851,17 +1853,16 @@ class Ui_frmClientes(object):
         self.label_12.setStyleSheet("")
         self.label_12.setText(QCoreApplication.translate("frmClientes", u"Nombre Comercial:", None))
         self.tabwidget.setTabText(self.tabwidget.indexOf(self.tab_datos), QCoreApplication.translate("frmClientes", u"Cliente", None))
-        self.label_27.setText(QCoreApplication.translate("frmClientes", u"Direcci\u00f3n:", None))
-        self.label_6.setText(QCoreApplication.translate("frmClientes", u"Descripci\u00f3n:", None))
-        self.label_7.setText(QCoreApplication.translate("frmClientes", u"DIRECCIONES", None))
         self.lblProvinciaAlternativa.setText(QCoreApplication.translate("frmClientes", u"Provincia:", None))
         self.label_29.setText(QCoreApplication.translate("frmClientes", u"C.P.:", None))
+        self.label_6.setText(QCoreApplication.translate("frmClientes", u"Descripci\u00f3n:", None))
         self.label_28.setText(QCoreApplication.translate("frmClientes", u"Direcci\u00f3n 2:", None))
+        self.label_66.setText(QCoreApplication.translate("frmClientes", u"Poblaci\u00f3n", None))
         self.label_86.setText(QCoreApplication.translate("frmClientes", u"Comentarios:", None))
         self.label_64.setText(QCoreApplication.translate("frmClientes", u"email:", None))
+        self.label_27.setText(QCoreApplication.translate("frmClientes", u"Direcci\u00f3n:", None))
+        self.label_7.setText(QCoreApplication.translate("frmClientes", u"DIRECCIONES", None))
         self.label_31.setText(QCoreApplication.translate("frmClientes", u"Pais:", None))
-        self.label_66.setText(QCoreApplication.translate("frmClientes", u"Poblaci\u00f3n", None))
-        self.btnBuscarPaisAlternativo.setText("")
 #if QT_CONFIG(tooltip)
         self.btnAnadirdireccion.setToolTip(QCoreApplication.translate("frmClientes", u"A\u00f1adir nueva direcci\u00f3n alternativa", None))
 #endif // QT_CONFIG(tooltip)
@@ -1871,6 +1872,7 @@ class Ui_frmClientes(object):
         self.btnBorrardireccion.setToolTip(QCoreApplication.translate("frmClientes", u"Borrar una direcci\u00f3n alternativa", None))
 #endif // QT_CONFIG(tooltip)
         self.btnBorrardireccion.setText(QCoreApplication.translate("frmClientes", u"Borrar", None))
+        self.btnBuscarPaisAlternativo.setText("")
         self.btnGuardardireccionAlternativa.setText(QCoreApplication.translate("frmClientes", u"Guardar", None))
         self.btnDeshacerdireccionAlternativa.setText(QCoreApplication.translate("frmClientes", u"Deshacer", None))
         self.tabwidget.setTabText(self.tabwidget.indexOf(self.tab_direcciones), QCoreApplication.translate("frmClientes", u"Direcciones alternativas", None))

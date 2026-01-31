@@ -110,6 +110,37 @@ class ClienteModel:
             print(f"Error al recuperar cliente ID {id_cliente}: {error_msg}")
             return None, []
 
+
+    """-------------------------------------------------------------
+    Obtenemos las direcciones alternativas del cliente, si las tiene
+    ---------------------------------------------------------------"""
+    def get_direcciones_alternativas_cliente(self, id_cliente):
+        
+        if not self.db_empresa or not self.db_empresa.db.isOpen():
+            print("Error: La base de datos no está abierta.")
+            return None, []
+
+        # 1. Preparamos la query directamente sobre la conexión existente
+        query = QSqlQuery(self.db_empresa.db)
+        query.prepare("SELECT id, descripcion FROM cliente_direcciones WHERE id_cliente = :id")
+        query.bindValue(":id", id_cliente)
+
+        # 2. Ejecutamos y extraemos todo
+        if query.exec() and query.next():
+            record = query.record()
+
+            # Extraemos los nombres de las columnas
+            columnas = [record.fieldName(i) for i in range(record.count())]
+
+            # Extraemos los valores del registro
+            valores = [query.value(i) for i in range(record.count())]
+
+            return valores, columnas
+        else:
+            error_msg = query.lastError().text()
+            print(f"Error al recuperar direcciones alternativas cliente ID {id_cliente}: {error_msg}")
+            return None, []
+
     """--------------------------------------
     Busca un cliente por su nombre fiscal.
     --------------------------------------"""
@@ -357,37 +388,46 @@ class ClienteModel:
             print(f"❌ Error SQL buscando poblaciones por nombre: {e}")
             return []
 
+   
+            
     """--------------------------------------
-                Buscar Países
+        GUardar Dirección Alternativa
     --------------------------------------"""
-    def buscar_paises(self, criterio):
+    def guardar_direccion_alternativa(self,  datos_direccion,nuevo_cliente=False):
         """
-        Abre el selector de países.
+        Guarda la dirección alternativa de un cliente.
         """
-        # Usamos db_maestros para paises
-        db = self.db_maestros.db
+        try:
+            # Justo después de db.open()
+            self.db_empresa.db.setConnectOptions("preparedStatements=0")
+            # Construcción de la query con placeholders nombrados
+            if nuevo_cliente:
+                campos = ", ".join([f"{col}" for col in datos_direccion.keys()])
+                sql = f"INSERT INTO cliente_direcciones ({campos}) VALUES ({', '.join([':' + col for col in datos_direccion.keys()])})"
+            else:
+                campos = ", ".join([f"{col} = :{col}" for col in datos_direccion.keys()])
+                sql = f"UPDATE cliente_direcciones SET {campos} WHERE id = :id_cliente"
+            query = QSqlQuery(self.db_empresa.db)
+            query.prepare(sql)
 
-        if not db or not db.isOpen():
-            print("La base de datos maestros no está abierta.")
-            return
+            # Agregamos los valores con bindValue
+            for col, valor in datos_direccion.items():
+                query.bindValue(f":{col}", valor)
 
-        # Instanciamos el buscador genérico
-        buscador = DBConsultaView(db)
+            if query.exec():
+                return True
+            else:
+                print(f"Error SQL: {query.lastError().text()}")
+                error = query.lastError()
+                print(f"--- ERROR SQL DETALLADO ---")
+                print(f"Mensaje Driver: {error.driverText()}") # Aquí suele estar el "No existe campo..."
+                print(f"Mensaje Base Datos: {error.databaseText()}")
+                print(f"Consulta que falló: {sql}")
+                print(f"---------------------------")
+                return False
 
-        buscador.set_config(
-            titulo="Seleccione País",
-            sql_base="SELECT id, nombre, iso FROM paises",
-            campos_busqueda=["nombre", "iso"],
-            headers=["ID", "País", "Código ISO"],
-        )
-        buscador.set_tamano_columnas([0, 600, 80])
-
-        if buscador.exec():
-            # Recuperamos el ID y el nombre
-            id_pais = buscador.id_seleccionado
-            nombre_pais = buscador.registro.value("nombre")
-            DatosPais = {"id": id_pais, "nombre": nombre_pais}
-            # Actualizamos la vista de empresas
-            return DatosPais
-            # Guardamos el ID en alguna parte para el UPDATE
-            # (podrías agregar un campo oculto en la vista o un atributo temporal)
+        except Exception as e:
+            print("!" * 50)
+            print(f"ERROR DATABASE: {e}")
+            print("!" * 50)
+            return False

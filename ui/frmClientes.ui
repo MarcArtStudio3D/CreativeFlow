@@ -1058,39 +1058,8 @@ font: 14pt &quot;Sans Serif&quot;;</string>
            <string>Direcciones alternativas</string>
           </attribute>
           <layout class="QGridLayout" name="gridLayout">
-           <item row="3" column="1">
-            <widget class="QLabel" name="label_27">
-             <property name="text">
-              <string>Dirección:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLabel" name="label_6">
-             <property name="text">
-              <string>Descripción:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_7">
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>27</height>
-              </size>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">background: #304163;
-color: rgb(255,255,255);</string>
-             </property>
-             <property name="text">
-              <string>DIRECCIONES</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignmentFlag::AlignCenter</set>
-             </property>
-            </widget>
+           <item row="5" column="2" colspan="3">
+            <widget class="QLineEdit" name="provincia_alternativa"/>
            </item>
            <item row="5" column="1">
             <widget class="QLabel" name="lblProvinciaAlternativa">
@@ -1106,6 +1075,13 @@ color: rgb(255,255,255);</string>
              </property>
             </widget>
            </item>
+           <item row="0" column="1">
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string>Descripción:</string>
+             </property>
+            </widget>
+           </item>
            <item row="4" column="1">
             <widget class="QLabel" name="label_28">
              <property name="text">
@@ -1113,59 +1089,7 @@ color: rgb(255,255,255);</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="0" rowspan="8">
-            <widget class="QListView" name="lista_direccionesAlternativas">
-             <property name="maximumSize">
-              <size>
-               <width>200</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="alternatingRowColors">
-              <bool>true</bool>
-             </property>
-             <property name="selectionBehavior">
-              <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
-             </property>
-             <property name="viewMode">
-              <enum>QListView::ViewMode::ListMode</enum>
-             </property>
-             <property name="modelColumn">
-              <number>0</number>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="1">
-            <widget class="QLabel" name="label_86">
-             <property name="text">
-              <string>Comentarios:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="1">
-            <widget class="QLabel" name="label_64">
-             <property name="text">
-              <string>email:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="2" colspan="2">
-            <widget class="QLineEdit" name="direccion_alternativa1"/>
-           </item>
-           <item row="4" column="2" colspan="2">
-            <widget class="QLineEdit" name="direccion_alternativa2"/>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLabel" name="label_31">
-             <property name="text">
-              <string>Pais:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="2" colspan="2">
-            <widget class="QLineEdit" name="descripcion_direccion_alternativa"/>
-           </item>
-           <item row="2" column="2" colspan="2">
+           <item row="2" column="2" colspan="3">
             <layout class="QHBoxLayout" name="horizontalLayout_13">
              <item>
               <widget class="QLineEdit" name="cp_alternativa">
@@ -1189,42 +1113,61 @@ color: rgb(255,255,255);</string>
              </item>
             </layout>
            </item>
-           <item row="1" column="3">
-            <widget class="QLineEdit" name="pais_alternativo"/>
+           <item row="3" column="2" colspan="3">
+            <widget class="QLineEdit" name="direccion_alternativa1"/>
            </item>
-           <item row="1" column="2">
-            <widget class="QPushButton" name="btnBuscarPaisAlternativo">
-             <property name="maximumSize">
-              <size>
-               <width>40</width>
-               <height>40</height>
-              </size>
-             </property>
+           <item row="7" column="1">
+            <widget class="QLabel" name="label_86">
              <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="designer.qrc">
-               <normaloff>:/modules/images/find.png</normaloff>:/modules/images/find.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>32</width>
-               <height>32</height>
-              </size>
+              <string>Comentarios:</string>
              </property>
             </widget>
            </item>
-           <item row="5" column="2" colspan="2">
-            <widget class="QLineEdit" name="provincia_alternativa"/>
+           <item row="6" column="1">
+            <widget class="QLabel" name="label_64">
+             <property name="text">
+              <string>email:</string>
+             </property>
+            </widget>
            </item>
-           <item row="6" column="2" colspan="2">
-            <widget class="QLineEdit" name="email_alternativa"/>
+           <item row="3" column="1">
+            <widget class="QLabel" name="label_27">
+             <property name="text">
+              <string>Dirección:</string>
+             </property>
+            </widget>
            </item>
-           <item row="7" column="2" colspan="2">
-            <widget class="QTextEdit" name="comentarios_alternativa"/>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_7">
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>27</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background: #304163;
+color: rgb(255,255,255);</string>
+             </property>
+             <property name="text">
+              <string>DIRECCIONES</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignmentFlag::AlignCenter</set>
+             </property>
+            </widget>
            </item>
-           <item row="8" column="2" colspan="2">
+           <item row="1" column="1">
+            <widget class="QLabel" name="label_31">
+             <property name="text">
+              <string>Pais:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="4">
+            <widget class="QLineEdit" name="pais_alternativo"/>
+           </item>
+           <item row="8" column="2" colspan="3">
             <layout class="QHBoxLayout" name="horizontalLayout_2">
              <item>
               <widget class="QPushButton" name="btnAnadirdireccion">
@@ -1288,7 +1231,39 @@ color: rgb(255,255,255);</string>
              </item>
             </layout>
            </item>
-           <item row="9" column="2" colspan="2">
+           <item row="7" column="2" colspan="3">
+            <widget class="QTextEdit" name="comentarios_alternativa"/>
+           </item>
+           <item row="0" column="2" colspan="3">
+            <widget class="QLineEdit" name="descripcion_direccion_alternativa"/>
+           </item>
+           <item row="6" column="2" colspan="3">
+            <widget class="QLineEdit" name="email_alternativa"/>
+           </item>
+           <item row="1" column="2">
+            <widget class="QPushButton" name="btnBuscarPaisAlternativo">
+             <property name="maximumSize">
+              <size>
+               <width>40</width>
+               <height>40</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="designer.qrc">
+               <normaloff>:/modules/images/find.png</normaloff>:/modules/images/find.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>32</width>
+               <height>32</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="2" colspan="3">
             <layout class="QHBoxLayout" name="horizontalLayout_4">
              <item>
               <widget class="QPushButton" name="btnGuardardireccionAlternativa">
@@ -1344,6 +1319,32 @@ color: rgb(255,255,255);</string>
               </spacer>
              </item>
             </layout>
+           </item>
+           <item row="4" column="2" colspan="3">
+            <widget class="QLineEdit" name="direccion_alternativa2"/>
+           </item>
+           <item row="1" column="3">
+            <widget class="QLineEdit" name="id_pais_alternativo">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>20</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" rowspan="9">
+            <widget class="QTableView" name="tbDirecciones_alternativas">
+             <property name="maximumSize">
+              <size>
+               <width>250</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -3034,7 +3035,6 @@ color: rgb(255,255,255);</string>
   <tabstop>pais</tabstop>
   <tabstop>tabla_busquedas</tabstop>
   <tabstop>id_pais</tabstop>
-  <tabstop>lista_direccionesAlternativas</tabstop>
   <tabstop>TablaAlbaranes</tabstop>
  </tabstops>
  <resources>
