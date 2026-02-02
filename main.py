@@ -18,8 +18,8 @@ def aplicar_estilo_personalizado(app):
 def main():
     # 1. Ajustes específicos para Arch Linux y Qt
     os.environ["QT_LOGGING_RULES"] = "qt.sql.qsqldatabase.warning=false"
-    # Forzamos la ruta de plugins por si acaso en Arch
-    QCoreApplication.addLibraryPath("/usr/lib/qt6/plugins")
+    # Comentado: Usar los plugins de PySide6, no los del sistema
+    # QCoreApplication.addLibraryPath("/usr/lib/qt6/plugins")
 
     app = QApplication(sys.argv)
 

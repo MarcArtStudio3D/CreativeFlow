@@ -61,3 +61,4 @@ class DataManager:
             return True, "Operación realizada"
         else:
             return False, query.lastError().text()
+        

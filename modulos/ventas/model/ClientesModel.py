@@ -6,6 +6,7 @@ from PySide6.QtSql import QSqlDatabase, QSqlQuery
 from PySide6.QtWidgets import QMessageBox
 
 from modulos.comun.view.DBConsultaView import DBConsultaView
+import helpers.db_utils
 
 
 class ClienteModel:
@@ -141,6 +142,28 @@ class ClienteModel:
             print(f"Error al recuperar direcciones alternativas cliente ID {id_cliente}: {error_msg}")
             return None, []
 
+    """-------------------------------------------------------------
+    Obtenemos las direcciones alternativas del cliente, si las tiene
+    ---------------------------------------------------------------"""
+    def get_datos_direccion_alternativa(self,id_cliente):
+        
+        if not self.db_empresa or not self.db_empresa.db.isOpen():
+            print("Error: La base de datos no está abierta.")
+            return None, []
+
+        # 1. Preparamos la query directamente sobre la conexión existente
+        query = QSqlQuery(self.db_empresa.db)
+        query.prepare("SELECT * FROM cliente_direcciones WHERE id_cliente = :id")
+        query.bindValue(":id", id_cliente)
+
+        # 2. Ejecutamos y extraemos todo
+        if query.exec() and query.next():
+            return helpers.db_utils.query_to_dict(query)
+        else:
+            error_msg = query.lastError().text()
+            print(f"Error al recuperar direcciones alternativas cliente ID {id_cliente}: {error_msg}")
+            return None, []
+        
     """--------------------------------------
     Busca un cliente por su nombre fiscal.
     --------------------------------------"""

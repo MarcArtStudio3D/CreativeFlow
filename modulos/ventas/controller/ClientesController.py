@@ -1,3 +1,4 @@
+from operator import index
 import os
 from turtle import title
 import unicodedata
@@ -31,6 +32,7 @@ class ClientesController:
         self.session_data = session_data
         self.validador = ValidadorFiscal()
         self._validando = False  # Flag para evitar validaciones en cascada
+        self._direcciones_tabla_connected = False  # Flag para evitar conexiones duplicadas
         self.set_edicion_bloqueada(
             True
         )  # Bloquea todos los campos al iniciar para solo lectura
@@ -68,8 +70,9 @@ class ClientesController:
 
         self.vista.txtBuscar_cliente.textChanged.connect(self.filtrar_clientes)
 
-        # Conectamos el doble clic de la tabla a la función de carga
+        # Conectamos las tablas
         self.vista.tabla_busquedas.doubleClicked.connect(self.abrir_cliente_desde_tabla)
+        self.vista.tbDirecciones_alternativas.clicked.connect(self.abrir_direccion_alternativa_desde_tabla)
 
         # Desactivo campos que no deben editarse
         # self.vista.pais.setReadOnly(True)
@@ -250,6 +253,41 @@ class ClientesController:
         except Exception as e:
             print(f"Error al intentar editar: {e}")
 
+    def abrir_direccion_alternativa_desde_tabla(self, index):
+        try:
+            # 1. Accedemos directamente al modelo que tiene la tabla ahora mismo
+            # self.tabla_model es el QSqlQueryModel que asignamos en refrescar_tabla
+            model = self.vista.tbDirecciones_alternativas.model()
+
+            # 2. Obtenemos el ID (columna 0 de la fila donde se hizo doble clic)
+            id = model.data(model.index(index.row(), 0))
+
+            if id is not None:
+                
+                # Cargamos los datos de la dirección alternativa
+               
+                self.cargar_datos_direccion_alternativa(id)
+                
+        except Exception as e:
+            print(f"Error al cargar dirección alternativa: {e}")
+
+    #----------------------------------------------------------------------------
+    # Carga los datos de una dirección alternativa en los campos correspondientes
+    #----------------------------------------------------------------------------
+    def cargar_datos_direccion_alternativa(self, id):
+        registro = self.modelo.get_datos_direccion_alternativa(id)
+
+        if not registro:
+            return
+
+        # Mapeamos los datos a los campos correspondientes
+        """Rellena la vista usando los datos de la fila de la BD."""
+        if not registro: return
+
+        datos = registro
+        #for nombre_col, valor in datos.items():
+        self.vista.poblacion_alternativa.setText(str(datos.get("poblacion", "")))
+
     """-------------------------------------------
     VAMOS AL SIGUIENTE CLIENTE SEGÚN NOMBRE FISCAL
     -------------------------------------------"""
@@ -317,6 +355,7 @@ class ClientesController:
 
         # 3. Guardamos las columnas para cuando toque capturar los datos al guardar
         self.columnas_actuales = columnas
+
         #-------------------------------------------------------
         # Verificamos si hay datos de direcciones alternativas.
         #-------------------------------------------------------
@@ -331,6 +370,10 @@ class ClientesController:
         if not isinstance(model, QStandardItemModel):
             model = QStandardItemModel(table_view)
             table_view.setModel(model)
+            # Conectar señal para navegación con teclado (flechas) solo la primera vez
+            if not self._direcciones_tabla_connected:
+                table_view.selectionModel().currentChanged.connect(self.abrir_direccion_alternativa_desde_tabla)
+                self._direcciones_tabla_connected = True
         
         # Limpiar modelo
         model.removeRows(0, model.rowCount())
@@ -357,9 +400,9 @@ class ClientesController:
         table_view.setSelectionBehavior(table_view.SelectionBehavior.SelectRows)
         table_view.setSelectionMode(table_view.SelectionMode.SingleSelection)
 
-    """------------------------------------
-        AÑADIR NUEVO CLIENTE
-    ------------------------------------"""
+    #------------------------------
+    #    AÑADIR NUEVO CLIENTE
+    #------------------------------
     def nuevo_cliente(self):
         # Lista de campos a limpiar (columnas de la tabla clientes)
         campos_cliente = [
@@ -388,9 +431,9 @@ class ClientesController:
         # Pasamos a modo edición directamente
         self.editar_cliente()   
 
-    """------------------------------------
-                FILTRAR CLIENTES
-    ------------------------------------"""
+    #------------------------------------
+    #            FILTRAR CLIENTES
+    #------------------------------------
 
     def filtrar_clientes(self, texto):
         # Filtramos la tabla según el texto y el criterio seleccionado
